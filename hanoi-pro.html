@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>หอคอยฮานอย Pro</title>
+<style>
+  :root {
+    --bg: #0f172a; --panel: #1e293b; --line: #334155; --text: #e2e8f0; --muted: #94a3b8;
+    --accent: #38bdf8; --good: #22c55e; --warn: #f59e0b; --bad: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text);
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e1b4b);
+  }
+  .wrap { max-width: 1050px; margin: 0 auto; padding: 20px; }
+  h1 { text-align: center; margin: 10px 0 4px; }
+  h3 { margin: 0 0 10px; color: var(--accent); }
+  h4 { margin: 0 0 8px; color: var(--accent); }
+  .sub { text-align: center; color: var(--muted); margin-bottom: 16px; }
+  .note { color: var(--muted); font-size: 13px; margin: 0 0 12px; line-height: 1.6; }
+  .panel {
+    background: var(--panel); border-radius: 14px; padding: 16px;
+    margin-bottom: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.3);
+  }
+
+  /* ---------- แท็บ & ปุ่ม ---------- */
+  .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  button {
+    border: none; border-radius: 8px; padding: 10px 16px; font-size: 15px; font-family: inherit;
+    font-weight: 600; color: #fff; cursor: pointer; transition: .2s;
+  }
+  button:hover:not(:disabled) { filter: brightness(1.15); transform: translateY(-1px); }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .tab { background: var(--line); color: var(--muted); }
+  .tab.active { background: var(--accent); color: var(--bg); }
+  #playBtn { background: var(--good); }
+  #stepBtn { background: #8b5cf6; }
+  #hintBtn { background: var(--warn); }
+  #undoBtn { background: #6366f1; }
+  #resetBtn { background: var(--bad); }
+  #soundBtn { background: #475569; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
+  .controls label { color: var(--muted); font-size: 14px; display: flex; align-items: center; gap: 6px; }
+  select { padding: 8px; border-radius: 6px; background: var(--bg); color: var(--text); border: 1px solid var(--line); }
+  input[type=range] { accent-color: var(--accent); }
+  body.mode-auto .play-only, body.mode-play .auto-only { display: none !important; }
+
+  /* ---------- สถิติ ---------- */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center; }
+  @media (max-width: 600px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+  .stat .v { font-size: 26px; font-weight: 700; color: var(--accent); }
+  .stat .l { font-size: 13px; color: var(--muted); }
+  .progress { height: 8px; background: var(--bg); border-radius: 4px; margin-top: 12px; overflow: hidden; }
+  .progress div { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--good)); transition: width .3s; }
+
+  /* ---------- กระดาน ---------- */
+  #message { text-align: center; font-size: 17px; min-height: 28px; margin-bottom: 8px; }
+  #message .from { color: var(--warn); font-weight: 700; }
+  #message .to { color: var(--good); font-weight: 700; }
+  #message .err { color: var(--bad); font-weight: 700; }
+  #board { position: relative; height: 340px; overflow: hidden; user-select: none; touch-action: none; }
+  body.mode-play #board { cursor: grab; }
+  .base {
+    position: absolute; bottom: 24px; left: 2%; right: 2%; height: 16px;
+    background: linear-gradient(#78350f, #451a03); border-radius: 6px;
+  }
+  .pole {
+    position: absolute; bottom: 40px; width: 12px; height: 250px;
+    transform: translateX(-50%); border-radius: 6px 6px 0 0;
+    background: linear-gradient(90deg, #92400e, #d97706, #92400e);
+    transition: box-shadow .3s;
+  }
+  .pole.from { box-shadow: 0 0 20px 5px var(--warn); }
+  .pole.to { box-shadow: 0 0 20px 5px var(--good); }
+  .pole.bad { box-shadow: 0 0 20px 5px var(--bad); }
+  .label {
+    position: absolute; bottom: 0; transform: translateX(-50%);
+    font-weight: 700; color: var(--muted); white-space: nowrap;
+  }
+  .disk {
+    position: absolute; height: 24px; border-radius: 12px; z-index: 2;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,.6);
+    box-shadow: inset 0 -4px 0 rgba(0,0,0,.25), 0 3px 6px rgba(0,0,0,.4);
+    transition-property: left, top; transition-timing-function: ease-in-out;
+  }
+  .disk.moving { z-index: 5; outline: 3px solid #fff; }
+  .disk.hint { animation: pulse .8s ease-in-out infinite; z-index: 4; }
+  .disk.shake { animation: shake .35s; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 5px rgba(250,204,21,.9), 0 0 24px 8px rgba(250,204,21,.6); } }
+  @keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+
+  /* ---------- แผนผัง Recursion ---------- */
+  .tree-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .tree-grid { grid-template-columns: 1fr; } }
+  #tree, #history {
+    position: relative; max-height: 320px; overflow-y: auto;
+    font-family: Consolas, monospace; font-size: 13px;
+  }
+  .tree, .tree ul { list-style: none; margin: 0; padding: 0; }
+  .tree ul { padding-left: 18px; margin-left: 6px; border-left: 1px dashed var(--line); }
+  .call, .mv { padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
+  .call { color: var(--muted); }
+  .call .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+  .call.active { color: #fff; background: rgba(56,189,248,.15); font-weight: 700; }
+  .call.done, .mv.done { opacity: .35; }
+  .mv { color: #cbd5e1; }
+  .mv small { color: var(--muted); }
+  .mv.current { background: #1d4ed8; color: #fff; font-weight: 700; }
+  .mv.current small { color: #dbeafe; }
+  .frame {
+    padding: 6px 8px; margin-bottom: 4px; border-radius: 6px; background: var(--bg);
+    border-left: 3px solid var(--line); font-family: Consolas, monospace; font-size: 13px;
+  }
+  .frame.top { background: #1d4ed8; border-left-color: var(--accent); color: #fff; font-weight: 700; }
+
+  /* ---------- ข้อมูล & ประวัติ ---------- */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+  .info ol, .info ul { margin: 0; padding-left: 20px; line-height: 1.7; }
+  #history div { padding: 4px 8px; border-radius: 4px; color: var(--muted); }
+  #history div.done { color: #64748b; text-decoration: line-through; }
+  #history div.current { background: #1d4ed8; color: #fff; text-decoration: none; }
+</style>
+</head>
+<body class="mode-auto">
+<div class="wrap">
+  <h1>หอคอยฮานอย Pro</h1>
+  <div class="sub">ย้ายจานทั้งหมดจากเสา A ไปเสา C ด้วยจำนวนครั้งน้อยที่สุด</div>
+
+  <div class="tabs">
+    <button class="tab active" id="tabAuto">🤖 โหมดสาธิต</button>
+    <button class="tab" id="tabPlay">🎮 โหมดเล่นเอง</button>
+  </div>
+
+  <div class="panel controls">
+    <label>จำนวนจาน
+      <select id="diskSel">
+        <option>1</option><option>2</option><option selected>3</option><option>4</option>
+        <option>5</option><option>6</option><option>7</option><option>8</option>
+      </select>
+    </label>
+    <label class="auto-only">ความเร็ว <input type="range" id="speed" min="1" max="10" value="4"></label>
+    <button id="playBtn" class="auto-only">▶ เล่น</button>
+    <button id="stepBtn" class="auto-only">⏭ ทีละขั้น</button>
+    <button id="hintBtn" class="play-only">💡 คำใบ้</button>
+    <button id="undoBtn" class="play-only">↶ ย้อนกลับ</button>
+    <button id="resetBtn">↺ รีเซ็ต</button>
+    <button id="soundBtn">🔊 เสียง: เปิด</button>
+  </div>
+
+  <div class="panel">
+    <div class="stats">
+      <div class="stat"><div class="v" id="stepNow">0</div><div class="l">ย้ายไปแล้ว (ครั้ง)</div></div>
+      <div class="stat"><div class="v" id="stepMin">7</div><div class="l">น้อยที่สุด = 2ⁿ − 1</div></div>
+      <div class="stat"><div class="v" id="remain">7</div><div class="l">เหลืออย่างน้อย (ครั้ง)</div></div>
+      <div class="stat"><div class="v" id="status">พร้อม</div><div class="l">สถานะ</div></div>
+    </div>
+    <div class="progress"><div id="bar"></div></div>
+  </div>
+
+  <div class="panel">
+    <div id="message"></div>
+    <div id="board">
+      <div class="base"></div>
+      <div class="pole" id="pole0"></div>
+      <div class="pole" id="pole1"></div>
+      <div class="pole" id="pole2"></div>
+      <div class="label" id="label0">เสา A (ต้นทาง)</div>
+      <div class="label" id="label1">เสา B (พัก)</div>
+      <div class="label" id="label2">เสา C (ปลายทาง)</div>
+    </div>
+  </div>
+
+  <div class="panel auto-only">
+    <h3>แผนผัง Recursion</h3>
+    <p class="note">
+      แต่ละบรรทัด <b>hanoi(k, X→Y)</b> คือการเรียกฟังก์ชัน 1 ครั้ง ภายในจะเรียกตัวเองซ้ำ 2 ครั้ง
+      โดยมี "ย้ายจาน k" คั่นตรงกลาง · แถบสีฟ้า = ฟังก์ชันที่ยังทำงานไม่จบ (อยู่บน Call Stack)
+    </p>
+    <div class="tree-grid">
+      <div id="tree"></div>
+      <div>
+        <h4>Call Stack (บนสุด = กำลังทำงาน)</h4>
+        <div id="stack"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel info">
+      <div class="play-only">
+        <h3>วิธีเล่น</h3>
+        <ul>
+          <li><b>ลาก</b> จานบนสุดไปวางที่เสาอื่น หรือ</li>
+          <li><b>คลิก</b> เสาต้นทาง แล้วคลิกเสาปลายทาง</li>
+          <li>ติดตรงไหนกด 💡 คำใบ้ ได้เลย</li>
+        </ul>
+        <h3 style="margin-top:14px">กติกา</h3>
+      </div>
+      <h3 class="auto-only">กติกา</h3>
+      <ul>
+        <li>ย้ายได้ครั้งละ 1 จาน</li>
+        <li>หยิบได้เฉพาะจานบนสุดของเสา</li>
+        <li>ห้ามวางจานใหญ่ทับจานเล็ก</li>
+      </ul>
+      <h3 style="margin-top:14px">หลักการ (Recursion)</h3>
+      <ol>
+        <li>ย้ายจาน n−1 แผ่นบน ไปพักที่เสา B</li>
+        <li>ย้ายจานใหญ่สุด ไปเสา C</li>
+        <li>ย้ายจาน n−1 แผ่นจาก B ตามไปที่ C</li>
+      </ol>
+    </div>
+    <div class="panel">
+      <h3 id="histTitle">ลำดับการย้ายที่ถูกต้อง</h3>
+      <div id="history"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const board = $('board');
+  const NAMES = ['A', 'B', 'C'];
+  const H = 340, BASE = 40, DH = 24, GAP = 2, LIFT = 15;
+
+  let mode = 'auto';
+  let n, towers, diskEls, moves, treeNodes, nodeEls, moveEls;
+  let step = 0, playing = false, animating = false, generation = 0, runId = 0;
+  let count = 0, userMoves = [], hintsUsed = 0, won = false;
+  let drag = null, selected = null, hintDisk = null;
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const phaseMs = () => Math.round(700 / +$('speed').value);
+  const topDisk = i => towers[i][towers[i].length - 1];
+
+  // ================= เสียง (Web Audio API) =================
+  let audioCtx = null, soundOn = true;
+  function tone(freq, dur = 0.12, type = 'sine', vol = 0.15, delay = 0) {
+    if (!soundOn) return;
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const t = audioCtx.currentTime + delay;
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(freq, t);
+      g.gain.setValueAtTime(vol, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t); o.stop(t + dur + 0.02);
+    } catch (e) { /* เบราว์เซอร์ไม่รองรับเสียง */ }
+  }
+  const sfx = {
+    lift: s => tone(300 + (n - s) * 45, 0.08, 'triangle', 0.12),
+    drop: s => tone(200 + (n - s) * 45, 0.16, 'sine', 0.2),
+    error: () => { tone(160, 0.18, 'sawtooth', 0.1); tone(120, 0.25, 'sawtooth', 0.1, 0.12); },
+    hint: () => { tone(880, 0.08, 'sine', 0.1); tone(1175, 0.12, 'sine', 0.1, 0.09); },
+    win: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.25, 'triangle', 0.15, i * 0.13))
+  };
+
+  // ================= อัลกอริทึม =================
+  // สร้างต้นไม้การเรียกฟังก์ชัน + ลำดับการย้าย (in-order = ลำดับการย้ายจริง)
+  function buildTree(k, from, to, via, depth) {
+    if (k === 0) return null;
+    const node = { k, from, to, via, depth, id: treeNodes.length };
+    treeNodes.push(node);
+    node.left = buildTree(k - 1, from, via, to, depth + 1);
+    node.move = moves.length;
+    moves.push({ disk: k, from, to });
+    node.right = buildTree(k - 1, via, to, from, depth + 1);
+    node.lo = node.left ? node.left.lo : node.move;
+    node.hi = node.right ? node.right.hi : node.move;
+    return node;
+  }
+
+  // ตำแหน่งปัจจุบันของจานแต่ละแผ่น: p[ขนาดจาน] = เลขเสา
+  function posOf() {
+    const p = [];
+    towers.forEach((t, i) => t.forEach(s => { p[s] = i; }));
+    return p;
+  }
+
+  // การย้ายที่ดีที่สุดถัดไป จากสถานะใดก็ได้
+  function nextMove(k, target, p) {
+    if (k === 0) return null;
+    if (p[k] === target) return nextMove(k - 1, target, p);
+    const other = 3 - p[k] - target;
+    return nextMove(k - 1, other, p) || { disk: k, from: p[k], to: target };
+  }
+
+  // จำนวนครั้งน้อยที่สุดที่ยังต้องย้าย จากสถานะปัจจุบัน
+  function minRemaining(k, target, p) {
+    if (k === 0) return 0;
+    if (p[k] === target) return minRemaining(k - 1, target, p);
+    return minRemaining(k - 1, 3 - p[k] - target, p) + 2 ** (k - 1);
+  }
+
+  // ================= ตำแหน่งและขนาด =================
+  const poleX = i => board.clientWidth * (2 * i + 1) / 6;
+  const poleAt = x => Math.max(0, Math.min(2, Math.floor(x / (board.clientWidth / 3))));
+  const diskColor = s => `hsl(${(s - 1) * 300 / Math.max(n - 1, 1)}, 75%, 52%)`;
+  function diskWidth(size) {
+    const maxW = Math.min(board.clientWidth / 3 - 16, 240);
+    const minW = Math.max(30, maxW * 0.25);
+    return n === 1 ? maxW : minW + (size - 1) * (maxW - minW) / (n - 1);
+  }
+  function diskPos(size, pole, level) {
+    return { left: poleX(pole) - diskWidth(size) / 2, top: H - BASE - (level + 1) * (DH + GAP) };
+  }
+
+  function layout() {
+    for (let i = 0; i < 3; i++) {
+      $('pole' + i).style.left = poleX(i) + 'px';
+      $('label' + i).style.left = poleX(i) + 'px';
+      towers[i].forEach((s, lvl) => {
+        const el = diskEls[s], p = diskPos(s, i, lvl);
+        el.style.transitionDuration = '0ms';
+        el.style.width = diskWidth(s) + 'px';
+        el.style.left = p.left + 'px';
+        el.style.top = p.top + 'px';
+      });
+    }
+    if (selected !== null) diskEls[topDisk(selected)].style.top = LIFT + 'px';
+  }
+
+  function animateTo(el, left, top, ms) {
+    el.style.transitionDuration = ms + 'ms';
+    el.style.left = left + 'px';
+    el.style.top = top + 'px';
+    return sleep(ms + 20);
+  }
+
+  function highlight(from, to) {
+    clearHighlight();
+    if (from != null) $('pole' + from).classList.add('from');
+    if (to != null) $('pole' + to).classList.add('to');
+  }
+  function clearHighlight() {
+    document.querySelectorAll('.pole').forEach(p => p.classList.remove('from', 'to', 'bad'));
+  }
+
+  // ================= สร้าง / รีเซ็ต =================
+  function renderNode(nd) {
+    if (!nd) return '';
+    const f = NAMES[nd.from], t = NAMES[nd.to], v = NAMES[nd.via];
+    return `<li>
+      <div class="call" data-n="${nd.id}"><span class="dot" style="background:${diskColor(nd.k)}"></span>hanoi(${nd.k}, ${f}→${t}, พัก ${v})</div>
+      <ul>
+        ${renderNode(nd.left)}
+        <li><div class="mv" data-m="${nd.move}">➜ ย้ายจาน ${nd.k}: ${f} → ${t} <small>(ขั้นที่ ${nd.move + 1})</small></div></li>
+        ${renderNode(nd.right)}
+      </ul>
+    </li>`;
+  }
+
+  function build() {
+    generation++; runId++;
+    playing = false; animating = false; drag = null; selected = null; hintDisk = null;
+    won = false; count = 0; userMoves = []; hintsUsed = 0; step = 0;
+    n = +$('diskSel').value;
+    towers = [[], [], []]; moves = []; treeNodes = [];
+    const root = buildTree(n, 0, 2, 1, 0);
+
+    board.querySelectorAll('.disk').forEach(d => d.remove());
+    diskEls = {};
+    for (let s = n; s >= 1; s--) {
+      towers[0].push(s);
+      const d = document.createElement('div');
+      d.className = 'disk';
+      d.textContent = s;
+      d.style.background = diskColor(s);
+      board.appendChild(d);
+      diskEls[s] = d;
+    }
+
+    $('history').innerHTML = mode === 'auto'
+      ? moves.map((m, i) => `<div id="h${i}">ขั้นที่ ${i + 1}: จาน ${m.disk}  ${NAMES[m.from]} → ${NAMES[m.to]}</div>`).join('')
+      : '';
+
+    $('tree').innerHTML = `<ul class="tree">${renderNode(root)}</ul>`;
+    nodeEls = []; moveEls = [];
+    $('tree').querySelectorAll('.call').forEach(el => { nodeEls[+el.dataset.n] = el; });
+    $('tree').querySelectorAll('.mv').forEach(el => { moveEls[+el.dataset.m] = el; });
+    $('tree').scrollTop = 0;
+    $('history').scrollTop = 0;
+
+    clearHighlight();
+    layout();
+    $('message').innerHTML = mode === 'auto'
+      ? 'กด "เล่น" หรือ "ทีละขั้น" เพื่อดูการแก้ปัญหา'
+      : 'ลากจานบนสุดไปวางเสาอื่น หรือคลิกเสาต้นทางแล้วคลิกเสาปลายทาง';
+    updateUI();
+  }
+
+  // ================= อัปเดตหน้าจอ =================
+  function updateUI() {
+    const total = 2 ** n - 1;
+    const remain = minRemaining(n, 2, posOf());
+    $('stepNow').textContent = mode === 'auto' ? step : count;
+    $('stepMin').textContent = total;
+    $('remain').textContent = remain;
+    $('bar').style.width = ((total - remain) / total * 100) + '%';
+
+    let status;
+    if (mode === 'auto') {
+      const done = step >= moves.length;
+      status = done ? 'สำเร็จ!' : playing ? 'กำลังเล่น' : step ? 'หยุดชั่วคราว' : 'พร้อม';
+      $('playBtn').textContent = playing ? '⏸ หยุด' : '▶ เล่น';
+      $('playBtn').disabled = done;
+      $('stepBtn').disabled = done || playing;
+      $('diskSel').disabled = playing;
+      document.querySelectorAll('#history div').forEach((d, i) => {
+        d.className = i < step ? 'done' : i === step ? 'current' : '';
+      });
+      const cur = $('h' + step);
+      if (cur) $('history').scrollTop = cur.offsetTop - 60;
+      updateTree();
+    } else {
+      status = won ? 'ชนะแล้ว!' : count ? 'กำลังเล่น' : 'พร้อม';
+      $('hintBtn').disabled = won;
+      $('undoBtn').disabled = won || !userMoves.length;
+      $('diskSel').disabled = false;
+      renderPlayHistory();
+    }
+    $('status').textContent = status;
+  }
+
+  function updateTree() {
+    const cur = step, stack = [];
+    treeNodes.forEach(nd => {
+      const el = nodeEls[nd.id];
+      if (nd.hi < cur) el.className = 'call done';
+      else if (nd.lo <= cur) { el.className = 'call active'; stack.push(nd); }
+      else el.className = 'call';
+    });
+    moveEls.forEach((el, i) => {
+      el.className = 'mv' + (i < cur ? ' done' : i === cur ? ' current' : '');
+    });
+    stack.sort((a, b) => b.depth - a.depth); // ลึกสุดอยู่บนสุด
+    $('stack').innerHTML = stack.length
+      ? stack.map((nd, i) =>
+          `<div class="frame${i === 0 ? ' top' : ''}">hanoi(${nd.k}, ${NAMES[nd.from]}→${NAMES[nd.to]}, พัก ${NAMES[nd.via]})</div>`
+        ).join('')
+      : '<div class="frame">ว่าง: ทุกฟังก์ชันทำงานจบแล้ว</div>';
+    const el = moveEls[cur];
+    if (el) $('tree').scrollTop = el.offsetTop - $('tree').clientHeight / 2;
+  }
+
+  function renderPlayHistory() {
+    const h = $('history');
+    h.innerHTML = userMoves.length
+      ? userMoves.map((m, i) =>
+          `<div class="${i === userMoves.length - 1 ? 'current' : ''}">ครั้งที่ ${i + 1}: จาน ${m.disk}  ${NAMES[m.from]} → ${NAMES[m.to]}</div>`
+        ).join('')
+      : '<div>ยังไม่มีการย้าย</div>';
+    h.scrollTop = h.scrollHeight;
+  }
+
+  // ================= โหมดสาธิต =================
+  async function doStep() {
+    if (mode !== 'auto' || animating || step >= moves.length) return;
+    animating = true;
+    const gen = generation, m = moves[step], s = m.disk, el = diskEls[s], ms = phaseMs();
+
+    highlight(m.from, m.to);
+    el.classList.add('moving');
+    sfx.lift(s);
+    $('message').innerHTML =
+      `ขั้นที่ ${step + 1}: ย้ายจาน <b>${s}</b> จาก <span class="from">เสา ${NAMES[m.from]}</span> → <span class="to">เสา ${NAMES[m.to]}</span>`;
+
+    const dest = diskPos(s, m.to, towers[m.to].length);
+    await animateTo(el, parseFloat(el.style.left), LIFT, ms); if (gen !== generation) return;
+    await animateTo(el, dest.left, LIFT, ms);                  if (gen !== generation) return;
+    await animateTo(el, dest.left, dest.top, ms);              if (gen !== generation) return;
+
+    towers[m.from].pop();
+    towers[m.to].push(s);
+    sfx.drop(s);
+    el.classList.remove('moving');
+    clearHighlight();
+    step++;
+    animating = false;
+
+    if (step === moves.length) {
+      playing = false;
+      sfx.win();
+      $('message').innerHTML = `🎉 สำเร็จ! ย้ายจาน ${n} แผ่นด้วย <b>${moves.length}</b> ครั้ง (น้อยที่สุดที่เป็นไปได้)`;
+    }
+    updateUI();
+  }
+
+  async function togglePlay() {
+    if (playing) { playing = false; runId++; updateUI(); return; }
+    playing = true;
+    const id = ++runId;
+    updateUI();
+    while (playing && id === runId && step < moves.length) {
+      await doStep();
+      await sleep(phaseMs() / 2);
+    }
+    if (id === runId) { playing = false; updateUI(); }
+  }
+
+  // ================= โหมดเล่นเอง =================
+  const canMove = (from, to) =>
+    towers[from].length > 0 && (towers[to].length === 0 || topDisk(to) > topDisk(from));
+
+  function pointerXY(e) {
+    const r = board.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  function markTarget(from, p) {
+    document.querySelectorAll('.pole').forEach(el => el.classList.remove('to', 'bad'));
+    if (p !== from) $('pole' + p).classList.add(canMove(from, p) ? 'to' : 'bad');
+  }
+
+  board.addEventListener('pointerdown', e => {
+    if (mode !== 'play' || animating || won) return;
+    e.preventDefault();
+    const { x, y } = pointerXY(e);
+    const p = poleAt(x);
+    clearHint();
+
+    // มีจานที่เลือกค้างไว้ (โหมดคลิก) → พยายามย้ายไปเสาที่คลิก
+    if (selected !== null) {
+      const from = selected;
+      selected = null;
+      tryMove(from, p);
+      return;
+    }
+    if (!towers[p].length) return;
+
+    const s = topDisk(p), el = diskEls[s];
+    drag = {
+      s, el, from: p, sx: x, sy: y, moved: false, gen: generation,
+      offX: x - parseFloat(el.style.left), offY: y - parseFloat(el.style.top)
+    };
+    el.style.transitionDuration = '0ms';
+    el.classList.add('moving');
+    highlight(p, null);
+    sfx.lift(s);
+    board.setPointerCapture(e.pointerId);
+    board.style.cursor = 'grabbing';
+  });
+
+  board.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const { x, y } = pointerXY(e);
+    if (!drag.moved && Math.hypot(x - drag.sx, y - drag.sy) > 6) drag.moved = true;
+    if (!drag.moved) return;
+    drag.el.style.left = (x - drag.offX) + 'px';
+    drag.el.style.top = Math.max(0, Math.min(H - DH, y - drag.offY)) + 'px';
+    markTarget(drag.from, poleAt(x));
+  });
+
+  function endDrag(e, cancel) {
+    if (!drag) return;
+    const d = drag;
+    drag = null;
+    board.style.cursor = '';
+    if (d.gen !== generation) return;
+
+    // แค่คลิก (ไม่ได้ลาก) → เลือกจานไว้ แล้วรอคลิกเสาปลายทาง
+    if (!d.moved && !cancel) {
+      selected = d.from;
+      animateTo(d.el, parseFloat(d.el.style.left), LIFT, 150);
+      $('message').innerHTML =
+        `เลือกจาน <b>${d.s}</b> จากเสา ${NAMES[d.from]} แล้ว คลิกเสาที่ต้องการวาง (คลิกเสาเดิมเพื่อยกเลิก)`;
+      return;
+    }
+    tryMove(d.from, cancel ? d.from : poleAt(pointerXY(e).x));
+  }
+  board.addEventListener('pointerup', e => endDrag(e, false));
+  board.addEventListener('pointercancel', e => endDrag(e, true));
+
+  async function tryMove(from, to) {
+    const s = topDisk(from), el = diskEls[s], gen = generation;
+    animating = true;
+    el.classList.add('moving');
+    let ok = false;
+
+    if (to !== from && canMove(from, to)) {
+      ok = true;
+      highlight(from, to);
+      const dest = diskPos(s, to, towers[to].length);
+      await animateTo(el, dest.left, LIFT, 160);     if (gen !== generation) return;
+      await animateTo(el, dest.left, dest.top, 160); if (gen !== generation) return;
+      towers[from].pop();
+      towers[to].push(s);
+      count++;
+      userMoves.push({ disk: s, from, to });
+      sfx.drop(s);
+      $('message').innerHTML =
+        `ย้ายจาน <b>${s}</b> จาก <span class="from">เสา ${NAMES[from]}</span> → <span class="to">เสา ${NAMES[to]}</span>`;
+    } else {
+      if (to !== from) {
+        sfx.error();
+        $('message').innerHTML = `<span class="err">ผิดกติกา!</span> ห้ามวางจาน ${s} ทับจาน ${topDisk(to)} ที่เล็กกว่า`;
+        $('pole' + to).classList.add('bad');
+        el.classList.add('shake');
+      } else {
+        $('message').innerHTML = 'วางจานกลับที่เดิม';
+      }
+      const back = diskPos(s, from, towers[from].length - 1);
+      await animateTo(el, back.left, LIFT, 160);     if (gen !== generation) return;
+      await animateTo(el, back.left, back.top, 160); if (gen !== generation) return;
+      el.classList.remove('shake');
+    }
+
+    el.classList.remove('moving');
+    clearHighlight();
+    animating = false;
+    if (ok && towers[2].length === n) win();
+    updateUI();
+  }
+
+  function win() {
+    won = true;
+    sfx.win();
+    const total = 2 ** n - 1, extra = count - total;
+    let msg = extra === 0
+      ? `🏆 สมบูรณ์แบบ! ใช้ <b>${count}</b> ครั้ง เท่ากับค่าน้อยที่สุดพอดี`
+      : `🎉 สำเร็จ! ใช้ <b>${count}</b> ครั้ง (เกินค่าน้อยที่สุด ${extra} ครั้ง) ลองทำให้ได้ ${total} ครั้งดูไหม?`;
+    if (hintsUsed) msg += ` · ใช้คำใบ้ ${hintsUsed} ครั้ง`;
+    $('message').innerHTML = msg;
+  }
+
+  async function undo() {
+    if (mode !== 'play' || animating || won || !userMoves.length) return;
+    clearHint();
+    if (selected !== null) { selected = null; layout(); }
+
+    const m = userMoves[userMoves.length - 1], s = m.disk, el = diskEls[s], gen = generation;
+    animating = true;
+    el.classList.add('moving');
+    highlight(m.to, m.from);
+    sfx.lift(s);
+    const dest = diskPos(s, m.from, towers[m.from].length);
+    await animateTo(el, parseFloat(el.style.left), LIFT, 150); if (gen !== generation) return;
+    await animateTo(el, dest.left, LIFT, 150);                  if (gen !== generation) return;
+    await animateTo(el, dest.left, dest.top, 150);              if (gen !== generation) return;
+
+    towers[m.to].pop();
+    towers[m.from].push(s);
+    userMoves.pop();
+    count--;
+    sfx.drop(s);
+    el.classList.remove('moving');
+    clearHighlight();
+    animating = false;
+    $('message').innerHTML = `↶ ย้อนกลับ: จาน <b>${s}</b> กลับไปเสา ${NAMES[m.from]}`;
+    updateUI();
+  }
+
+  function showHint() {
+    if (mode !== 'play' || animating || won) return;
+    if (selected !== null) { selected = null; layout(); }
+    clearHint();
+    const mv = nextMove(n, 2, posOf());
+    if (!mv) return;
+    hintsUsed++;
+    hintDisk = diskEls[mv.disk];
+    hintDisk.classList.add('hint');
+    highlight(mv.from, mv.to);
+    sfx.hint();
+    $('message').innerHTML =
+      `💡 คำใบ้: ย้ายจาน <b>${mv.disk}</b> จาก <span class="from">เสา ${NAMES[mv.from]}</span> → <span class="to">เสา ${NAMES[mv.to]}</span>`;
+  }
+
+  function clearHint() {
+    if (hintDisk) hintDisk.classList.remove('hint');
+    hintDisk = null;
+    clearHighlight();
+  }
+
+  // ================= สลับโหมด & ปุ่ม =================
+  function setMode(m) {
+    mode = m;
+    document.body.className = 'mode-' + m;
+    $('tabAuto').classList.toggle('active', m === 'auto');
+    $('tabPlay').classList.toggle('active', m === 'play');
+    $('histTitle').textContent = m === 'auto' ? 'ลำดับการย้ายที่ถูกต้อง' : 'ประวัติการย้ายของคุณ';
+    build();
+  }
+
+  $('tabAuto').onclick = () => setMode('auto');
+  $('tabPlay').onclick = () => setMode('play');
+  $('playBtn').onclick = togglePlay;
+  $('stepBtn').onclick = doStep;
+  $('hintBtn').onclick = showHint;
+  $('undoBtn').onclick = undo;
+  $('resetBtn').onclick = build;
+  $('diskSel').onchange = build;
+  $('soundBtn').onclick = () => {
+    soundOn = !soundOn;
+    $('soundBtn').textContent = soundOn ? '🔊 เสียง: เปิด' : '🔇 เสียง: ปิด';
+  };
+  window.addEventListener('resize', () => { if (!animating && !drag) layout(); });
+
+  setMode('auto');
+</script>
+</body>
+</html>

@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ห้องทดลองมัลติมิเตอร์แบบเข็ม</title>
+<style>
+  :root { --bg:#0f172a; --panel:#1e293b; --line:#334155; --text:#e2e8f0; --muted:#94a3b8;
+          --accent:#38bdf8; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; color:var(--text); font-family:'Segoe UI',Tahoma,sans-serif;
+         background:linear-gradient(135deg,#0f172a,#1e1b4b); }
+  .wrap { max-width:1150px; margin:0 auto; padding:20px; }
+  h1 { text-align:center; margin:8px 0 4px; }
+  h3 { margin:0 0 10px; color:var(--accent); }
+  .sub { text-align:center; color:var(--muted); margin-bottom:16px; }
+  .panel { background:var(--panel); border-radius:14px; padding:16px; margin-bottom:16px;
+           box-shadow:0 8px 24px rgba(0,0,0,.3); }
+  .tabs { display:flex; justify-content:center; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+  button { border:none; border-radius:8px; padding:9px 14px; font-size:14px; font-family:inherit;
+           font-weight:600; color:#fff; cursor:pointer; background:#475569; transition:.2s; }
+  button:hover:not(:disabled) { filter:brightness(1.15); }
+  button.on { background:var(--good); }
+  button.warnb { background:var(--warn); }
+  .tab { background:var(--line); color:var(--muted); }
+  .tab.active { background:var(--accent); color:var(--bg); }
+  .grid { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:16px; }
+  @media (max-width:850px) { .grid { grid-template-columns:1fr; } }
+  body.mode-lab .quiz-only, body.mode-quiz .lab-only { display:none !important; }
+
+  /* ---------- ตัวมิเตอร์ ---------- */
+  .meter { background:linear-gradient(#3f3f46,#27272a); border-radius:22px; padding:14px; margin-bottom:16px;
+           box-shadow:inset 0 2px 0 rgba(255,255,255,.1),0 10px 30px rgba(0,0,0,.5); }
+  #face { width:100%; display:block; border-radius:12px; }
+  .rangeName { font-size:17px; font-weight:700; color:#fde68a; text-align:center; margin-top:10px; }
+  .meter-bottom { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  #knob { width:260px; max-width:100%; }
+  .side { flex:1; min-width:160px; display:flex; flex-direction:column; gap:14px; align-items:center; }
+  .zero { text-align:center; font-size:13px; color:#d4d4d8; transition:opacity .3s; }
+  .zero input { width:150px; accent-color:var(--good); }
+  .jacks { display:flex; gap:26px; }
+  .jack { text-align:center; font-size:12px; color:#d4d4d8; }
+  .jack i { display:block; width:28px; height:28px; border-radius:50%; margin:0 auto 4px; border:5px solid #18181b; }
+  .small { font-size:12px; color:#a1a1aa; text-align:center; }
+
+  /* ---------- แผงควบคุม ---------- */
+  .ctrl { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; align-items:center; }
+  select, input[type=text] { padding:8px; border-radius:6px; background:var(--bg); color:var(--text);
+           border:1px solid var(--line); font-family:inherit; font-size:14px; }
+  #scenSel { width:100%; }
+  /* ปรับพื้นหลังวงจรให้อ่อนลงและตัดกับเส้นสายไฟชัดเจนขึ้น */
+  #circuit { width:100%; background:#334155; border-radius:10px; display:block; margin-top:10px; box-shadow:inset 0 2px 6px rgba(0,0,0,.2); }
+  .desc { color:var(--muted); font-size:14px; margin:8px 0; line-height:1.6; }
+  .msg { padding:8px 10px; border-radius:8px; margin-bottom:6px; font-size:14px; line-height:1.5; }
+  .msg.info { background:rgba(56,189,248,.12); border-left:3px solid var(--accent); }
+  .msg.warn { background:rgba(245,158,11,.13); border-left:3px solid var(--warn); }
+  .msg.bad  { background:rgba(239,68,68,.16); border-left:3px solid var(--bad); }
+  .msg.good { background:rgba(34,197,94,.13); border-left:3px solid var(--good); }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  td, th { padding:6px 4px; border-bottom:1px solid var(--line); text-align:left; }
+  th { color:var(--accent); }
+  .help td:first-child { color:var(--muted); width:40%; }
+  .big { font-size:20px; font-weight:700; color:#fde68a; margin:6px 0; }
+  ol.steps { margin:0; padding-left:20px; line-height:1.8; font-size:14px; }
+  #fuse { display:none; background:rgba(239,68,68,.18); border:2px solid var(--bad); }
+  #fuse button { background:var(--bad); margin-top:8px; }
+  label.chk { font-size:14px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+</style>
+</head>
+<body class="mode-lab">
+<div class="wrap">
+  <h1>ห้องทดลองมัลติมิเตอร์แบบเข็ม</h1>
+  <div class="sub">ฝึกวัดแรงดันไฟตรง ไฟสลับ ความต้านทาน และกระแสไฟฟ้า ด้วยมิเตอร์จำลอง</div>
+
+  <div class="tabs">
+    <button class="tab active" id="tabLab">🔬 ห้องทดลอง</button>
+    <button class="tab" id="tabQuiz">📝 แบบฝึกอ่านหน้าปัด</button>
+  </div>
+
+  <div class="grid">
+    <!-- ===== ซ้าย: ตัวมิเตอร์ ===== -->
+    <div>
+      <div class="meter">
+        <svg id="face" viewBox="0 0 500 290"></svg>
+        <div class="rangeName" id="rangeName"></div>
+        <div class="meter-bottom">
+          <svg id="knob" viewBox="0 0 300 300"></svg>
+          <div class="side">
+            <div class="zero" id="zeroBox">ปุ่มปรับ 0Ω<br>
+              <input type="range" id="zeroAdj" min="0.85" max="1.15" step="0.001" value="1">
+            </div>
+            <div class="jacks">
+              <div class="jack"><i style="background:#0a0a0a"></i>COM (−)</div>
+              <div class="jack"><i style="background:#b91c1c"></i>+ V·Ω·A</div>
+            </div>
+            <div class="small">คลิกตัวเลขรอบสวิตช์ หรือคลิกที่ตัวสวิตช์เพื่อหมุนเปลี่ยนย่าน</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel lab-only">
+        <h3>สรุปวิธีอ่านสเกล</h3>
+        <table>
+          <tr><th>ย่านที่ตั้ง</th><th>อ่านแถว</th><th>แล้ว</th></tr>
+          <tr><td>DCV / ACV 2.5</td><td>0–250</td><td>÷ 100</td></tr>
+          <tr><td>DCV / ACV 10</td><td>0–10</td><td>อ่านตรง ๆ</td></tr>
+          <tr><td>DCV / ACV 50</td><td>0–50</td><td>อ่านตรง ๆ</td></tr>
+          <tr><td>DCV / ACV 250</td><td>0–250</td><td>อ่านตรง ๆ</td></tr>
+          <tr><td>DCV / ACV 1000</td><td>0–10</td><td>× 100</td></tr>
+          <tr><td>DCmA 2.5 / 25 / 250</td><td>0–250</td><td>÷ 100 / ÷ 10 / ตรง ๆ</td></tr>
+          <tr><td>Ω ×1, ×10, ×1k, ×10k</td><td>สเกล Ω (บนสุด, ขวา→ซ้าย)</td><td>× ตัวคูณ</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== ขวา: การทดลอง / แบบฝึก ===== -->
+    <div>
+      <div class="panel lab-only">
+        <h3>เลือกการทดลอง</h3>
+        <select id="scenSel"></select>
+        <div class="desc" id="scenDesc"></div>
+        <div class="ctrl" id="adjRow"></div>
+        <svg id="circuit" viewBox="0 0 320 195"></svg>
+        <div class="ctrl">
+          <button id="btnProbe"></button>
+          <button id="btnRev"></button>
+          <button id="btnShort"></button>
+        </div>
+      </div>
+
+      <div class="panel lab-only" id="fuse">
+        <h3 style="color:#fca5a5">💥 ฟิวส์ในมิเตอร์ขาด!</h3>
+        <div id="fuseReason"></div>
+        <div class="desc">ของจริง: มิเตอร์อาจเสียหาย และอาจเกิดประกายไฟเป็นอันตรายต่อผู้ใช้</div>
+        <button id="btnFuse">🔧 เปลี่ยนฟิวส์ใหม่</button>
+      </div>
+
+      <div class="panel lab-only">
+        <h3>ผลการวัดและคำแนะนำ</h3>
+        <div id="msgs"></div>
+        <label class="chk"><input type="checkbox" id="showHelp" checked> แสดงตัวช่วยอ่านค่าและเฉลย</label>
+        <div id="help" style="margin-top:8px"></div>
+      </div>
+
+      <div class="panel lab-only">
+        <h3>ขั้นตอนการวัดที่ถูกต้อง</h3>
+        <ol class="steps" id="steps"></ol>
+      </div>
+
+      <div class="panel quiz-only">
+        <h3>📝 แบบฝึกอ่านค่าจากหน้าปัด</h3>
+        <div class="desc">ดูย่านที่ตั้งไว้ แล้วอ่านค่าที่เข็มชี้ พิมพ์คำตอบแล้วกด "ตรวจคำตอบ"
+          (มองให้เข็มทับกับเงาในแถบกระจกพอดี)</div>
+        <div class="big" id="qRange"></div>
+        <div class="ctrl">
+          <input type="text" id="qAns" placeholder="พิมพ์ค่าที่อ่านได้" style="width:160px">
+          <span id="qUnit" style="color:var(--muted)"></span>
+          <button id="qCheck" class="on">ตรวจคำตอบ</button>
+          <button id="qNext">ข้อต่อไป ➜</button>
+        </div>
+        <div id="qFeedback" style="margin-top:10px"></div>
+        <div class="desc">คะแนน: <b id="qScore">0 / 0</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const NS = 'http://www.w3.org/2000/svg';
+const CX = 250, CY = 270;          // จุดหมุนเข็ม
+const RC = 20;                     // ค่ากึ่งกลางสเกล Ω (ย่าน ×1 = 20 Ω)
+const DC_OPV = 20000, AC_OPV = 9000; // ความไว 20 kΩ/V (DC), 9 kΩ/V (AC)
+
+// ================= ย่านของสวิตช์ =================
+const RANGES = [
+  { t:'off', v:0,     lb:'OFF' },
+  { t:'dcv', v:2.5,   lb:'2.5' }, { t:'dcv', v:10, lb:'10' }, { t:'dcv', v:50, lb:'50' },
+  { t:'dcv', v:250,   lb:'250' }, { t:'dcv', v:1000, lb:'1000' },
+  { t:'acv', v:1000,  lb:'1000' }, { t:'acv', v:250, lb:'250' }, { t:'acv', v:50, lb:'50' }, { t:'acv', v:10, lb:'10' },
+  { t:'ma',  v:250,   lb:'250' }, { t:'ma', v:25, lb:'25' }, { t:'ma', v:2.5, lb:'2.5' },
+  { t:'ohm', v:1,     lb:'×1' }, { t:'ohm', v:10, lb:'×10' }, { t:'ohm', v:1000, lb:'×1k' }, { t:'ohm', v:10000, lb:'×10k' }
+];
+const GROUPS = [
+  { t:'dcv', name:'DCV', c:'#f4f4f5' }, { t:'acv', name:'ACV', c:'#f87171' },
+  { t:'ma', name:'DCmA', c:'#60a5fa' }, { t:'ohm', name:'Ω', c:'#4ade80' }
+];
+const colorOf = t => ({ off:'#a1a1aa', dcv:'#f4f4f5', acv:'#f87171', ma:'#60a5fa', ohm:'#4ade80' })[t];
+
+// ================= สถานการณ์ทดลอง =================
+const SCEN = [
+  { g:'วัดแรงดันไฟตรง (DCV)', id:'aa', k:'src', name:'ถ่าน AA 1.5 V', short:'ถ่าน AA', V:1.56,
+    desc:'ถ่านไฟฉายก้อนใหม่ แรงดันจะสูงกว่า 1.5 V เล็กน้อย ลองหาย่านที่อ่านได้ละเอียดที่สุด' },
+  { g:'วัดแรงดันไฟตรง (DCV)', id:'9v', k:'src', name:'แบตเตอรี่ 9 V', short:'แบตเตอรี่ 9 V', V:9.25,
+    desc:'แบตเตอรี่สี่เหลี่ยม 9 V ลองเทียบว่าย่าน 10 กับย่าน 50 อ่านได้ละเอียดต่างกันอย่างไร' },
+  { g:'วัดแรงดันไฟตรง (DCV)', id:'car', k:'src', name:'แบตเตอรี่รถยนต์ 12 V', short:'แบตรถยนต์', V:12.6,
+    desc:'แบตเตอรี่รถยนต์ที่ชาร์จเต็มจะมีแรงดันประมาณ 12.6 V ลองต่อสายสลับขั้วดูว่าเข็มเป็นอย่างไร' },
+  { g:'วัดแรงดันไฟตรง (DCV)', id:'psu', k:'src', name:'แหล่งจ่ายไฟปรับค่าได้ 0–30 V', short:'แหล่งจ่ายไฟ', adj:true,
+    desc:'เลื่อนปรับแรงดัน แล้วฝึกเลือกย่านให้เหมาะกับแรงดันแต่ละค่า' },
+  { g:'วัดแรงดันไฟตรง (DCV)', id:'div', k:'src', name:'วงจรแบ่งแรงดัน 100k/100k (Loading Effect)', short:'วงจรแบ่งแรงดัน 10 V', V:5, Rth:50000,
+    desc:'แหล่งจ่าย 10 V ต่อกับตัวต้านทาน 100 kΩ สองตัวอนุกรมกัน ค่าจริงที่จุดกลางคือ 5 V แต่มิเตอร์เข็มจะอ่านได้ต่ำกว่า เพราะความต้านทานภายในมิเตอร์ไปต่อขนานกับวงจร ลองเทียบย่าน 10 V กับ 50 V ดู' },
+  { g:'วัดแรงดันไฟสลับ (ACV)', id:'mains', k:'src', ac:true, name:'เต้ารับไฟบ้าน 220 V', short:'เต้ารับไฟบ้าน', V:226,
+    desc:'⚠️ ไฟบ้านอันตรายถึงชีวิต ของจริงต้องจับเฉพาะด้ามฉนวนของสายวัด ในห้องทดลองนี้ลองดูได้ว่า ถ้าตั้งย่านผิด (Ω หรือ mA) จะเกิดอะไรขึ้น' },
+  { g:'วัดแรงดันไฟสลับ (ACV)', id:'trans', k:'src', ac:true, name:'หม้อแปลงไฟ 12 VAC', short:'หม้อแปลง 12 VAC', V:12.4,
+    desc:'ไฟสลับแรงดันต่ำจากหม้อแปลง ลองวัดด้วยย่าน DCV ดูว่าเข็มเป็นอย่างไร' },
+  { g:'วัดความต้านทาน (Ω)', id:'r220', k:'res', name:'ตัวต้านทาน 220 Ω', R:220,
+    desc:'อย่าลืมแตะปลายสายเข้าหากันแล้วปรับ 0Ω ก่อนวัด และเลือกตัวคูณที่ทำให้เข็มอยู่แถวกลางสเกล' },
+  { g:'วัดความต้านทาน (Ω)', id:'r4k7', k:'res', name:'ตัวต้านทาน 4.7 kΩ', R:4700,
+    desc:'ลองวัดด้วยตัวคูณหลาย ๆ ค่า แล้วดูว่าตัวคูณไหนอ่านได้แม่นที่สุด' },
+  { g:'วัดความต้านทาน (Ω)', id:'r100k', k:'res', name:'ตัวต้านทาน 100 kΩ', R:100000,
+    desc:'ค่าความต้านทานสูง ต้องใช้ตัวคูณสูง' },
+  { g:'วัดความต้านทาน (Ω)', id:'rq', k:'res', mystery:true, name:'ตัวต้านทานปริศนา (สุ่มค่า)',
+    desc:'ไม่บอกค่า ให้วัดเอง แล้วเทียบกับรหัสแถบสีบนตัวต้านทาน (เปิดตัวช่วยเพื่อดูเฉลย)' },
+  { g:'วัดกระแสไฟตรง (DCmA)', id:'i1', k:'ser', name:'ถ่าน 1.5 V + R 100 Ω', V:1.5, R:100, load:'R 100 Ω',
+    desc:'ต้องตัดวงจรแล้วต่อมิเตอร์แบบอนุกรม กระแสโดยประมาณคือ 1.5 / 100 = 15 mA' },
+  { g:'วัดกระแสไฟตรง (DCmA)', id:'i2', k:'ser', name:'แบต 9 V + R 1 kΩ', V:9, R:1000, load:'R 1 kΩ',
+    desc:'กระแสโดยประมาณคือ 9 / 1000 = 9 mA ลองดูว่าย่านไหนอ่านได้ดีที่สุด' },
+  { g:'วัดกระแสไฟตรง (DCmA)', id:'i3', k:'ser', name:'แบต 12 V + หลอดไฟ 60 Ω', V:12, R:60, load:'หลอดไฟ 60 Ω',
+    desc:'กระแสสูงประมาณ 200 mA ถ้าเริ่มวัดด้วยย่านต่ำเกินไป ฟิวส์จะขาด' }
+];
+SCEN.forEach(s => { s.Rth = s.Rth || 0; });
+
+// ================= สถานะ =================
+let mode = 'lab', rangeIdx = 0, labRangeIdx = 0;
+let probe = 'open', reversed = false, switchedWhileOn = false;
+let fuseBlown = false, fuseReason = '';
+let scen = SCEN[0], psuV = 5, mysteryR = 1000;
+let quiz = null, score = { ok: 0, all: 0 };
+const zeroOff = {};
+[1, 10, 1000, 10000].forEach(v => { zeroOff[v] = (Math.random() < .5 ? -1 : 1) * (0.03 + Math.random() * 0.05); });
+const needle = { pos: 0, vel: 0, target: 0, jitter: false };
+let needleG, knobG;
+
+const rng = () => RANGES[rangeIdx];
+const gain = () => +$('zeroAdj').value + (zeroOff[rng().v] || 0);
+const resR = () => scen.mystery ? mysteryR : scen.R;
+const fmtN = x => String(Number((+x).toPrecision(3)));
+const fmtOhm = R => !isFinite(R) ? '∞' : R >= 1e6 ? fmtN(R / 1e6) + ' MΩ' : R >= 1e3 ? fmtN(R / 1e3) + ' kΩ' : fmtN(R) + ' Ω';
+
+// ================= วาดหน้าปัด =================
+function svgEl(tag, attrs, parent, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text != null) e.textContent = text;
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function fPos(r, f) {
+  const a = (-50 + 100 * f) * Math.PI / 180;
+  return [CX + r * Math.sin(a), CY - r * Math.cos(a)];
+}
+function arcPath(r) {
+  const [x1, y1] = fPos(r, 0), [x2, y2] = fPos(r, 1);
+  return `M${x1} ${y1} A${r} ${r} 0 0 1 ${x2} ${y2}`;
+}
+function tick(s, f, r1, r2, c, w) {
+  const [a, b] = fPos(r1, f), [x, y] = fPos(r2, f);
+  svgEl('line', { x1: a, y1: b, x2: x, y2: y, stroke: c, 'stroke-width': w }, s);
+}
+function label(s, f, r, t, c, size) {
+  const [x, y] = fPos(r, f);
+  svgEl('text', { x, y, fill: c, 'font-size': size, 'font-weight': 700, 'font-family': 'Arial',
+    'text-anchor': 'middle', 'dominant-baseline': 'middle' }, s, String(t));
+}
+
+function drawFace() {
+  const s = $('face');
+  s.innerHTML = `<defs><linearGradient id="mir" x1="0" x2="1">
+    <stop offset="0" stop-color="#94a3b8"/><stop offset=".5" stop-color="#f8fafc"/><stop offset="1" stop-color="#94a3b8"/>
+  </linearGradient></defs>`;
+  svgEl('rect', { x: 0, y: 0, width: 500, height: 290, rx: 14, fill: '#f7f1dc' }, s);
+
+  // สเกล Ω (สีเขียว กลับด้าน ไม่เป็นเชิงเส้น)
+  const fo = R => RC / (RC + R), G = '#15803d';
+  svgEl('path', { d: arcPath(230), fill: 'none', stroke: G, 'stroke-width': 1.5 }, s);
+  [0.5, 1.5, 3, 4, 6, 7, 8, 9, 15, 30, 40, 70, 150, 300, 2000].forEach(R => tick(s, fo(R), 230, 236, G, 1));
+  [500, 1000].forEach(R => tick(s, fo(R), 230, 240, G, 1.5));
+  [0, 1, 2, 5, 10, 20, 50, 100, 200].forEach(R => { tick(s, fo(R), 230, 241, G, 1.6); label(s, fo(R), 252, R, G, 11); });
+  tick(s, 0, 230, 241, G, 1.6); label(s, 0, 252, '∞', G, 14);
+  label(s, -0.065, 232, 'Ω', G, 17);
+
+  // แถบกระจก (กันการอ่านค่าผิดจากมุมมอง)
+  svgEl('path', { d: arcPath(210), fill: 'none', stroke: 'url(#mir)', 'stroke-width': 10 }, s);
+
+  // สเกล V · mA (เชิงเส้น 50 ช่อง)
+  svgEl('path', { d: arcPath(196), fill: 'none', stroke: '#111', 'stroke-width': 1.5 }, s);
+  for (let i = 0; i <= 50; i++) {
+    const len = i % 10 === 0 ? 14 : i % 5 === 0 ? 10 : 6;
+    tick(s, i / 50, 196, 196 - len, '#111', i % 5 === 0 ? 1.6 : 1);
+  }
+  [[10, 174], [50, 160], [250, 146]].forEach(([full, r]) => {
+    for (let k = 0; k <= 5; k++) label(s, k / 5, r, full * k / 5, '#111', 11);
+  });
+
+  const txt = (y, t, c, size, w = 700) => svgEl('text', { x: CX, y, fill: c, 'font-size': size, 'font-weight': w,
+    'font-family': 'Arial', 'text-anchor': 'middle' }, s, t);
+  txt(152, 'DC V · mA', '#111', 12);
+  txt(168, 'AC V', '#b91c1c', 12);
+  txt(208, 'ANALOG MULTITESTER', '#52525b', 13);
+  txt(225, '20 kΩ/V DC · 9 kΩ/V AC', '#71717a', 10, 400);
+
+  needleG = svgEl('g', {}, s);
+  svgEl('line', { x1: CX, y1: CY, x2: CX, y2: CY - 245, stroke: '#b91c1c', 'stroke-width': 2.2, 'stroke-linecap': 'round' }, needleG);
+  svgEl('circle', { cx: CX, cy: CY, r: 13, fill: '#27272a' }, s);
+  svgEl('circle', { cx: CX, cy: CY, r: 4, fill: '#a1a1aa' }, s);
+}
+
+// ================= วาดสวิตช์หมุน =================
+function drawKnob() {
+  const s = $('knob'), N = RANGES.length, C = 150, step = 360 / N;
+  s.innerHTML = `<defs><radialGradient id="kg" cx=".4" cy=".35">
+    <stop offset="0" stop-color="#71717a"/><stop offset="1" stop-color="#18181b"/></radialGradient></defs>`;
+  const pos = (r, deg) => { const a = deg * Math.PI / 180; return [C + r * Math.sin(a), C - r * Math.cos(a)]; };
+
+  GROUPS.forEach(g => {
+    const idx = RANGES.map((r, i) => r.t === g.t ? i : -1).filter(i => i >= 0);
+    const a1 = (idx[0] - .4) * step, a2 = (idx[idx.length - 1] + .4) * step;
+    const [x1, y1] = pos(122, a1), [x2, y2] = pos(122, a2);
+    svgEl('path', { d: `M${x1} ${y1} A122 122 0 0 1 ${x2} ${y2}`, fill: 'none', stroke: g.c, 'stroke-width': 4, 'stroke-linecap': 'round' }, s);
+    const [tx, ty] = pos(138, (a1 + a2) / 2);
+    svgEl('text', { x: tx, y: ty, fill: g.c, 'font-size': 12, 'font-weight': 700, 'text-anchor': 'middle', 'dominant-baseline': 'middle' }, s, g.name);
+  });
+
+  RANGES.forEach((r, i) => {
+    const [x, y] = pos(103, i * step);
+    const t = svgEl('text', { x, y, fill: colorOf(r.t), 'font-size': 11, 'font-weight': 700,
+      'text-anchor': 'middle', 'dominant-baseline': 'middle', class: 'klabel' }, s, r.lb);
+    t.style.cursor = 'pointer';
+    t.addEventListener('click', () => setRange(i));
+    const [dx, dy] = pos(86, i * step);
+    svgEl('circle', { cx: dx, cy: dy, r: 2, fill: '#a1a1aa' }, s);
+  });
+
+  svgEl('circle', { cx: C, cy: C, r: 74, fill: '#0a0a0a' }, s);
+  knobG = svgEl('g', {}, s);
+  svgEl('circle', { cx: C, cy: C, r: 68, fill: 'url(#kg)', stroke: '#000', 'stroke-width': 2 }, knobG);
+  svgEl('rect', { x: C - 10, y: C - 66, width: 20, height: 132, rx: 10, fill: '#3f3f46' }, knobG);
+  svgEl('polygon', { points: `${C},${C - 64} ${C - 7},${C - 46} ${C + 7},${C - 46}`, fill: '#fde047' }, knobG);
+  knobG.style.cursor = 'pointer';
+  knobG.style.transformOrigin = '150px 150px';
+  knobG.style.transition = 'transform .25s';
+  knobG.addEventListener('click', () => setRange((rangeIdx + 1) % N));
+}
+
+function turnKnob() {
+  knobG.style.transform = `rotate(${rangeIdx * 360 / RANGES.length}deg)`;
+  document.querySelectorAll('#knob .klabel').forEach((t, i) => {
+    t.setAttribute('font-size', i === rangeIdx ? 14 : 11);
+    t.setAttribute('fill', i === rangeIdx ? '#fde047' : colorOf(RANGES[i].t));
+  });
+}
+
+function setRange(i, force) {
+  if (mode === 'quiz' && !force) return;
+  if (mode === 'lab' && probe === 'on' && i !== rangeIdx) switchedWhileOn = true;
+  rangeIdx = i;
+  turnKnob();
+  update();
+}
+
+// ================= การอ่านสเกล =================
+function scaleOf(r) {
+  if (r.t === 'ma') return { 2.5: { full: 250, mul: 0.01 }, 25: { full: 250, mul: 0.1 }, 250: { full: 250, mul: 1 } }[r.v];
+  return { 2.5: { full: 250, mul: 0.01 }, 10: { full: 10, mul: 1 }, 50: { full: 50, mul: 1 },
+           250: { full: 250, mul: 1 }, 1000: { full: 10, mul: 100 } }[r.v];
+}
+const unitOf = r => r.t === 'ma' ? 'mA' : r.t === 'ohm' ? 'Ω' : 'V';
+function rangeName(r) {
+  return { off: 'OFF (ปิดเครื่อง)', dcv: `DCV ${r.v} V (แรงดันไฟตรง)`, acv: `ACV ${r.v} V (แรงดันไฟสลับ)`,
+           ma: `DC ${r.v} mA (กระแสไฟตรง)`, ohm: `Ω ${r.lb} (ความต้านทาน)` }[r.t];
+}
+function scaleText(r) {
+  if (r.t === 'off') return '-';
+  if (r.t === 'ohm') return `สเกล Ω แถวบนสุด (สีเขียว อ่านจากขวาไปซ้าย) แล้วคูณ ${r.lb.slice(1)}`;
+  const s = scaleOf(r);
+  return `แถว 0–${s.full} ` + (s.mul === 1 ? 'อ่านได้ค่าตรง ๆ' : s.mul > 1 ? `แล้วคูณ ${s.mul}` : `แล้วหาร ${Math.round(1 / s.mul)}`);
+}
+function readingText(f, r) {
+  if (r.t === 'off') return '-';
+  if (f > 1.02) return 'เกินสเกล (อ่านไม่ได้)';
+  if (f < -0.02) return 'เข็มตีกลับ (อ่านไม่ได้)';
+  f = Math.max(0, Math.min(1, f));
+  if (r.t === 'ohm') {
+    if (f < 0.004) return '∞ (วงจรขาด หรือค่าสูงมาก)';
+    const sc = f >= 1 ? 0 : RC * (1 / f - 1);
+    return `${fmtN(sc)} × ${r.lb.slice(1)} = ${fmtOhm(sc * r.v)}`;
+  }
+  const s = scaleOf(r), raw = f * s.full, u = unitOf(r);
+  if (s.mul === 1) return `${fmtN(raw)} ${u}`;
+  return s.mul > 1 ? `${fmtN(raw)} × ${s.mul} = ${fmtN(raw * s.mul)} ${u}`
+                   : `${fmtN(raw)} ÷ ${Math.round(1 / s.mul)} = ${fmtN(raw * s.mul)} ${u}`;
+}
+
+// ================= ฟิสิกส์ของมิเตอร์ =================
+function meterR(r) {
+  return { dcv: DC_OPV * r.v, acv: AC_OPV * r.v, ma: 250 / r.v, ohm: RC * r.v, off: Infinity }[r.t];
+}
+function blow(out, reason) {
+  fuseBlown = true; fuseReason = reason; needle.vel = 14;
+  out.f = 0; out.jit = false; out.msgs = [['bad', '💥 ฟิวส์ขาด! ' + reason]];
+  return out;
+}
+
+function compute() {
+  const r = rng(), out = { f: 0, jit: false, msgs: [] }, sign = reversed ? -1 : 1;
+  if (fuseBlown) { out.msgs.push(['bad', 'ฟิวส์ขาดอยู่ มิเตอร์จะไม่ตอบสนองจนกว่าจะเปลี่ยนฟิวส์']); return out; }
+  if (r.t === 'off') { out.msgs.push(['info', 'สวิตช์อยู่ที่ OFF มิเตอร์ไม่ทำงาน ให้หมุนเลือกย่านก่อน']); return out; }
+  if (probe === 'open') { out.msgs.push(['info', 'สายวัดยังไม่ได้แตะวงจร กดปุ่ม "แตะสายวัดกับวงจร" เพื่อเริ่มวัด']); return out; }
+
+  if (probe === 'short') {
+    if (r.t === 'ohm') {
+      const g = gain(); out.f = g;
+      if (Math.abs(g - 1) < 0.006) out.msgs.push(['good', '✓ เข็มชี้ 0 Ω พอดี ปรับศูนย์เรียบร้อย ยกปลายสายออกแล้วเริ่มวัดได้เลย']);
+      else out.msgs.push(['warn', `เข็ม${g > 1 ? 'เลย' : 'ยังไม่ถึง'} 0 Ω ค่อย ๆ เลื่อนปุ่ม "ปรับ 0Ω" ให้เข็มชี้ 0 พอดี`]);
+    } else out.msgs.push(['info', 'การแตะปลายสายเข้าหากันใช้เพื่อปรับ 0Ω ในย่าน Ω เท่านั้น']);
+    return out;
+  }
+
+  const sc = scen, Rm = meterR(r);
+  if (sc.k === 'src') {
+    const V = sc.adj ? psuV : sc.V;
+    if (r.t === 'dcv') {
+      if (sc.ac) { out.jit = true; out.msgs.push(['warn', 'วัดไฟสลับด้วยย่าน DCV เข็มจะสั่นอยู่แถว 0 ให้เปลี่ยนเป็นย่าน ACV']); }
+      else out.f = sign * V * Rm / (Rm + sc.Rth) / r.v;
+    } else if (r.t === 'acv') {
+      const Vm = V * Rm / (Rm + sc.Rth);
+      if (sc.ac) out.f = Vm / r.v;
+      else { out.f = sign > 0 ? 2.22 * Vm / r.v : 0; out.msgs.push(['warn', 'วัดไฟตรงด้วยย่าน ACV ค่าที่อ่านได้จะผิดจากความจริง ให้ใช้ย่าน DCV']); }
+    } else if (r.t === 'ma') {
+      const ImA = V / (sc.Rth + Rm) * 1000, peak = sc.ac ? ImA * 1.414 : ImA;
+      if (peak > 4 * r.v) return blow(out, 'ต่อมิเตอร์ย่านกระแส (mA) คร่อมแหล่งจ่ายแรงดัน ย่านกระแสมีความต้านทานภายในต่ำมาก กระแสจึงไหลผ่านมิเตอร์สูงมาก');
+      out.msgs.push(['bad', 'ห้ามใช้ย่านกระแสวัดแรงดัน! ย่าน mA ต้องต่ออนุกรมกับวงจรเท่านั้น']);
+      if (sc.ac) out.jit = true; else out.f = sign * ImA / r.v;
+    } else if (r.t === 'ohm') {
+      if (V > 0.2) return blow(out, 'ใช้ย่าน Ω วัดจุดที่มีไฟ ย่าน Ω ต้องใช้กับวงจรที่ปิดไฟแล้วเท่านั้น');
+      const Ri = RC * r.v; out.f = gain() * Ri / (Ri + sc.Rth);
+    }
+    if (sc.id === 'div' && r.t === 'dcv')
+      out.msgs.push(['info', `ย่านนี้มิเตอร์มีความต้านทานภายใน ${fmtOhm(Rm)} ต่อขนานกับตัวต้านทาน 100 kΩ ในวงจร จึงอ่านได้ต่ำกว่า 5 V ยิ่งตั้งย่านสูง ความต้านทานภายในก็ยิ่งสูง ค่าที่อ่านได้จึงใกล้ค่าจริงมากขึ้น`]);
+  } else if (sc.k === 'res') {
+    if (r.t === 'ohm') { const Ri = RC * r.v; out.f = gain() * Ri / (Ri + resR()); }
+    else out.msgs.push(['warn', 'ตัวต้านทานไม่มีไฟเลี้ยง ย่านนี้จึงวัดอะไรไม่ได้ ต้องหมุนไปย่าน Ω ซึ่งใช้แบตเตอรี่ในตัวมิเตอร์']);
+  } else { // ser: มิเตอร์ต่ออนุกรมในวงจร
+    if (r.t === 'ohm') return blow(out, 'ต่อย่าน Ω เข้ากับวงจรที่มีไฟ');
+    const ImA = sc.V / (sc.R + Rm) * 1000;
+    if (r.t === 'ma') {
+      if (ImA > 4 * r.v) return blow(out, `กระแสในวงจร (ประมาณ ${fmtN(ImA)} mA) สูงกว่าย่าน ${r.v} mA หลายเท่า ควรเริ่มจากย่านสูงสุดก่อนเสมอ`);
+      out.f = sign * ImA / r.v;
+    } else {
+      const Vm = ImA / 1000 * Rm;
+      out.f = r.t === 'dcv' ? sign * Vm / r.v : (sign > 0 ? 2.22 * Vm / r.v : 0);
+      out.msgs.push(['warn', 'ต่อย่านแรงดันแบบอนุกรม ย่านแรงดันมีความต้านทานสูงมาก วงจรแทบไม่มีกระแส มิเตอร์จึงอ่านได้เกือบเท่าแรงดันแหล่งจ่าย ถ้าจะวัดกระแสต้องใช้ย่าน DCmA']);
+    }
+  }
+
+  if (fuseBlown) return out;
+  if (out.f > 1.02) out.msgs.push(['bad', 'เข็มตีเกินสเกล! ยกสายวัดออกทันที แล้วเปลี่ยนไปย่านที่สูงกว่า (ของจริงเข็มอาจงอได้)']);
+  else if (out.f < -0.02) out.msgs.push(['bad', 'เข็มตีกลับไปทางซ้าย แสดงว่าต่อสายสลับขั้ว ให้สลับสายแดงกับสายดำ']);
+  else if (!out.msgs.length && !out.jit) {
+    if (r.t !== 'ohm') {
+      if (out.f < 0.2) out.msgs.push(['info', 'เข็มขึ้นน้อย ถ้ายกสายออกแล้วลดย่านลง จะอ่านได้ละเอียดกว่านี้']);
+      else out.msgs.push(['good', '✓ ตั้งย่านเหมาะสมแล้ว เข็มอยู่ในช่วงที่อ่านได้แม่นยำ']);
+    } else {
+      if (Math.abs(gain() - 1) >= 0.006) out.msgs.push(['warn', 'ยังไม่ได้ปรับ 0Ω ในย่านนี้ ค่าที่อ่านได้จะคลาดเคลื่อน (ต้องปรับใหม่ทุกครั้งที่เปลี่ยนตัวคูณ)']);
+      else if (out.f < 0.1) out.msgs.push(['info', 'เข็มอยู่ทางซ้ายมาก (ค่าความต้านทานสูง) ให้เปลี่ยนไปใช้ตัวคูณที่สูงขึ้น']);
+      else if (out.f > 0.9) out.msgs.push(['info', 'เข็มอยู่ทางขวามาก (ค่าความต้านทานต่ำ) ให้เปลี่ยนไปใช้ตัวคูณที่ต่ำลง']);
+      else out.msgs.push(['good', '✓ เข็มอยู่ช่วงกลางสเกล อ่านค่าได้แม่นยำ อย่าลืมคูณด้วยตัวคูณของย่าน']);
+    }
+  }
+  return out;
+}
+
+function trueText() {
+  const sc = scen;
+  if (sc.k === 'src') {
+    if (sc.id === 'div') return '5 V (ขณะที่ไม่มีมิเตอร์ต่ออยู่)';
+    return `${fmtN(sc.adj ? psuV : sc.V)} V ${sc.ac ? '(AC rms)' : '(DC)'}`;
+  }
+  if (sc.k === 'res') return fmtOhm(resR());
+  return `${fmtN(sc.V / sc.R * 1000)} mA (ขณะที่ไม่มีมิเตอร์ต่ออยู่)`;
+}
+
+// ================= วาดวงจร =================
+const BAND = ['#000', '#7c2d12', '#dc2626', '#f97316', '#facc15', '#16a34a', '#2563eb', '#7c3aed', '#6b7280', '#fff'];
+function bands(R) {
+  let ex = Math.floor(Math.log10(R)) - 1, two = Math.round(R / 10 ** ex);
+  if (two >= 100) { two = Math.round(two / 10); ex++; }
+  return [Math.floor(two / 10), two % 10, ex];
+}
+
+function drawCircuit() {
+  const sc = scen, T1 = [90, 100], T2 = [230, 100];
+  let s = '';
+  const wire = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#1e293b" stroke-width="4" stroke-linecap="round"/>`;
+  const text = (x, y, t, c = '#0f172a', size = 12, anchor = 'middle', w = 700) =>
+    `<text x="${x}" y="${y}" fill="${c}" font-size="${size}" font-weight="${w}" text-anchor="${anchor}">${t}</text>`;
+  let labs = ['', ''];
+
+  if (sc.k === 'src') {
+    const V = sc.adj ? psuV : sc.V;
+    const sub = sc.id === 'div' ? '100 kΩ + 100 kΩ (วัดที่จุดกลาง)' : sc.ac ? '∿ ไฟสลับ' : sc.adj ? `จอแสดง ${V.toFixed(1)} V` : 'ไฟตรง';
+    s += `<rect x="55" y="12" width="210" height="54" rx="10" fill="#1e293b" stroke="#475569"/>`
+      + text(160, 35, sc.short, '#fff', 14) + text(160, 55, sub, '#cbd5e1', 11, 'middle', 500)
+      + wire(90, 66, 90, 100) + wire(230, 66, 230, 100);
+    labs = sc.id === 'div' ? ['จุดวัด', 'GND'] : sc.ac ? ['L', 'N'] : ['+', '−'];
+  } else if (sc.k === 'res') {
+    const R = resR(), [d1, d2, ex] = bands(R);
+    s += wire(90, 100, 230, 100)
+      + `<rect x="115" y="86" width="90" height="28" rx="12" fill="#fef08a" stroke="#ca8a04"/>`
+      + [d1, d2, ex].map((b, i) => `<rect x="${128 + i * 14}" y="86" width="7" height="28" fill="${BAND[b]}"/>`).join('')
+      + `<rect x="186" y="86" width="7" height="28" fill="#d4a017"/>`
+      + text(160, 70, sc.mystery ? 'R = ? (ลองอ่านแถบสีด้วย)' : 'R = ' + fmtOhm(R), '#0f172a', 13, 'middle', 700);
+  } else {
+    s += `<path d="M90 100 V35 H230 V100" fill="none" stroke="#1e293b" stroke-width="4" stroke-linecap="round"/>`
+      + `<rect x="124" y="22" width="8" height="26" fill="#334155"/>`
+      + `<line x1="122" y1="20" x2="122" y2="50" stroke="#0f172a" stroke-width="3"/>`
+      + `<line x1="134" y1="27" x2="134" y2="43" stroke="#0f172a" stroke-width="5"/>`
+      + text(112, 22, '+', '#dc2626', 15, 'middle', 700) + text(128, 68, `${sc.V} V`, '#0f172a', 12, 'middle', 700)
+      + `<rect x="168" y="26" width="46" height="18" rx="3" fill="#fef08a" stroke="#ca8a04"/>`
+      + text(191, 68, sc.load, '#0f172a', 12, 'middle', 700)
+      + text(160, 104, 'ตัดวงจรตรงนี้', '#1e293b', 11, 'middle', 600);
+    labs = ['A (ฝั่ง +)', 'B'];
+  }
+
+  s += `<circle cx="${T1[0]}" cy="${T1[1]}" r="6" fill="#fef08a" stroke="#0f172a" stroke-width="2"/>`
+    + `<circle cx="${T2[0]}" cy="${T2[1]}" r="6" fill="#fef08a" stroke="#0f172a" stroke-width="2"/>`
+    + text(T1[0] - 12, T1[1] + 5, labs[0], '#991b1b', 13, 'end', 700)
+    + text(T2[0] + 12, T2[1] + 5, labs[1], '#0f172a', 13, 'start', 700);
+
+  // สายวัด (ใช้เส้นสีดำและสีแดงเข้มขึ้นเพื่อให้ตัดกับพื้นหลังใหม่)
+  const RS = [140, 195], BS = [180, 195];
+  let rt, bt;
+  if (probe === 'on') { rt = reversed ? T2 : T1; bt = reversed ? T1 : T2; }
+  else if (probe === 'short') { rt = [156, 150]; bt = [164, 150]; }
+  else { rt = [120, 152]; bt = [200, 152]; }
+  const lead = (S, T, c) => `<path d="M${S[0]} ${S[1]} Q${S[0]} ${T[1] + 30} ${T[0]} ${T[1]}" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round"/>`
+    + `<circle cx="${T[0]}" cy="${T[1]}" r="4" fill="#f8fafc" stroke="#0f172a" stroke-width="1.5"/>`;
+  s += lead(BS, bt, '#09090b') + lead(RS, rt, '#b91c1c');
+  $('circuit').innerHTML = s;
+}
+
+// ================= แผงข้อมูล =================
+const STEPS = {
+  dc: ['หมุนสวิตช์ไปย่าน DCV ที่สูงกว่าแรงดันที่คาดไว้ (ถ้าไม่รู้ ให้เริ่มที่ 1000)',
+       'ต่อสายวัดแบบ "ขนาน" สายแดงแตะขั้ว + สายดำแตะขั้ว −',
+       'ถ้าเข็มขึ้นน้อย ให้ยกสายออก แล้วลดย่านลงทีละขั้น',
+       'อ่านค่าบนแถวสเกลที่ตรงกับย่าน โดยมองให้เข็มทับเงาในแถบกระจก'],
+  ac: ['หมุนสวิตช์ไปย่าน ACV ที่สูงกว่าแรงดันที่คาดไว้ (ไฟบ้านใช้ย่าน 250 V)',
+       'แตะสายวัดคร่อมจุดที่จะวัด ไฟสลับไม่ต้องสนใจขั้ว',
+       'อ่านค่าบนแถวสเกลที่ตรงกับย่าน',
+       'ของจริง: จับเฉพาะด้ามฉนวนของสายวัด ห้ามแตะส่วนที่เป็นโลหะ'],
+  res: ['ตรวจให้แน่ใจว่าวงจรไม่มีไฟ', 'หมุนสวิตช์ไปย่าน Ω',
+        'แตะปลายสายแดงและดำเข้าหากัน แล้วหมุนปุ่ม "ปรับ 0Ω" ให้เข็มชี้ 0 (ต้องทำใหม่ทุกครั้งที่เปลี่ยนตัวคูณ)',
+        'แตะสายวัดที่ขาทั้งสองของตัวต้านทาน',
+        'เลือกตัวคูณที่ทำให้เข็มอยู่แถวกลางสเกล แล้วนำค่าที่อ่านได้คูณด้วยตัวคูณ'],
+  ser: ['ปิดไฟ แล้วตัดวงจรตรงจุดที่จะวัด', 'หมุนสวิตช์ไปย่าน DCmA สูงสุด (250 mA) ก่อน',
+        'ต่อมิเตอร์แบบ "อนุกรม" สายแดงต่อฝั่งที่กระแสไหลเข้า (ฝั่ง +) สายดำต่อฝั่งที่กระแสไหลออก',
+        'ถ้าเข็มขึ้นน้อย ให้ยกสายออกก่อน แล้วลดย่านลงทีละขั้น',
+        'อ่านค่าบนแถว 0–250 แล้วหารตามย่านที่ตั้ง']
+};
+
+function renderHelper(out) {
+  const r = rng();
+  if (!$('showHelp').checked) {
+    $('help').innerHTML = '<div class="desc">ซ่อนตัวช่วยอยู่ ลองอ่านค่าจากหน้าปัดด้วยตัวเองก่อน แล้วค่อยเปิดดูเฉลย</div>';
+    return;
+  }
+  let rows = [
+    ['ย่านที่ตั้ง', rangeName(r)],
+    ['วิธีอ่าน', scaleText(r)],
+    ['ค่าที่เข็มชี้', `<b style="color:#fde68a">${out.jit ? 'เข็มสั่นอยู่แถว 0 (อ่านค่าไม่ได้)' : readingText(out.f, r)}</b>`],
+    ['ค่าจริงของวงจร (เฉลย)', trueText()]
+  ];
+  if (r.t === 'ohm') rows.push(['สถานะการปรับ 0Ω', Math.abs(gain() - 1) < 0.006 ? '✓ ปรับแล้ว' : '✗ ยังไม่ตรง']);
+  $('help').innerHTML = `<table class="help">${rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join('')}</table>`;
+}
+
+function renderControls() {
+  const bp = $('btnProbe'), bs = $('btnShort'), br = $('btnRev');
+  bp.textContent = probe === 'on' ? '✋ ยกสายวัดออก' : '🔌 แตะสายวัดกับวงจร';
+  bp.className = probe === 'on' ? 'on' : '';
+  bs.textContent = probe === 'short' ? '↔ แยกปลายสายออก' : '🔗 แตะปลายสายเข้าหากัน';
+  bs.className = probe === 'short' ? 'on' : '';
+  br.textContent = reversed ? '🔀 สายสลับขั้วอยู่ (กดเพื่อแก้)' : '🔀 สลับสายแดง/ดำ';
+  br.className = reversed ? 'warnb' : '';
+
+  const row = $('adjRow');
+  if (scen.adj) row.innerHTML = `<label class="chk">ปรับแรงดัน <input type="range" id="psu" min="0" max="30" step="0.1" value="${psuV}"> <b>${psuV.toFixed(1)} V</b></label>`;
+  else if (scen.mystery) row.innerHTML = `<button id="reroll">🎲 สุ่มตัวต้านทานใหม่</button>`;
+  else row.innerHTML = '';
+  if ($('psu')) $('psu').oninput = e => { psuV = +e.target.value; update(); };
+  if ($('reroll')) $('reroll').onclick = () => { newMystery(); update(); };
+}
+
+// ================= อัปเดตหน้าจอ =================
+function update() {
+  const r = rng();
+  $('rangeName').textContent = rangeName(r);
+  $('zeroBox').style.opacity = (mode === 'lab' && r.t === 'ohm') ? 1 : .4;
+
+  if (mode === 'quiz') { needle.target = quiz.f; needle.jitter = false; return; }
+
+  const out = compute();
+  needle.target = out.f;
+  needle.jitter = out.jit;
+  if (switchedWhileOn && probe === 'on' && !fuseBlown)
+    out.msgs.unshift(['warn', 'ข้อควรระวัง: ควรยกสายวัดออกก่อนหมุนเปลี่ยนย่านทุกครั้ง']);
+
+  $('msgs').innerHTML = out.msgs.map(([c, t]) => `<div class="msg ${c}">${t}</div>`).join('');
+  $('fuse').style.display = fuseBlown ? 'block' : 'none';
+  $('fuseReason').textContent = fuseReason;
+  $('scenDesc').textContent = scen.desc;
+  const kind = scen.k === 'src' ? (scen.ac ? 'ac' : 'dc') : scen.k;
+  $('steps').innerHTML = STEPS[kind].map(t => `<li>${t}</li>`).join('');
+  drawCircuit();
+  renderHelper(out);
+  renderControls();
+}
+
+// ================= แอนิเมชันเข็ม (สปริง + การหน่วง) =================
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.033, (now - last) / 1000);
+  last = now;
+  let t = needle.target;
+  if (needle.jitter) t += (Math.random() - .5) * 0.035;
+  const acc = 90 * (t - needle.pos) - 11 * needle.vel;
+  needle.vel += acc * dt;
+  needle.pos += needle.vel * dt;
+  if (needle.pos > 1.05) { needle.pos = 1.05; needle.vel *= -0.3; }
+  if (needle.pos < -0.05) { needle.pos = -0.05; needle.vel *= -0.3; }
+  needleG.setAttribute('transform', `rotate(${-50 + 100 * needle.pos} ${CX} ${CY})`);
+  requestAnimationFrame(loop);
+}
+
+// ================= แบบฝึกอ่านหน้าปัด =================
+function newQuiz() {
+  const i = 1 + Math.floor(Math.random() * (RANGES.length - 1)), r = RANGES[i];
+  let f, ans;
+  if (r.t === 'ohm') {
+    const nice = [1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30, 40, 50, 70, 100];
+    const s = nice[Math.floor(Math.random() * nice.length)];
+    f = RC / (RC + s); ans = s * r.v;
+  } else {
+    const sc = scaleOf(r);
+    f = Math.round((0.1 + Math.random() * 0.88) * 100) / 100;
+    ans = f * sc.full * sc.mul;
+  }
+  quiz = { i, f, ans, done: false };
+  setRange(i, true);
+  $('qRange').textContent = 'ย่านที่ตั้ง: ' + rangeName(r);
+  $('qUnit').textContent = r.t === 'ohm' ? 'Ω (พิมพ์ 1500 หรือ 1.5k ก็ได้)' : unitOf(r);
+  $('qAns').value = '';
+  $('qFeedback').innerHTML = '';
+  $('qAns').focus();
+}
+
+function parseVal(s) {
+  const m = s.trim().replace(/,/g, '').match(/^(-?\d*\.?\d+)\s*([kKM]?)/);
+  if (!m) return NaN;
+  return +m[1] * ({ k: 1e3, K: 1e3, M: 1e6 }[m[2]] || 1);
+}
+
+function checkQuiz() {
+  if (!quiz || quiz.done) return;
+  const r = RANGES[quiz.i], x = parseVal($('qAns').value);
+  if (isNaN(x)) { $('qFeedback').innerHTML = '<div class="msg warn">กรุณาพิมพ์ตัวเลข</div>'; return; }
+  const ok = r.t === 'ohm' ? Math.abs(x - quiz.ans) / quiz.ans <= 0.1 : Math.abs(x - quiz.ans) <= r.v / 100 + 1e-9;
+  quiz.done = true;
+  score.all++; if (ok) score.ok++;
+  $('qScore').textContent = `${score.ok} / ${score.all}`;
+  $('qFeedback').innerHTML = `<div class="msg ${ok ? 'good' : 'bad'}">${ok ? '✅ ถูกต้อง!' : '❌ ยังไม่ถูก'}
+    คำตอบคือ <b>${readingText(quiz.f, r)}</b><br>วิธีอ่าน: ${scaleText(r)}</div>`;
+}
+
+// ================= อื่น ๆ =================
+function newMystery() {
+  const E12 = [10, 12, 15, 18, 22, 27, 33, 39, 47, 56, 68, 82];
+  mysteryR = E12[Math.floor(Math.random() * 12)] * 10 ** Math.floor(Math.random() * 5);
+}
+
+function setMode(m) {
+  if (m === mode) return;
+  if (m === 'quiz') labRangeIdx = rangeIdx;
+  mode = m;
+  document.body.className = 'mode-' + m;
+  $('tabLab').classList.toggle('active', m === 'lab');
+  $('tabQuiz').classList.toggle('active', m === 'quiz');
+  if (m === 'quiz') newQuiz();
+  else { rangeIdx = labRangeIdx; turnKnob(); update(); }
+}
+
+function init() {
+  let html = '', lastG = '';
+  SCEN.forEach((s, i) => {
+    if (s.g !== lastG) { if (lastG) html += '</optgroup>'; html += `<optgroup label="${s.g}">`; lastG = s.g; }
+    html += `<option value="${i}">${s.name}</option>`;
+  });
+  $('scenSel').innerHTML = html + '</optgroup>';
+  $('scenSel').onchange = e => {
+    scen = SCEN[+e.target.value];
+    if (scen.mystery) newMystery();
+    probe = 'open'; switchedWhileOn = false;
+    update();
+  };
+  $('btnProbe').onclick = () => { probe = probe === 'on' ? 'open' : 'on'; switchedWhileOn = false; update(); };
+  $('btnShort').onclick = () => { probe = probe === 'short' ? 'open' : 'short'; switchedWhileOn = false; update(); };
+  $('btnRev').onclick = () => { reversed = !reversed; update(); };
+  $('btnFuse').onclick = () => { fuseBlown = false; fuseReason = ''; probe = 'open'; update(); };
+  $('zeroAdj').oninput = update;
+  $('showHelp').onchange = update;
+  $('tabLab').onclick = () => setMode('lab');
+  $('tabQuiz').onclick = () => setMode('quiz');
+  $('qCheck').onclick = checkQuiz;
+  $('qNext').onclick = newQuiz;
+  $('qAns').addEventListener('keydown', e => { if (e.key === 'Enter') quiz && quiz.done ? newQuiz() : checkQuiz(); });
+
+  drawFace();
+  drawKnob();
+  turnKnob();
+  update();
+  requestAnimationFrame(loop);
+}
+init();
+</script>
+</body>
+</html>

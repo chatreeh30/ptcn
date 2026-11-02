@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>โปรแกรมอ่านค่าแถบสีตัวต้านทาน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f3f5f9; --card:#ffffff; --text:#1f2937; --muted:#6b7280;
+    --primary:#2563eb; --border:#e5e7eb; --radius:14px; --ok:#16a34a; --bad:#dc2626;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Sarabun","Noto Sans Thai",system-ui,sans-serif;
+       background:var(--bg);color:var(--text);line-height:1.6}
+  header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;padding:20px 16px;text-align:center}
+  header h1{margin:0;font-size:clamp(1.25rem,4vw,1.9rem)}
+  header p{margin:4px 0 0;opacity:.9;font-size:.95rem}
+  .hidden{display:none !important}
+  .store-warn{max-width:1168px;width:calc(100% - 32px);margin:12px auto 0;padding:10px 14px;
+       background:#fffbeb;border:1px solid #fcd34d;color:#92400e;border-radius:10px;font-size:.9rem}
+
+  /* แท็บเลือกโหมด */
+  .mode-tabs{max-width:1200px;margin:14px auto 0;padding:0 16px;display:grid;
+       grid-template-columns:repeat(4,1fr);gap:8px}
+  @media (max-width:520px){ .mode-tabs{grid-template-columns:repeat(2,1fr)} }
+  .mode-tabs button{padding:11px 6px;border-radius:12px;border:2px solid var(--primary);
+       background:#fff;color:var(--primary);font:inherit;font-weight:700;cursor:pointer}
+  .mode-tabs button.active{background:var(--primary);color:#fff}
+
+  main{max-width:1200px;margin:0 auto;padding:16px;display:grid;gap:16px;grid-template-columns:1fr}
+  @media (min-width:960px){
+    main{grid-template-columns:1.15fr 1fr;align-items:start}
+    .sticky{position:sticky;top:16px}
+  }
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:0 2px 10px rgba(0,0,0,.06);padding:16px}
+  .card h2{margin:0 0 12px;font-size:1.15rem}
+  .card h3{margin:18px 0 6px;font-size:1.02rem}
+  .full{grid-column:1/-1}
+
+  /* ภาพตัวต้านทาน */
+  .resistor-wrap{background:linear-gradient(180deg,#f8fafc,#eef2f7);border-radius:12px;padding:8px}
+  svg{width:100%;height:auto;display:block}
+
+  /* ผลลัพธ์ */
+  .value-box{text-align:center;margin-top:10px}
+  .value-main{font-size:clamp(1.8rem,7vw,2.6rem);font-weight:700;color:var(--primary)}
+  .value-sub{color:var(--muted);font-size:.95rem}
+  .code-line{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+
+  /* ปุ่ม */
+  .seg{display:flex;gap:6px;background:#eef2ff;padding:4px;border-radius:10px}
+  .seg button{flex:1;border:0;background:transparent;padding:10px 6px;border-radius:8px;
+              font:inherit;font-weight:600;cursor:pointer;color:#3730a3}
+  .seg button.active{background:var(--primary);color:#fff}
+  .tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .btn{flex:1;min-width:90px;border:1px solid var(--primary);background:#fff;color:var(--primary);
+       padding:10px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer}
+  .btn:hover{background:#eff6ff}
+  .btn.primary{background:var(--primary);color:#fff}
+  .btn.primary:hover{background:#1d4ed8}
+  .btn.danger{border-color:var(--bad);color:var(--bad)}
+  .btn.danger:hover{background:#fef2f2}
+  .btn.sm{flex:none;min-width:0;padding:4px 10px;font-size:.85rem}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+
+  /* แถบสี */
+  .band-row{border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-top:10px}
+  .band-row.ok{border-color:var(--ok);background:#f0fdf4}
+  .band-row.bad{border-color:var(--bad);background:#fef2f2}
+  .band-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+  .band-title{font-weight:600}
+  .band-chosen{font-size:.9rem;color:var(--muted)}
+  .swatches{display:flex;flex-wrap:wrap;gap:8px}
+  .sw{width:42px;height:42px;border-radius:10px;border:2px solid rgba(0,0,0,.15);
+      cursor:pointer;position:relative;padding:0;transition:transform .1s}
+  .sw:hover{transform:scale(1.08)}
+  .sw.selected{outline:3px solid var(--primary);outline-offset:2px}
+  .sw.selected::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;
+      font-weight:700;font-size:1.1rem;color:var(--ck,#fff);text-shadow:0 0 2px rgba(0,0,0,.5)}
+  @media (max-width:420px){ .sw{width:36px;height:36px} }
+
+  /* แบบฝึก */
+  .quiz-q{background:#eff6ff;border-radius:10px;padding:10px 12px;margin:12px 0}
+  .target{font-size:clamp(1.4rem,5vw,1.9rem);font-weight:700;color:var(--primary);text-align:center;margin-top:4px}
+  .field{margin-top:12px}
+  .field label{display:block;font-weight:600;margin-bottom:4px}
+  .field > input,.field > select{width:100%}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+  @media (max-width:480px){ .grid2{grid-template-columns:1fr} }
+  .input-row{display:flex;gap:8px}
+  .input-row input{flex:1;min-width:0}
+  input[type=text],select{font:inherit;font-size:16px;padding:10px;border:2px solid #cbd5e1;
+       border-radius:8px;background:#fff;color:var(--text)}
+  input.ok,select.ok{border-color:var(--ok);background:#f0fdf4}
+  input.bad,select.bad{border-color:var(--bad);background:#fef2f2}
+  .help{font-size:.82rem;color:var(--muted);margin:3px 0 0}
+  .check{display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer}
+  .check input{width:18px;height:18px}
+  .feedback{margin-top:12px;padding:10px 12px;border-radius:10px;display:none}
+  .feedback.show{display:block}
+  .feedback ul{margin:6px 0 0;padding-left:1.2rem}
+  .feedback.ok{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+  .feedback.bad{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+  .feedback.info{background:#fffbeb;border:1px solid #fcd34d;color:#92400e}
+  .score{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px;margin-top:14px;text-align:center}
+  .score div{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:6px 4px}
+  .score b{display:block;font-size:1.3rem;color:var(--primary)}
+  .score .best b{color:#d97706}
+  .score span{font-size:.8rem;color:var(--muted)}
+
+  /* โหมดจับเวลา */
+  .exam-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-weight:700}
+  .timer{font-family:ui-monospace,Consolas,monospace;font-size:1.1rem;background:#eef2ff;color:#1e3a8a;
+         padding:4px 10px;border-radius:8px}
+  .timer.warn{background:#fef2f2;color:var(--bad)}
+  .progress{height:8px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:8px}
+  .progress > div{height:100%;width:0;background:var(--primary);transition:width .3s}
+  .res-ok{color:var(--ok);font-weight:700}
+  .res-bad{color:var(--bad);font-weight:700}
+  #exTable tr.active td{background:#eff6ff}
+  .lb tr.hl td{background:#fef9c3;font-weight:700}
+
+  /* ขั้นตอนการอ่าน */
+  .steps ol{padding-left:1.3rem;margin:0}
+  .steps li{margin-bottom:12px}
+  .formula{background:#f8fafc;border-left:4px solid var(--primary);padding:8px 12px;border-radius:6px;
+           font-family:ui-monospace,Consolas,monospace;overflow-x:auto;margin-top:6px;font-size:.92rem}
+  .chip{display:inline-flex;align-items:center;gap:5px;padding:1px 9px;border-radius:999px;
+        background:#f1f5f9;font-size:.9rem;white-space:nowrap}
+  .dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.3);display:inline-block}
+  .placeholder{color:var(--muted);text-align:center;padding:12px;margin:0}
+
+  /* ตาราง */
+  .table-scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  #refTable{min-width:520px}
+  #exTable{min-width:680px}
+  th,td{border:1px solid var(--border);padding:6px;text-align:center;vertical-align:middle}
+  th{background:#eef2ff}
+  #refTable td:first-child{text-align:left}
+  footer{text-align:center;color:var(--muted);font-size:.85rem;padding:12px 16px 24px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>โปรแกรมอ่านค่าแถบสีตัวต้านทาน</h1>
+  <p>Resistor Color Code Calculator &amp; Trainer — รองรับ 4 / 5 / 6 แถบสี</p>
+</header>
+
+<div class="store-warn hidden" id="storeWarn">
+  เบราว์เซอร์นี้ไม่อนุญาตให้บันทึกข้อมูลถาวร สถิติและตารางคะแนนจะหายเมื่อปิดหน้าเว็บ
+</div>
+
+<nav class="mode-tabs" id="modeTabs">
+  <button type="button" data-mode="calc" class="active">คำนวณ</button>
+  <button type="button" data-mode="quiz">ฝึกอ่านค่า</button>
+  <button type="button" data-mode="rev">ฝึกย้อนกลับ</button>
+  <button type="button" data-mode="exam">จับเวลา</button>
+</nav>
+
+<main>
+  <!-- ภาพ + ผลลัพธ์ -->
+  <section class="card sticky" id="picCard">
+    <h2 id="picTitle">ภาพตัวต้านทาน</h2>
+    <div class="resistor-wrap" id="resistorSvg"></div>
+    <div class="code-line" id="hintLine"></div>
+    <div class="value-box" id="valueBox">
+      <div class="value-main" id="valueMain">—</div>
+      <div class="value-sub" id="valueSub"></div>
+      <div class="code-line" id="codeLine"></div>
+    </div>
+  </section>
+
+  <!-- โหมดคำนวณ -->
+  <section class="card" id="calcPanel">
+    <h2>เลือกจำนวนแถบและสี</h2>
+    <div class="seg" id="bandCount">
+      <button type="button" data-n="4" class="active">4 แถบ</button>
+      <button type="button" data-n="5">5 แถบ</button>
+      <button type="button" data-n="6">6 แถบ</button>
+    </div>
+    <div class="tools">
+      <button type="button" class="btn" id="btnRandom">สุ่มสี</button>
+      <button type="button" class="btn" id="btnReset">ค่าเริ่มต้น</button>
+    </div>
+    <div id="bands"></div>
+  </section>
+
+  <!-- โหมดฝึกอ่านค่า -->
+  <section class="card hidden" id="quizPanel">
+    <h2>ฝึกอ่านค่าจากแถบสี</h2>
+    <div class="seg" id="qBands">
+      <button type="button" data-n="4" class="active">4 แถบ</button>
+      <button type="button" data-n="5">5 แถบ</button>
+      <button type="button" data-n="6">6 แถบ</button>
+    </div>
+    <label class="check"><input type="checkbox" id="qHint"> แสดงชื่อสีใต้ภาพ (คำใบ้)</label>
+    <div class="quiz-q" id="qQuestion"></div>
+    <div id="qForm"></div>
+    <div class="tools">
+      <button type="button" class="btn primary" id="qCheck">ตรวจคำตอบ</button>
+      <button type="button" class="btn" id="qReveal">ดูเฉลย</button>
+      <button type="button" class="btn" id="qNext">ข้อต่อไป</button>
+    </div>
+    <div class="feedback" id="qFeedback" aria-live="polite"></div>
+    <div class="score" id="qScore"></div>
+    <p class="help">* สถิติสูงสุด = จำนวนข้อที่ตอบถูกติดต่อกันมากที่สุด (บันทึกไว้ในเบราว์เซอร์นี้)</p>
+    <div class="tools">
+      <button type="button" class="btn" id="qResetScore">ล้างคะแนนรอบนี้</button>
+      <button type="button" class="btn danger" id="qClearBest">ลบสถิติสูงสุด</button>
+    </div>
+  </section>
+
+  <!-- โหมดฝึกย้อนกลับ -->
+  <section class="card hidden" id="revPanel">
+    <h2>ฝึกย้อนกลับ: เลือกแถบสีจากค่าความต้านทาน</h2>
+    <div class="seg" id="rBands">
+      <button type="button" data-n="4" class="active">4 แถบ</button>
+      <button type="button" data-n="5">5 แถบ</button>
+      <button type="button" data-n="6">6 แถบ</button>
+    </div>
+    <label class="check"><input type="checkbox" id="rHint"> แสดงค่าตัวเลขของสีที่เลือก (คำใบ้)</label>
+    <div class="quiz-q" id="rQuestion"></div>
+    <div id="rForm"></div>
+    <div class="tools">
+      <button type="button" class="btn primary" id="rCheck">ตรวจคำตอบ</button>
+      <button type="button" class="btn" id="rReveal">ดูเฉลย</button>
+      <button type="button" class="btn" id="rClear">ล้างสีที่เลือก</button>
+      <button type="button" class="btn" id="rNext">ข้อต่อไป</button>
+    </div>
+    <div class="feedback" id="rFeedback" aria-live="polite"></div>
+    <div class="score" id="rScore"></div>
+    <p class="help">* สถิติสูงสุด = จำนวนข้อที่ตอบถูกติดต่อกันมากที่สุด (บันทึกไว้ในเบราว์เซอร์นี้)</p>
+    <div class="tools">
+      <button type="button" class="btn" id="rResetScore">ล้างคะแนนรอบนี้</button>
+      <button type="button" class="btn danger" id="rClearBest">ลบสถิติสูงสุด</button>
+    </div>
+  </section>
+
+  <!-- โหมดจับเวลา -->
+  <section class="card hidden" id="examPanel">
+    <!-- ตั้งค่า -->
+    <div id="exSetup">
+      <h2>แบบทดสอบจับเวลา</h2>
+      <div class="field">
+        <label for="exName">ชื่อผู้ทำแบบทดสอบ</label>
+        <input type="text" id="exName" maxlength="30" placeholder="ไม่บังคับ เช่น ชื่อ-เลขที่">
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label for="exType">ประเภทโจทย์</label>
+          <select id="exType">
+            <option value="read">อ่านค่าจากแถบสี</option>
+            <option value="rev">เลือกแถบสีจากค่า (ย้อนกลับ)</option>
+            <option value="mix">คละทั้งสองแบบ</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="exBands">จำนวนแถบสี</label>
+          <select id="exBands">
+            <option value="4">4 แถบ</option>
+            <option value="5">5 แถบ</option>
+            <option value="6">6 แถบ</option>
+            <option value="mix">คละ 4/5/6 แถบ</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="exCount">จำนวนข้อ</label>
+          <select id="exCount">
+            <option value="5">5 ข้อ</option>
+            <option value="10" selected>10 ข้อ</option>
+            <option value="20">20 ข้อ</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="exLimit">เวลาจำกัด</label>
+          <select id="exLimit">
+            <option value="0">ไม่จำกัด (จับเวลาอย่างเดียว)</option>
+            <option value="60">1 นาที</option>
+            <option value="120">2 นาที</option>
+            <option value="300">5 นาที</option>
+          </select>
+        </div>
+      </div>
+      <div class="tools">
+        <button type="button" class="btn primary" id="btnExStart">เริ่มทำแบบทดสอบ</button>
+      </div>
+      <h3>ตารางคะแนนสูงสุด (5 อันดับ)</h3>
+      <p class="help" id="lbCfg"></p>
+      <div id="lbSetup"></div>
+      <div class="tools">
+        <button type="button" class="btn danger" id="btnLbClear">ลบตารางคะแนนของการตั้งค่านี้</button>
+      </div>
+    </div>
+
+    <!-- ระหว่างทำแบบทดสอบ -->
+    <div id="exRun" class="hidden">
+      <div class="exam-bar">
+        <span id="exProg">ข้อ 1 / 10</span>
+        <span class="timer" id="exTimer">00:00.0</span>
+      </div>
+      <div class="progress"><div id="exProgBar"></div></div>
+      <div class="quiz-q" id="exQuestion"></div>
+      <div id="exAnswer"></div>
+      <div class="tools">
+        <button type="button" class="btn primary" id="btnExSubmit">ส่งคำตอบ</button>
+        <button type="button" class="btn" id="btnExSkip">ข้ามข้อนี้</button>
+        <button type="button" class="btn danger" id="btnExQuit">ยกเลิก</button>
+      </div>
+      <div class="feedback" id="exMsg" aria-live="polite"></div>
+    </div>
+
+    <!-- สรุปผล -->
+    <div id="exResult" class="hidden">
+      <h2>สรุปผลการทดสอบ</h2>
+      <p class="help" id="exCfgLabel"></p>
+      <div class="score" id="exSummary"></div>
+      <div class="feedback show" id="exRankMsg"></div>
+      <h3>รายละเอียดรายข้อ</h3>
+      <div class="table-scroll"><table id="exTable"></table></div>
+      <h3>ตารางคะแนนสูงสุด (5 อันดับ)</h3>
+      <div id="lbResult"></div>
+      <div class="tools">
+        <button type="button" class="btn primary" id="btnExAgain">ทำอีกครั้ง</button>
+        <button type="button" class="btn" id="btnExSetup">กลับไปหน้าตั้งค่า</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- วิธีทำ -->
+  <section class="card full steps" id="stepsCard">
+    <h2 id="stepsTitle">วิธีการอ่านค่า</h2>
+    <ol id="steps"></ol>
+    <p class="placeholder hidden" id="stepsPlaceholder"></p>
+  </section>
+
+  <!-- ตารางอ้างอิง -->
+  <section class="card full">
+    <details>
+      <summary style="cursor:pointer;font-weight:600">ตารางรหัสสีตัวต้านทาน (อ้างอิง IEC 60062)</summary>
+      <div class="table-scroll" style="margin-top:10px"><table id="refTable"></table></div>
+    </details>
+  </section>
+</main>
+
+<footer>อ่านจากซ้ายไปขวา โดยให้แถบค่าความคลาดเคลื่อนอยู่ทางขวามือ</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+/* =========================================================
+   ที่เก็บข้อมูลถาวร (localStorage) พร้อมสำรองในหน่วยความจำ
+   ========================================================= */
+const store = (() => {
+  const PREFIX = 'resistorTrainer.';
+  const mem = {};
+  let ok = true;
+  try { localStorage.setItem(PREFIX + 't', '1'); localStorage.removeItem(PREFIX + 't'); }
+  catch (e) { ok = false; }
+  return {
+    ok,
+    get(k, d){
+      try { const v = ok ? localStorage.getItem(PREFIX + k) : mem[k]; return v == null ? d : JSON.parse(v); }
+      catch (e) { return d; }
+    },
+    set(k, v){
+      const s = JSON.stringify(v);
+      if (ok){ try { localStorage.setItem(PREFIX + k, s); return; } catch (e) {} }
+      mem[k] = s;
+    }
+  };
+})();
+
+/* =========================================================
+   ข้อมูลรหัสสี
+   ========================================================= */
+const COLORS = [
+  {key:'black',  th:'ดำ',      hex:'#000000', digit:0, mult:0,  tc:250},
+  {key:'brown',  th:'น้ำตาล',   hex:'#7b3f00', digit:1, mult:1,  tol:1,    tc:100},
+  {key:'red',    th:'แดง',     hex:'#d32f2f', digit:2, mult:2,  tol:2,    tc:50},
+  {key:'orange', th:'ส้ม',      hex:'#f57c00', digit:3, mult:3,  tol:0.05, tc:15},
+  {key:'yellow', th:'เหลือง',   hex:'#fdd835', digit:4, mult:4,  tol:0.02, tc:25},
+  {key:'green',  th:'เขียว',    hex:'#2e7d32', digit:5, mult:5,  tol:0.5,  tc:20},
+  {key:'blue',   th:'น้ำเงิน',   hex:'#1565c0', digit:6, mult:6,  tol:0.25, tc:10},
+  {key:'violet', th:'ม่วง',     hex:'#7b1fa2', digit:7, mult:7,  tol:0.1,  tc:5},
+  {key:'grey',   th:'เทา',     hex:'#9e9e9e', digit:8, mult:8,  tol:0.01, tc:1},
+  {key:'white',  th:'ขาว',     hex:'#ffffff', digit:9, mult:9},
+  {key:'gold',   th:'ทอง',     hex:'#d4af37', mult:-1, tol:5},
+  {key:'silver', th:'เงิน',     hex:'#c0c0c0', mult:-2, tol:10},
+  {key:'none',   th:'ไม่มีแถบ', hex:'transparent', tol:20}
+];
+const BY_KEY = Object.fromEntries(COLORS.map(c => [c.key, c]));
+const LIGHT  = new Set(['yellow','white','gold','silver','none','grey']);
+
+const CONFIG = {
+  4: ['digit','digit','mult','tol'],
+  5: ['digit','digit','digit','mult','tol'],
+  6: ['digit','digit','digit','mult','tol','tc']
+};
+const ROLE_LABEL = {digit:'ตัวเลขนัยสำคัญ', mult:'ตัวคูณ', tol:'ค่าความคลาดเคลื่อน', tc:'สัมประสิทธิ์อุณหภูมิ'};
+const POS = { 4:[150,215,270,415], 5:[142,200,248,296,420], 6:[138,192,240,288,400,442] };
+const DEFAULTS = {
+  4:['yellow','violet','red','gold'],
+  5:['brown','black','black','brown','brown'],
+  6:['brown','black','black','brown','brown','brown']
+};
+const state = { mode:'calc', n:4, sel:JSON.parse(JSON.stringify(DEFAULTS)) };
+
+/* อนุกรมค่ามาตรฐาน (IEC 60063) สำหรับสร้างโจทย์ */
+const E24 = [10,11,12,13,15,16,18,20,22,24,27,30,33,36,39,43,47,51,56,62,68,75,82,91];
+const E96 = [100,102,105,107,110,113,115,118,121,124,127,130,133,137,140,143,147,150,154,158,
+  162,165,169,174,178,182,187,191,196,200,205,210,215,221,226,232,237,243,249,255,
+  261,267,274,280,287,294,301,309,316,324,332,340,348,357,365,374,383,392,402,412,
+  422,432,442,453,464,475,487,499,511,523,536,549,562,576,590,604,619,634,649,665,
+  681,698,715,732,750,768,787,806,825,845,866,887,909,931,953,976];
+const QUIZ_RULE = {
+  4:{series:E24, mult:[-1,0,1,2,3,4,5,6], tol:['gold','silver','brown','red']},
+  5:{series:E96, mult:[-2,-1,0,1,2,3,4,5], tol:['brown','red','green','blue','violet']},
+  6:{series:E96, mult:[-2,-1,0,1,2,3,4,5], tol:['brown','red','green','blue','violet']}
+};
+const TC_KEYS = ['black','brown','red','orange','yellow','green','blue','violet','grey'];
+
+/* =========================================================
+   ฟังก์ชันช่วย
+   ========================================================= */
+const SUP = {'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+const pow10 = e => '10' + String(e).split('').map(ch => SUP[ch]).join('');
+const num = x => Number(x.toPrecision(10)).toLocaleString('en-US',{maximumFractionDigits:6});
+const multValue = e => Number(Math.pow(10,e).toPrecision(3)).toLocaleString('en-US',{maximumFractionDigits:2});
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const esc = s => String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+
+function fmt(v){
+  const units = [[1e9,'GΩ'],[1e6,'MΩ'],[1e3,'kΩ'],[1,'Ω']];
+  for (const [u,s] of units){
+    if (Math.abs(v) >= u) return Number((v/u).toPrecision(6)).toLocaleString('en-US',{maximumFractionDigits:6}) + ' ' + s;
+  }
+  return Number(v.toPrecision(6)) + ' Ω';
+}
+/* แสดงค่าตามจำนวนเลขนัยสำคัญ เช่น 10.0 kΩ (5 แถบ), 4.7 kΩ (4 แถบ) */
+function fmtSig(v, d){
+  let u = 1, s = 'Ω';
+  for (const [uu, ss] of [[1e9,'GΩ'],[1e6,'MΩ'],[1e3,'kΩ']]) if (v >= uu){ u = uu; s = ss; break; }
+  const x = Number((v/u).toPrecision(12));
+  const intDigits = x >= 1 ? Math.floor(Math.log10(x)) + 1 : 1;
+  return (intDigits > d ? String(Math.round(x)) : x.toPrecision(d)) + ' ' + s;
+}
+function fmtTime(ms){
+  const t = Math.max(0, Math.floor(ms / 100));
+  const m = Math.floor(t / 600), s = Math.floor(t / 10) % 60, d = t % 10;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${d}`;
+}
+
+function swatchStyle(c){
+  if (c.key==='gold')   return 'background:linear-gradient(135deg,#f9e79f,#d4af37 45%,#9a7b1c)';
+  if (c.key==='silver') return 'background:linear-gradient(135deg,#f5f5f5,#c0c0c0 45%,#8a8a8a)';
+  if (c.key==='none')   return 'background:repeating-linear-gradient(45deg,#fff 0 6px,#e5e7eb 6px 12px)';
+  return 'background:' + c.hex;
+}
+const chip = (c, val) =>
+  `<span class="chip"><span class="dot" style="${swatchStyle(c)}"></span>${c.th}${val!==undefined ? ' = '+val : ''}</span>`;
+const colorSeq = keys => keys.map(k => chip(BY_KEY[k])).join(' ');
+
+function describe(c, role){
+  if (role==='digit') return String(c.digit);
+  if (role==='mult')  return '×' + multValue(c.mult);
+  if (role==='tol')   return '±' + c.tol + '%';
+  return c.tc + ' ppm/K';
+}
+const valueText = r => `${fmtSig(r.ohm, r.digits.length)} ±${r.tol}%` + (r.tc!==undefined ? `, ${r.tc} ppm/K` : '');
+
+function optionsFor(role, idx, n){
+  switch (role){
+    case 'digit': return COLORS.filter(c => c.digit!==undefined && !(idx===0 && c.digit===0));
+    case 'mult':  return COLORS.filter(c => c.mult!==undefined);
+    case 'tol':   return COLORS.filter(c => c.tol!==undefined && (c.key!=='none' || n===4));
+    case 'tc':    return COLORS.filter(c => c.tc!==undefined);
+  }
+}
+
+function showMsg(id, type, html){ const f = $(id); f.className = 'feedback show ' + type; f.innerHTML = html; }
+function bindSeg(id, cb){
+  const btns = document.querySelectorAll(`#${id} button`);
+  btns.forEach(b => b.addEventListener('click', () => {
+    btns.forEach(x => x.classList.toggle('active', x === b));
+    cb(Number(b.dataset.n));
+  }));
+}
+
+/* =========================================================
+   ชุดปุ่มเลือกสี (ใช้ร่วมกันทุกโหมด)
+   ========================================================= */
+const pickForms = {};
+function makeSwatch(c){
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'sw'; b.dataset.key = c.key;
+  b.style.cssText = swatchStyle(c);
+  if (LIGHT.has(c.key)) b.style.setProperty('--ck', '#111');
+  return b;
+}
+function buildPickForm(container, p, n, sel, onChange, showVals){
+  pickForms[p] = { n, sel, onChange, showVals, locked:false };
+  container.innerHTML = '';
+  CONFIG[n].forEach((role, i) => {
+    const row = document.createElement('div');
+    row.className = 'band-row'; row.id = `${p}Row${i}`;
+    row.innerHTML = `
+      <div class="band-head">
+        <span class="band-title">แถบที่ ${i+1}: ${ROLE_LABEL[role]}</span>
+        <span class="band-chosen" id="${p}Chosen${i}"></span>
+      </div>
+      <div class="swatches" role="group" aria-label="เลือกสีแถบที่ ${i+1}"></div>`;
+    const wrap = row.querySelector('.swatches');
+    optionsFor(role, i, n).forEach(c => {
+      const b = makeSwatch(c);
+      b.addEventListener('click', () => {
+        if (pickForms[p].locked) return;
+        sel[i] = c.key;
+        row.classList.remove('ok','bad');
+        refreshPickForm(p);
+        if (onChange) onChange();
+      });
+      wrap.appendChild(b);
+    });
+    container.appendChild(row);
+  });
+  refreshPickForm(p);
+}
+function refreshPickForm(p){
+  const F = pickForms[p]; if (!F) return;
+  const show = F.showVals();
+  CONFIG[F.n].forEach((role, i) => {
+    const row = $(`${p}Row${i}`); if (!row) return;
+    row.querySelectorAll('.sw').forEach(b => {
+      const c = BY_KEY[b.dataset.key], on = b.dataset.key === F.sel[i];
+      b.classList.toggle('selected', on);
+      b.setAttribute('aria-pressed', on);
+      b.title = show ? `${c.th} (${describe(c, role)})` : c.th;
+      b.setAttribute('aria-label', b.title);
+    });
+    const k = F.sel[i];
+    $(`${p}Chosen${i}`).innerHTML = k
+      ? chip(BY_KEY[k]) + (show ? ` (${describe(BY_KEY[k], role)})` : '')
+      : 'ยังไม่ได้เลือก';
+  });
+}
+
+/* =========================================================
+   วาดภาพตัวต้านทาน (SVG)
+   ========================================================= */
+function bandFill(key){
+  if (key==='gold')   return 'url(#gGold)';
+  if (key==='silver') return 'url(#gSilver)';
+  return BY_KEY[key].hex;
+}
+function drawResistor(n, sel){
+  const pos = POS[n];
+  const bodyColor  = n===4 ? '#e8cfa0' : '#8ec5e8';
+  const bodyStroke = n===4 ? '#b8986a' : '#5d97be';
+  const body = "M118,62 Q118,42 146,42 L186,42 Q198,42 206,56 L394,56 Q402,42 414,42 L454,42 Q482,42 482,62 L482,138 Q482,158 454,158 L414,158 Q402,158 394,144 L206,144 Q198,158 186,158 L146,158 Q118,158 118,138 Z";
+  let bands = '', labels = '';
+  sel.forEach((k, i) => {
+    if (k && k !== 'none'){
+      bands += `<rect x="${pos[i]}" y="30" width="22" height="140" fill="${bandFill(k)}" clip-path="url(#bodyClip)"/>`;
+    } else if (!k){
+      bands += `<rect x="${pos[i]}" y="44" width="22" height="112" fill="#fff" fill-opacity=".45" stroke="#475569" stroke-width="1.5" stroke-dasharray="4 3" clip-path="url(#bodyClip)"/>`;
+    }
+    labels += `<text x="${pos[i]+11}" y="30" text-anchor="middle" font-size="13" font-weight="600" fill="#374151">${i+1}</text>`;
+  });
+  $('resistorSvg').innerHTML = `
+  <svg viewBox="0 0 600 195" role="img" aria-label="ภาพตัวต้านทาน ${n} แถบสี">
+    <defs>
+      <clipPath id="bodyClip"><path d="${body}"/></clipPath>
+      <linearGradient id="lead" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#f3f4f6"/><stop offset=".5" stop-color="#9ca3af"/><stop offset="1" stop-color="#6b7280"/>
+      </linearGradient>
+      <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fff" stop-opacity=".55"/>
+        <stop offset=".35" stop-color="#fff" stop-opacity=".08"/>
+        <stop offset=".65" stop-color="#000" stop-opacity="0"/>
+        <stop offset="1" stop-color="#000" stop-opacity=".28"/>
+      </linearGradient>
+      <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#9a7b1c"/><stop offset=".5" stop-color="#f9e79f"/><stop offset="1" stop-color="#b8962e"/>
+      </linearGradient>
+      <linearGradient id="gSilver" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#8a8a8a"/><stop offset=".5" stop-color="#f5f5f5"/><stop offset="1" stop-color="#a0a0a0"/>
+      </linearGradient>
+    </defs>
+    <rect x="8"   y="96" width="130" height="8" rx="4" fill="url(#lead)"/>
+    <rect x="462" y="96" width="130" height="8" rx="4" fill="url(#lead)"/>
+    <path d="${body}" fill="${bodyColor}" stroke="${bodyStroke}" stroke-width="1.5"/>
+    ${bands}
+    <path d="${body}" fill="url(#shine)"/>
+    ${labels}
+    <text x="300" y="186" text-anchor="middle" font-size="13" fill="#6b7280">ทิศทางการอ่าน: ซ้าย ➜ ขวา</text>
+  </svg>`;
+}
+
+/* =========================================================
+   คำนวณ และแสดงวิธีทำ
+   ========================================================= */
+function compute(n, keys){
+  const roles = CONFIG[n];
+  const sel = keys.map(k => BY_KEY[k]);
+  const digits = []; let mult, tol, tc;
+  roles.forEach((r, i) => {
+    const c = sel[i];
+    if (r==='digit') digits.push(c.digit);
+    else if (r==='mult') mult = c.mult;
+    else if (r==='tol')  tol  = c.tol;
+    else tc = c.tc;
+  });
+  const sig = parseInt(digits.join(''), 10);
+  const ohm = Number((sig * Math.pow(10, mult)).toPrecision(12));
+  const dR  = ohm * tol / 100;
+  return { n, roles, sel, digits, sig, mult, tol, tc, ohm, dR, min: ohm - dR, max: ohm + dR };
+}
+
+function renderResult(r){
+  $('valueMain').textContent = `${fmt(r.ohm)} ±${r.tol}%`;
+  $('valueSub').innerHTML =
+    `= ${num(r.ohm)} Ω<br>ช่วงค่าที่ยอมรับได้: ${fmt(r.min)} ถึง ${fmt(r.max)}` +
+    (r.tc!==undefined ? `<br>สัมประสิทธิ์อุณหภูมิ: ${r.tc} ppm/K` : '');
+  $('codeLine').innerHTML = r.sel.map(c => chip(c)).join(' ➜ ');
+}
+
+/* วิธีอ่านค่า: สี → ค่า */
+function renderSteps(r){
+  const s = [];
+  const tolIdx = r.roles.indexOf('tol'), tolC = r.sel[tolIdx];
+  const mi = r.roles.indexOf('mult');
+  s.push(`<li><b>กำหนดทิศทางการอ่าน:</b> ${
+    tolC.key==='none'
+      ? 'ตัวต้านทานนี้ไม่มีแถบค่าความคลาดเคลื่อน ให้เริ่มอ่านจากแถบที่อยู่ชิดปลายขาด้านใดด้านหนึ่งมากที่สุด'
+      : `วางตัวต้านทานให้แถบค่าความคลาดเคลื่อน ${chip(tolC)} ซึ่งโดยทั่วไปเว้นระยะห่างจากแถบกลุ่มอื่น อยู่ทางขวามือ`
+  } จากนั้นอ่านจากซ้ายไปขวา</li>`);
+  const dChips = r.roles.map((role, i) => role==='digit' ? `แถบที่ ${i+1} ${chip(r.sel[i], r.sel[i].digit)}` : null)
+                        .filter(Boolean).join(' , ');
+  s.push(`<li><b>อ่านตัวเลขนัยสำคัญ (${r.digits.length} หลัก):</b> ${dChips}
+          <div class="formula">ตัวเลขนัยสำคัญ = ${r.digits.join(' ')} → ${r.sig}</div></li>`);
+  s.push(`<li><b>อ่านตัวคูณ (Multiplier):</b> แถบที่ ${mi+1} ${chip(r.sel[mi])} หมายถึง ×${pow10(r.mult)} = ×${multValue(r.mult)}</li>`);
+  s.push(`<li><b>คำนวณค่าความต้านทาน:</b>
+          <div class="formula">R = ${r.sig} × ${pow10(r.mult)} = ${num(r.ohm)} Ω = ${fmt(r.ohm)}</div></li>`);
+  s.push(`<li><b>พิจารณาค่าความคลาดเคลื่อน (Tolerance):</b> แถบที่ ${tolIdx+1} ${chip(tolC)} = ±${r.tol}%
+          <div class="formula">ΔR = ${num(r.ohm)} × ${r.tol}/100 = ±${num(r.dR)} Ω<br>
+          R(min) = ${num(r.ohm)} − ${num(r.dR)} = ${fmt(r.min)}<br>
+          R(max) = ${num(r.ohm)} + ${num(r.dR)} = ${fmt(r.max)}</div></li>`);
+  if (r.n === 6){
+    const dT = r.ohm * r.tc * 1e-6;
+    s.push(`<li><b>สัมประสิทธิ์อุณหภูมิ (TCR):</b> แถบที่ 6 ${chip(r.sel[5])} = ${r.tc} ppm/K
+            หมายความว่าเมื่ออุณหภูมิเปลี่ยนไป 1 °C ค่าความต้านทานจะเปลี่ยนไปประมาณ
+            <div class="formula">ΔR/°C = ${num(r.ohm)} × ${r.tc} × 10⁻⁶ ≈ ${num(dT)} Ω/°C</div></li>`);
+  }
+  s.push(`<li><b>สรุปผล:</b> ค่าความต้านทาน = <b>${fmt(r.ohm)} ±${r.tol}%</b>${r.tc!==undefined ? `, TCR ${r.tc} ppm/K` : ''}</li>`);
+  $('steps').innerHTML = s.join('');
+}
+
+/* วิธีแปลงค่าเป็นรหัสสี: ค่า → สี */
+function renderEncodeSteps(r){
+  const s = [], k = r.digits.length;
+  const mi = r.roles.indexOf('mult'), ti = r.roles.indexOf('tol');
+  s.push(`<li><b>แปลงค่าให้อยู่ในหน่วยโอห์ม (Ω):</b>
+          <div class="formula">${fmtSig(r.ohm, k)} = ${num(r.ohm)} Ω</div></li>`);
+  s.push(`<li><b>เขียนในรูป (ตัวเลขนัยสำคัญ ${k} หลัก) × 10ⁿ:</b> ตัวต้านทานแบบ ${r.n} แถบใช้ตัวเลขนัยสำคัญ ${k} หลัก และหลักแรกต้องไม่เป็นศูนย์
+          <div class="formula">${num(r.ohm)} Ω = ${r.sig} × ${pow10(r.mult)}</div></li>`);
+  s.push(`<li><b>แปลงตัวเลขนัยสำคัญเป็นสี:</b> ${r.digits.map((d, i) => `แถบที่ ${i+1} ${chip(r.sel[i], d)}`).join(' , ')}</li>`);
+  s.push(`<li><b>แปลงเลขชี้กำลังเป็นสีของตัวคูณ:</b> n = ${r.mult} → ×${pow10(r.mult)} → แถบที่ ${mi+1} ${chip(r.sel[mi])}</li>`);
+  s.push(`<li><b>แปลงค่าความคลาดเคลื่อนเป็นสี:</b> ±${r.tol}% → แถบที่ ${ti+1} ${chip(r.sel[ti])}</li>`);
+  if (r.n === 6) s.push(`<li><b>แปลงสัมประสิทธิ์อุณหภูมิเป็นสี:</b> ${r.tc} ppm/K → แถบที่ 6 ${chip(r.sel[5])}</li>`);
+  s.push(`<li><b>สรุปลำดับแถบสี (ซ้าย ➜ ขวา):</b> ${r.sel.map(c => chip(c)).join(' ➜ ')}</li>`);
+  $('steps').innerHTML = s.join('');
+}
+
+function setSteps(r, kind){
+  $('stepsCard').classList.remove('hidden');
+  $('stepsTitle').textContent = kind==='encode' ? 'วิธีแปลงค่าความต้านทานเป็นรหัสสี' : 'วิธีการอ่านค่า';
+  $('stepsPlaceholder').classList.add('hidden');
+  if (kind==='encode') renderEncodeSteps(r); else renderSteps(r);
+}
+function stepsPlaceholder(title, text){
+  $('stepsCard').classList.remove('hidden');
+  $('stepsTitle').textContent = title;
+  $('steps').innerHTML = '';
+  $('stepsPlaceholder').textContent = text;
+  $('stepsPlaceholder').classList.remove('hidden');
+}
+
+/* =========================================================
+   โหมดคำนวณ
+   ========================================================= */
+function buildControls(){
+  buildPickForm($('bands'), 'c', state.n, state.sel[state.n], update, () => true);
+}
+function update(){
+  const n = state.n, sel = state.sel[n];
+  refreshPickForm('c');
+  $('picTitle').textContent = 'ภาพตัวต้านทาน';
+  $('hintLine').innerHTML = '';
+  drawResistor(n, sel);
+  const r = compute(n, sel);
+  $('valueBox').classList.remove('hidden');
+  renderResult(r);
+  setSteps(r, 'read');
+}
+
+/* =========================================================
+   แบบฟอร์มกรอกค่า + การตรวจคำตอบ
+   ========================================================= */
+const UNIT_OPTS = '<option value="1">Ω</option><option value="1e3">kΩ</option><option value="1e6">MΩ</option><option value="1e9">GΩ</option>';
+const TOL_OPTS = '<option value="">— เลือกค่า —</option>' +
+  [...new Set(COLORS.filter(c => c.tol!==undefined).map(c => c.tol))].sort((a,b) => b-a)
+    .map(t => `<option value="${t}">±${t}%</option>`).join('');
+const TC_OPTS = '<option value="">— เลือกค่า —</option>' +
+  [...new Set(COLORS.filter(c => c.tc!==undefined).map(c => c.tc))].sort((a,b) => b-a)
+    .map(t => `<option value="${t}">${t} ppm/K</option>`).join('');
+
+function readFormHTML(p, n){
+  return `
+  <div class="field">
+    <label for="${p}Value">ค่าความต้านทาน</label>
+    <div class="input-row">
+      <input type="text" id="${p}Value" inputmode="decimal" autocomplete="off" placeholder="เช่น 4.7">
+      <select id="${p}Unit" aria-label="หน่วย">${UNIT_OPTS}</select>
+    </div>
+    <div class="help">พิมพ์ตัวเลขแล้วเลือกหน่วย หรือพิมพ์แบบมีหน่วยในตัว เช่น 4.7k, 4k7, 1M5</div>
+  </div>
+  <div class="field">
+    <label for="${p}Tol">ค่าความคลาดเคลื่อน (Tolerance)</label>
+    <select id="${p}Tol">${TOL_OPTS}</select>
+  </div>` + (n === 6 ? `
+  <div class="field">
+    <label for="${p}Tc">สัมประสิทธิ์อุณหภูมิ (TCR)</label>
+    <select id="${p}Tc">${TC_OPTS}</select>
+  </div>` : '');
+}
+function bindReadForm(p, onEnter){
+  ['Value','Unit','Tol','Tc'].map(s => p + s).filter(id => $(id)).forEach(id =>
+    $(id).addEventListener('input', () => {
+      $(id).classList.remove('ok','bad');
+      if (id === p + 'Value') $(p + 'Unit').classList.remove('ok','bad');
+    }));
+  $(p + 'Value').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); onEnter(); } });
+}
+
+/* แปลงข้อความเป็นค่าโอห์ม: รองรับ 4.7, 4,700, 4.7k, 4k7, 1M5, 0R47, 4.7kΩ */
+function parseOhm(raw, unitMult){
+  let s = raw.trim().replace(/,/g, '').replace(/\s+/g, '').replace(/(Ω|Ω|ohms?|โอห์ม)$/i, '');
+  if (!s) return null;
+  const P = { r:1, k:1e3, m:1e6, g:1e9 };
+  let m = s.match(/^(\d+)([rkmg])(\d+)$/i);
+  if (m) return parseFloat(m[1] + '.' + m[3]) * P[m[2].toLowerCase()];
+  m = s.match(/^(\d*\.?\d+)([rkmg])?$/i);
+  if (!m) return null;
+  const v = parseFloat(m[1]);
+  return m[2] ? v * P[m[2].toLowerCase()] : v * unitMult;
+}
+function mark(el, ok){ el.classList.remove('ok','bad'); el.classList.add(ok ? 'ok' : 'bad'); }
+
+function valueHint(user, r){
+  const mi = r.roles.indexOf('mult') + 1;
+  const k = Math.log10(user / r.ohm), kr = Math.round(k);
+  if (kr !== 0 && Math.abs(k - kr) < 1e-6){
+    return `ตัวเลขนัยสำคัญถูกแล้ว แต่ค่าที่ตอบ${kr > 0 ? 'มากกว่า' : 'น้อยกว่า'}ค่าจริง ${multValue(Math.abs(kr))} เท่า — ตรวจสอบสีของแถบตัวคูณ (แถบที่ ${mi}) หรือหน่วยที่เลือก`;
+  }
+  return `ค่าความต้านทานยังไม่ถูก — ตรวจสอบตัวเลขนัยสำคัญจากแถบที่ 1–${r.digits.length} และตัวคูณจากแถบที่ ${mi}`;
+}
+
+/* ตรวจคำตอบแบบอ่านค่า */
+function evalRead(p, n, keys, markFields){
+  const r = compute(n, keys);
+  const user = parseOhm($(p + 'Value').value, Number($(p + 'Unit').value));
+  if (user === null || !isFinite(user) || user <= 0){
+    $(p + 'Value').focus();
+    return { incomplete:true, msg:'กรุณากรอกค่าความต้านทานเป็นตัวเลขที่มากกว่า 0 เช่น 4.7 แล้วเลือกหน่วย หรือพิมพ์ 4k7' };
+  }
+  const tolV = $(p + 'Tol').value;
+  if (tolV === ''){ $(p + 'Tol').focus(); return { incomplete:true, msg:'กรุณาเลือกค่าความคลาดเคลื่อน' }; }
+  const tcEl = $(p + 'Tc');
+  if (n === 6 && (!tcEl || tcEl.value === '')){ tcEl.focus(); return { incomplete:true, msg:'กรุณาเลือกสัมประสิทธิ์อุณหภูมิ' }; }
+
+  const okV = Math.abs(user - r.ohm) <= r.ohm * 1e-6;
+  const okT = Number(tolV) === r.tol;
+  const okC = n !== 6 || Number(tcEl.value) === r.tc;
+  if (markFields){
+    mark($(p + 'Value'), okV); mark($(p + 'Unit'), okV); mark($(p + 'Tol'), okT);
+    if (n === 6) mark(tcEl, okC);
+  }
+  const tips = [];
+  if (!okV) tips.push(valueHint(user, r));
+  if (!okT) tips.push(`ค่าความคลาดเคลื่อนยังไม่ถูก — ดูสีของแถบที่ ${r.roles.indexOf('tol') + 1}`);
+  if (!okC) tips.push('สัมประสิทธิ์อุณหภูมิยังไม่ถูก — ดูสีของแถบที่ 6');
+  const html = `${fmt(user)} ±${Number(tolV)}%` + (n === 6 ? `, ${tcEl.value} ppm/K` : '');
+  return { all: okV && okT && okC, tips, html };
+}
+
+/* ตรวจคำตอบแบบเลือกสี (ย้อนกลับ) */
+function evalPick(p, n, sel, keys, markRows){
+  const missing = sel.map((k, i) => k ? 0 : i + 1).filter(Boolean);
+  if (missing.length) return { incomplete:true, msg:`กรุณาเลือกสีให้ครบทุกแถบ (ยังไม่ได้เลือกแถบที่ ${missing.join(', ')})` };
+  const r = compute(n, keys), u = compute(n, sel), roles = CONFIG[n];
+  const ok = sel.map((k, i) => k === keys[i]);
+  if (markRows) ok.forEach((v, i) => mark($(`${p}Row${i}`), v));
+
+  const tips = [];
+  const mi = roles.indexOf('mult'), ti = roles.indexOf('tol');
+  const badDigits = roles.map((ro, i) => ro==='digit' && !ok[i] ? i + 1 : 0).filter(Boolean);
+  if (badDigits.length){
+    tips.push(`ตัวเลขนัยสำคัญยังไม่ถูกที่แถบที่ ${badDigits.join(', ')} — สีที่เลือกแทนตัวเลข ${u.digits.join(' ')} แต่ค่าในโจทย์ต้องใช้ตัวเลขนัยสำคัญ ${r.digits.length} หลัก`);
+    if (!ok[mi]) tips.push(`แถบตัวคูณ (แถบที่ ${mi+1}) ยังไม่ถูก`);
+  } else if (!ok[mi]){
+    tips.push(`ตัวเลขนัยสำคัญถูกแล้ว แต่แถบตัวคูณ (แถบที่ ${mi+1}) ยังไม่ถูก — สีที่เลือกให้ค่า ${fmt(u.ohm)} แต่โจทย์ต้องการ ${fmt(r.ohm)}`);
+  }
+  if (!ok[ti]) tips.push(`แถบค่าความคลาดเคลื่อน (แถบที่ ${ti+1}) ยังไม่ถูก — สีที่เลือกหมายถึง ±${u.tol}% แต่โจทย์ต้องการ ±${r.tol}%`);
+  if (n === 6 && !ok[5]) tips.push(`แถบสัมประสิทธิ์อุณหภูมิ (แถบที่ 6) ยังไม่ถูก — สีที่เลือกหมายถึง ${u.tc} ppm/K แต่โจทย์ต้องการ ${r.tc} ppm/K`);
+  const html = colorSeq(sel) + `<br><small>= ${valueText(u)}</small>`;
+  return { all: ok.every(Boolean), tips, html };
+}
+
+/* =========================================================
+   สร้างโจทย์
+   ========================================================= */
+const keyOfDigit = d => COLORS.find(c => c.digit === d).key;
+const keyOfMult  = e => COLORS.find(c => c.mult  === e).key;
+function genKeys(n, prev){
+  const rule = QUIZ_RULE[n];
+  let keys;
+  do {
+    keys = String(pick(rule.series)).split('').map(Number).map(keyOfDigit);
+    keys.push(keyOfMult(pick(rule.mult)), pick(rule.tol));
+    if (n === 6) keys.push(pick(TC_KEYS));
+  } while (prev && keys.join() === prev.join());
+  return keys;
+}
+
+/* =========================================================
+   โหมดฝึก (อ่านค่า / ย้อนกลับ)
+   ========================================================= */
+const practice = {
+  read:{ p:'q', n:4, keys:null, sel:null, attempts:0, scored:false, done:false, total:0, correct:0, streak:0, bestKey:'bestStreakRead' },
+  rev: { p:'r', n:4, keys:null, sel:null, attempts:0, scored:false, done:false, total:0, correct:0, streak:0, bestKey:'bestStreakRev' }
+};
+const scoreBoxHTML = p => `
+  <div><b id="${p}Total">0</b><span>ทำแล้ว (ข้อ)</span></div>
+  <div><b id="${p}Correct">0</b><span>ตอบถูก (ข้อ)</span></div>
+  <div><b id="${p}Pct">–</b><span>ความแม่นยำ</span></div>
+  <div><b id="${p}Streak">0</b><span>ถูกติดต่อกัน</span></div>
+  <div class="best"><b id="${p}Best">0</b><span>สถิติสูงสุด*</span></div>`;
+
+function renderScore(kind){
+  const P = practice[kind], p = P.p;
+  $(p + 'Total').textContent   = P.total;
+  $(p + 'Correct').textContent = P.correct;
+  $(p + 'Pct').textContent     = P.total ? Math.round(P.correct * 100 / P.total) + '%' : '–';
+  $(p + 'Streak').textContent  = P.streak;
+  $(p + 'Best').textContent    = store.get(P.bestKey, 0);
+}
+function tally(kind, ok){
+  const P = practice[kind];
+  P.total++;
+  if (ok){ P.correct++; P.streak++; } else P.streak = 0;
+  let isRecord = false;
+  if (P.streak > store.get(P.bestKey, 0)){ store.set(P.bestKey, P.streak); isRecord = true; }
+  renderScore(kind);
+  return isRecord;
+}
+
+function newPractice(kind){
+  const P = practice[kind];
+  P.keys = genKeys(P.n, P.keys);
+  P.attempts = 0; P.scored = false; P.done = false;
+  const r = compute(P.n, P.keys);
+  if (kind === 'read'){
+    $('qForm').innerHTML = readFormHTML('q', P.n);
+    bindReadForm('q', () => checkPractice('read'));
+    $('qQuestion').innerHTML = `<b>โจทย์:</b> ตัวต้านทานแบบ ${P.n} แถบสี — อ่านค่าจากภาพ แล้วกรอกค่าความต้านทาน และเลือกค่าความคลาดเคลื่อน${P.n===6 ? ' และสัมประสิทธิ์อุณหภูมิ' : ''}`;
+  } else {
+    P.sel = Array(P.keys.length).fill(null);
+    buildPickForm($('rForm'), 'r', P.n, P.sel, () => renderPractice('rev'), () => $('rHint').checked);
+    $('rQuestion').innerHTML = `<b>โจทย์:</b> เลือกสีของตัวต้านทานแบบ ${P.n} แถบ ที่มีค่า<div class="target">${valueText(r)}</div>`;
+  }
+  $(P.p + 'Feedback').className = 'feedback';
+  $(P.p + 'Check').disabled = false; $(P.p + 'Reveal').disabled = false;
+  renderPractice(kind);
+}
+
+function renderPractice(kind){
+  const P = practice[kind], r = compute(P.n, P.keys);
+  if (kind === 'read'){
+    $('picTitle').textContent = 'โจทย์: อ่านค่าตัวต้านทานนี้';
+    drawResistor(P.n, P.keys);
+    $('hintLine').innerHTML = $('qHint').checked
+      ? P.keys.map((k, i) => `<span class="chip">${i+1}. ${BY_KEY[k].th}</span>`).join(' ') : '';
+  } else {
+    $('picTitle').textContent = P.done ? 'คำตอบที่ถูกต้อง' : 'ภาพจากสีที่คุณเลือก';
+    drawResistor(P.n, P.done ? P.keys : P.sel);
+    $('hintLine').innerHTML = '';
+  }
+  $('valueBox').classList.toggle('hidden', !P.done);
+  if (P.done){ renderResult(r); setSteps(r, kind==='read' ? 'read' : 'encode'); }
+  else stepsPlaceholder(kind==='read' ? 'วิธีการอ่านค่า' : 'วิธีแปลงค่าความต้านทานเป็นรหัสสี',
+       'ตอบคำถามให้ถูกต้อง หรือกด "ดูเฉลย" แล้วโปรแกรมจะแสดงวิธีทำทีละขั้นตอน');
+}
+
+function finishPractice(kind){
+  const P = practice[kind];
+  P.done = true;
+  $(P.p + 'Check').disabled = true; $(P.p + 'Reveal').disabled = true;
+  if (kind === 'rev') pickForms.r.locked = true;
+  renderPractice(kind);
+}
+
+function checkPractice(kind){
+  const P = practice[kind]; if (P.done) return;
+  const r = compute(P.n, P.keys), fb = P.p + 'Feedback';
+  const ev = kind === 'read' ? evalRead('q', P.n, P.keys, true) : evalPick('r', P.n, P.sel, P.keys, true);
+  if (ev.incomplete){ showMsg(fb, 'info', ev.msg); return; }
+  P.attempts++;
+  let isRecord = false;
+  if (!P.scored){ P.scored = true; isRecord = tally(kind, ev.all); }
+  if (ev.all){
+    finishPractice(kind);
+    showMsg(fb, 'ok', `<b>ถูกต้อง!</b> ${kind==='read' ? valueText(r) : colorSeq(P.keys) + ' = ' + valueText(r)}` +
+      (P.attempts === 1 ? ' — ได้คะแนนข้อนี้' : ` (ตอบถูกในครั้งที่ ${P.attempts} — ไม่นับคะแนน)`) +
+      (isRecord && P.streak >= 2 ? `<br><b>สถิติใหม่!</b> ตอบถูกติดต่อกัน ${P.streak} ข้อ` : '') +
+      '<br>กด "ข้อต่อไป" เพื่อทำโจทย์ใหม่');
+  } else {
+    showMsg(fb, 'bad', `<b>ยังไม่ถูกต้อง</b> แก้ไข${kind==='read' ? 'ช่อง' : 'แถบ'}ที่มีกรอบสีแดงแล้วกดตรวจอีกครั้ง หรือกด "ดูเฉลย"
+      <ul>${ev.tips.map(t => `<li>${t}</li>`).join('')}</ul>`);
+  }
+}
+
+function revealPractice(kind){
+  const P = practice[kind]; if (P.done) return;
+  if (!P.scored){ P.scored = true; tally(kind, false); }
+  const r = compute(P.n, P.keys);
+  finishPractice(kind);
+  showMsg(P.p + 'Feedback', 'info', `<b>เฉลย:</b> ${kind==='read' ? valueText(r) : colorSeq(P.keys)}` +
+    ` — ศึกษา${kind==='read' ? 'วิธีการอ่านค่า' : 'วิธีแปลงค่าเป็นรหัสสี'}ด้านล่าง`);
+}
+
+/* =========================================================
+   โหมดจับเวลา
+   ========================================================= */
+const exam = { view:'setup', running:false, cfg:null, qs:[], idx:0, t0:0, qT0:0, timer:null, sel:null, last:null };
+const KIND_LABEL = { read:'อ่านค่า', rev:'ย้อนกลับ' };
+const TYPE_LABEL = { read:'อ่านค่าจากแถบสี', rev:'เลือกแถบสีจากค่า', mix:'คละทั้งสองแบบ' };
+
+function readExamCfg(){
+  return {
+    name:  $('exName').value.trim().slice(0, 30),
+    type:  $('exType').value,
+    bands: $('exBands').value,
+    count: Number($('exCount').value),
+    limit: Number($('exLimit').value)
+  };
+}
+const cfgKey = c => `${c.type}|${c.bands}|${c.count}|${c.limit}`;
+const cfgLabel = c => `${TYPE_LABEL[c.type]} · ${c.bands==='mix' ? 'คละ 4/5/6 แถบ' : c.bands + ' แถบ'} · ${c.count} ข้อ · ` +
+  (c.limit ? `จำกัดเวลา ${c.limit / 60} นาที` : 'ไม่จำกัดเวลา');
+
+/* ตารางคะแนนสูงสุด: เรียงตามคะแนนมาก→น้อย ถ้าเท่ากันเรียงตามเวลาน้อย→มาก เก็บ 5 อันดับ */
+const getLB = key => store.get('lb', {})[key] || [];
+function saveRecord(key, rec){
+  const all = store.get('lb', {});
+  const list = (all[key] || []).concat(rec);
+  list.sort((a, b) => b.score - a.score || a.timeMs - b.timeMs);
+  all[key] = list.slice(0, 5);
+  store.set('lb', all);
+  return all[key].findIndex(x => x.id === rec.id) + 1;   // 0 = ไม่ติดอันดับ
+}
+function renderLeaderboard(cid, key, hid){
+  const list = getLB(key);
+  if (!list.length){ $(cid).innerHTML = '<p class="help">ยังไม่มีสถิติสำหรับการตั้งค่านี้</p>'; return; }
+  $(cid).innerHTML = `<div class="table-scroll"><table class="lb">
+    <thead><tr><th>อันดับ</th><th>ชื่อ</th><th>คะแนน</th><th>เวลา</th><th>วันที่</th></tr></thead>
+    <tbody>${list.map((x, i) => `<tr class="${x.id === hid ? 'hl' : ''}">
+      <td>${i + 1}</td><td>${esc(x.name)}</td><td>${x.score}/${x.total}</td><td>${fmtTime(x.timeMs)}</td>
+      <td>${new Date(x.date).toLocaleString('th-TH', {dateStyle:'short', timeStyle:'short'})}</td></tr>`).join('')}
+    </tbody></table></div>`;
+}
+function renderSetupLB(){
+  const c = readExamCfg();
+  $('lbCfg').textContent = 'การตั้งค่า: ' + cfgLabel(c);
+  renderLeaderboard('lbSetup', cfgKey(c));
+}
+
+function showExamView(v){
+  exam.view = v;
+  $('exSetup').classList.toggle('hidden', v !== 'setup');
+  $('exRun').classList.toggle('hidden', v !== 'run');
+  $('exResult').classList.toggle('hidden', v !== 'result');
+  $('hintLine').innerHTML = '';
+  if (v === 'setup'){
+    $('picTitle').textContent = 'แบบทดสอบจับเวลา';
+    drawResistor(4, DEFAULTS[4]);
+    $('valueBox').classList.add('hidden');
+    $('stepsCard').classList.add('hidden');
+    renderSetupLB();
+  } else if (v === 'run'){
+    $('valueBox').classList.add('hidden');
+    $('stepsCard').classList.add('hidden');
+  } else {
+    renderExamResult();
+  }
+}
+
+function startExam(){
+  const cfg = readExamCfg();
+  store.set('name', cfg.name);
+  exam.cfg = cfg; exam.qs = [];
+  let prev = null;
+  for (let i = 0; i < cfg.count; i++){
+    const n = cfg.bands === 'mix' ? pick([4,5,6]) : Number(cfg.bands);
+    const kind = cfg.type === 'mix' ? pick(['read','rev']) : cfg.type;
+    const keys = genKeys(n, prev); prev = keys;
+    exam.qs.push({ kind, n, keys, answer:'', correct:false, time:0 });
+  }
+  exam.idx = 0; exam.running = true;
+  exam.t0 = performance.now();
+  clearInterval(exam.timer);
+  exam.timer = setInterval(tick, 100);
+  showExamView('run');
+  showExamQuestion();
+  tick();
+}
+
+function tick(){
+  if (!exam.running) return;
+  const el = performance.now() - exam.t0, lim = exam.cfg.limit * 1000;
+  if (lim){
+    const left = lim - el;
+    $('exTimer').textContent = 'เหลือ ' + fmtTime(left);
+    $('exTimer').classList.toggle('warn', left < 10000);
+    if (left <= 0) finishExam(true);
+  } else {
+    $('exTimer').textContent = 'เวลา ' + fmtTime(el);
+    $('exTimer').classList.remove('warn');
+  }
+}
+
+function showExamQuestion(){
+  const q = exam.qs[exam.idx], total = exam.qs.length, r = compute(q.n, q.keys);
+  exam.qT0 = performance.now();
+  $('exProg').textContent = `ข้อ ${exam.idx + 1} / ${total}`;
+  $('exProgBar').style.width = (exam.idx / total * 100) + '%';
+  $('exMsg').className = 'feedback';
+  $('valueBox').classList.add('hidden');
+  if (q.kind === 'read'){
+    $('picTitle').textContent = `ข้อ ${exam.idx + 1}: อ่านค่าตัวต้านทานนี้`;
+    $('exQuestion').innerHTML = `<b>ข้อ ${exam.idx + 1}:</b> อ่านค่าตัวต้านทานแบบ ${q.n} แถบสีในภาพ`;
+    $('exAnswer').innerHTML = readFormHTML('ex', q.n);
+    bindReadForm('ex', () => submitExam(false));
+    drawResistor(q.n, q.keys);
+    if (matchMedia('(pointer:fine)').matches) $('exValue').focus();
+  } else {
+    $('picTitle').textContent = `ข้อ ${exam.idx + 1}: ภาพจากสีที่คุณเลือก`;
+    $('exQuestion').innerHTML = `<b>ข้อ ${exam.idx + 1}:</b> เลือกสีของตัวต้านทานแบบ ${q.n} แถบ ที่มีค่า<div class="target">${valueText(r)}</div>`;
+    exam.sel = Array(q.keys.length).fill(null);
+    buildPickForm($('exAnswer'), 'ex', q.n, exam.sel, () => drawResistor(q.n, exam.sel), () => false);
+    drawResistor(q.n, exam.sel);
+  }
+}
+
+function submitExam(skip){
+  if (!exam.running) return;
+  const q = exam.qs[exam.idx];
+  if (skip){
+    q.answer = '<i>ข้าม</i>'; q.correct = false;
+  } else {
+    const ev = q.kind === 'read'
+      ? evalRead('ex', q.n, q.keys, false)
+      : evalPick('ex', q.n, exam.sel, q.keys, false);
+    if (ev.incomplete){ showMsg('exMsg', 'info', ev.msg); return; }
+    q.answer = ev.html; q.correct = ev.all;
+  }
+  q.time = performance.now() - exam.qT0;
+  exam.idx++;
+  if (exam.idx >= exam.qs.length) finishExam(false);
+  else showExamQuestion();
+}
+
+function finishExam(timeout){
+  if (!exam.running) return;
+  exam.running = false;
+  clearInterval(exam.timer);
+  const now = performance.now();
+  const total = timeout ? exam.cfg.limit * 1000 : now - exam.t0;
+  if (timeout){
+    for (let i = exam.idx; i < exam.qs.length; i++){
+      const q = exam.qs[i];
+      q.answer = '<i>หมดเวลา</i>'; q.correct = false;
+      q.time = i === exam.idx ? now - exam.qT0 : 0;
+    }
+  }
+  const key = cfgKey(exam.cfg);
+  const prevBest = getLB(key)[0] || null;
+  const rec = {
+    id: Date.now(), name: exam.cfg.name || 'ไม่ระบุชื่อ',
+    score: exam.qs.filter(q => q.correct).length, total: exam.qs.length,
+    timeMs: Math.round(total), date: new Date().toISOString()
+  };
+  const rank = saveRecord(key, rec);
+  exam.last = { rec, rank, key, prevBest, timeout };
+  showExamView('result');
+}
+
+function abortExam(){
+  clearInterval(exam.timer);
+  exam.running = false;
+  exam.view = 'setup';
+}
+
+function renderExamResult(){
+  const L = exam.last; if (!L) return;
+  const rec = L.rec, n = rec.total;
+  $('exCfgLabel').textContent = `${rec.name} · ${cfgLabel(exam.cfg)}`;
+  $('exSummary').innerHTML = `
+    <div><b>${rec.score}/${n}</b><span>คะแนน</span></div>
+    <div><b>${Math.round(rec.score * 100 / n)}%</b><span>ความแม่นยำ</span></div>
+    <div><b>${fmtTime(rec.timeMs)}</b><span>เวลารวม</span></div>
+    <div><b>${(rec.timeMs / n / 1000).toFixed(1)} s</b><span>เวลาเฉลี่ยต่อข้อ</span></div>`;
+
+  let msg, cls = 'ok';
+  if (L.rank === 1){
+    msg = '<b>สถิติใหม่! อันดับที่ 1</b> ของการตั้งค่านี้' +
+      (L.prevBest ? ` (สถิติเดิม ${L.prevBest.score}/${L.prevBest.total} ใน ${fmtTime(L.prevBest.timeMs)})` : '');
+  } else if (L.rank > 1){
+    msg = `ติดตารางคะแนนสูงสุด <b>อันดับที่ ${L.rank}</b>`;
+  } else {
+    cls = 'info';
+    const b = getLB(L.key)[0];
+    msg = `ยังไม่ติด 5 อันดับแรก — สถิติสูงสุดคือ ${b.score}/${b.total} ใน ${fmtTime(b.timeMs)}`;
+  }
+  if (L.timeout) msg = '<b>หมดเวลา!</b> ข้อที่ยังไม่ได้ตอบนับเป็นข้อผิด<br>' + msg;
+  showMsg('exRankMsg', cls, msg);
+
+  $('exTable').innerHTML = `<thead><tr><th>ข้อ</th><th>ประเภท</th><th>โจทย์</th><th>คำตอบของคุณ</th>
+    <th>เฉลย</th><th>ผล</th><th>เวลา</th><th></th></tr></thead><tbody>` +
+    exam.qs.map((q, i) => {
+      const r = compute(q.n, q.keys);
+      const question = q.kind === 'read' ? colorSeq(q.keys) : valueText(r);
+      const answer   = q.kind === 'read' ? valueText(r) : colorSeq(q.keys);
+      return `<tr><td>${i + 1}</td><td>${KIND_LABEL[q.kind]}<br><small>${q.n} แถบ</small></td>
+        <td>${question}</td><td>${q.answer}</td><td>${answer}</td>
+        <td class="${q.correct ? 'res-ok' : 'res-bad'}">${q.correct ? '✓ ถูก' : '✗ ผิด'}</td>
+        <td>${q.time ? (q.time / 1000).toFixed(1) + ' s' : '–'}</td>
+        <td><button type="button" class="btn sm" data-review="${i}">ดูวิธีทำ</button></td></tr>`;
+    }).join('') + '</tbody>';
+
+  renderLeaderboard('lbResult', L.key, rec.id);
+  const firstWrong = exam.qs.findIndex(q => !q.correct);
+  reviewExamQ(firstWrong >= 0 ? firstWrong : 0, false);
+}
+
+function reviewExamQ(i, scroll){
+  const q = exam.qs[i]; if (!q) return;
+  const r = compute(q.n, q.keys);
+  $('picTitle').textContent = `ทบทวนข้อ ${i + 1} — ${KIND_LABEL[q.kind]} (${q.n} แถบ)`;
+  $('hintLine').innerHTML = '';
+  drawResistor(q.n, q.keys);
+  $('valueBox').classList.remove('hidden');
+  renderResult(r);
+  setSteps(r, q.kind === 'read' ? 'read' : 'encode');
+  document.querySelectorAll('#exTable tbody tr').forEach((tr, j) => tr.classList.toggle('active', j === i));
+  if (scroll && window.innerWidth < 960) $('picCard').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+/* =========================================================
+   สลับโหมด
+   ========================================================= */
+function setMode(m){
+  if (m === state.mode) return;
+  if (exam.running){
+    if (!confirm('กำลังทำแบบทดสอบจับเวลาอยู่ ต้องการออกหรือไม่?\nผลการทดสอบครั้งนี้จะไม่ถูกบันทึก')) return;
+    abortExam();
+  }
+  state.mode = m;
+  document.querySelectorAll('#modeTabs button').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
+  [['calc','calcPanel'],['quiz','quizPanel'],['rev','revPanel'],['exam','examPanel']]
+    .forEach(([k, id]) => $(id).classList.toggle('hidden', k !== m));
+  if (m === 'calc') update();
+  else if (m === 'quiz'){ if (practice.read.keys) renderPractice('read'); else newPractice('read'); }
+  else if (m === 'rev'){ if (practice.rev.keys) renderPractice('rev'); else newPractice('rev'); }
+  else showExamView(exam.view);
+}
+
+/* =========================================================
+   ตารางอ้างอิง
+   ========================================================= */
+function buildRefTable(){
+  const rows = COLORS.map(c => `<tr>
+      <td>${chip(c)}</td>
+      <td>${c.digit ?? '–'}</td>
+      <td>${c.mult!==undefined ? '×' + multValue(c.mult) : '–'}</td>
+      <td>${c.tol!==undefined ? '±' + c.tol + '%' : '–'}</td>
+      <td>${c.tc!==undefined ? c.tc : '–'}</td></tr>`).join('');
+  $('refTable').innerHTML =
+    `<thead><tr><th>สี</th><th>ตัวเลข</th><th>ตัวคูณ</th><th>ความคลาดเคลื่อน</th><th>TCR (ppm/K)</th></tr></thead><tbody>${rows}</tbody>`;
+}
+
+/* =========================================================
+   เหตุการณ์
+   ========================================================= */
+document.querySelectorAll('#modeTabs button').forEach(b =>
+  b.addEventListener('click', () => setMode(b.dataset.mode)));
+
+/* โหมดคำนวณ */
+bindSeg('bandCount', n => { state.n = n; buildControls(); update(); });
+$('btnRandom').addEventListener('click', () => {
+  const n = state.n, arr = state.sel[n];
+  arr.splice(0, arr.length, ...CONFIG[n].map((role, i) => pick(optionsFor(role, i, n)).key));
+  update();
+});
+$('btnReset').addEventListener('click', () => {
+  const arr = state.sel[state.n];
+  arr.splice(0, arr.length, ...DEFAULTS[state.n]);
+  update();
+});
+
+/* โหมดฝึกทั้งสองแบบ */
+[['read','q'], ['rev','r']].forEach(([kind, p]) => {
+  $(p + 'Score').innerHTML = scoreBoxHTML(p);
+  bindSeg(p + 'Bands', n => { practice[kind].n = n; newPractice(kind); });
+  $(p + 'Check').addEventListener('click', () => checkPractice(kind));
+  $(p + 'Reveal').addEventListener('click', () => revealPractice(kind));
+  $(p + 'Next').addEventListener('click', () => newPractice(kind));
+  $(p + 'ResetScore').addEventListener('click', () => {
+    const P = practice[kind]; P.total = 0; P.correct = 0; P.streak = 0; renderScore(kind);
+  });
+  $(p + 'ClearBest').addEventListener('click', () => {
+    if (confirm('ต้องการลบสถิติสูงสุดของโหมดนี้หรือไม่?')){ store.set(practice[kind].bestKey, 0); renderScore(kind); }
+  });
+  renderScore(kind);
+});
+$('qHint').addEventListener('change', () => { if (practice.read.keys) renderPractice('read'); });
+$('rHint').addEventListener('change', () => refreshPickForm('r'));
+$('rClear').addEventListener('click', () => {
+  const P = practice.rev; if (P.done) return;
+  P.sel.fill(null);
+  document.querySelectorAll('#rForm .band-row').forEach(row => row.classList.remove('ok','bad'));
+  $('rFeedback').className = 'feedback';
+  refreshPickForm('r');
+  renderPractice('rev');
+});
+
+/* โหมดจับเวลา */
+['exType','exBands','exCount','exLimit'].forEach(id => $(id).addEventListener('change', renderSetupLB));
+$('btnExStart').addEventListener('click', startExam);
+$('btnExSubmit').addEventListener('click', () => submitExam(false));
+$('btnExSkip').addEventListener('click', () => submitExam(true));
+$('btnExQuit').addEventListener('click', () => {
+  if (confirm('ต้องการยกเลิกแบบทดสอบหรือไม่? ผลครั้งนี้จะไม่ถูกบันทึก')){ abortExam(); showExamView('setup'); }
+});
+$('btnExAgain').addEventListener('click', startExam);
+$('btnExSetup').addEventListener('click', () => showExamView('setup'));
+$('btnLbClear').addEventListener('click', () => {
+  const key = cfgKey(readExamCfg());
+  if (!getLB(key).length) return;
+  if (confirm('ต้องการลบตารางคะแนนของการตั้งค่านี้หรือไม่?')){
+    const all = store.get('lb', {}); delete all[key]; store.set('lb', all); renderSetupLB();
+  }
+});
+$('exTable').addEventListener('click', e => {
+  const b = e.target.closest('[data-review]');
+  if (b) reviewExamQ(Number(b.dataset.review), true);
+});
+
+/* =========================================================
+   เริ่มต้น
+   ========================================================= */
+if (!store.ok) $('storeWarn').classList.remove('hidden');
+$('exName').value = store.get('name', '');
+buildRefTable();
+buildControls();
+update();
+</script>
+</body>
+</html>
