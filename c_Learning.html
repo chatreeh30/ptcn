@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>เรียนภาษาซีเบื้องต้น</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5f9;color:#1e293b;font-family:'Sarabun','Noto Sans Thai',Tahoma,sans-serif;font-size:18px;line-height:1.7}
+.wrap{max-width:820px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:8px 0 2px}
+h2{font-size:1.4rem;margin:0 0 8px;color:#1d4ed8}
+h3{margin:0 0 6px}
+.sub{color:#64748b;margin:0 0 12px}
+code,pre,textarea,.mono{font-family:Consolas,'Courier New',monospace}
+code{background:#e0e7ff;color:#3730a3;padding:1px 6px;border-radius:5px;font-size:.92em}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}
+.dot{flex:1;min-width:120px;border:2px solid #cbd5e1;background:#fff;border-radius:12px;padding:8px 6px;cursor:pointer;font:inherit;font-size:.9rem;text-align:center}
+.dot.cur{border-color:#2563eb;background:#dbeafe;font-weight:700}
+.dot.done{border-color:#22c55e}
+.card{background:#fff;border-radius:16px;padding:18px 22px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.learn{background:#eff6ff;border-left:6px solid #2563eb}
+.mission{background:#faf5ff;border-left:6px solid #9333ea}
+.quiz{background:#fffbeb;border-left:6px solid #f59e0b}
+pre.show{background:#0f172a;color:#e2e8f0;padding:10px 14px;border-radius:10px;overflow-x:auto;font-size:.95rem;margin:8px 0}
+textarea.code{width:100%;background:#0f172a;color:#e2e8f0;border:0;border-radius:10px;padding:12px;font-size:1rem;line-height:1.55;resize:vertical;white-space:pre;tab-size:4}
+.inp{width:100%;border:2px solid #cbd5e1;border-radius:8px;padding:8px 10px;font-size:1rem;font-family:Consolas,monospace}
+.lab{display:block;font-size:.9rem;color:#475569;margin-top:8px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.btn{border:2px solid #cbd5e1;background:#fff;border-radius:10px;padding:8px 16px;font:inherit;font-size:1rem;cursor:pointer}
+.btn:hover{background:#f1f5f9}
+.btn.go{background:#2563eb;border-color:#2563eb;color:#fff;font-weight:700}
+.btn.ok{background:#16a34a;border-color:#16a34a;color:#fff;font-weight:700}
+.btn:disabled{opacity:.4;cursor:default}
+.term{background:#020617;color:#4ade80;border-radius:10px;padding:10px 14px;min-height:44px;white-space:pre-wrap;font-size:1rem;margin-top:6px}
+.term i{color:#fde68a;font-style:normal}
+.tlabel{font-size:.8rem;color:#64748b;margin-top:8px}
+.box{padding:10px 14px;border-radius:10px;margin-top:8px;font-size:.98rem}
+.err{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+.good{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+.warn{background:#fffbeb;border:1px solid #fcd34d;color:#92400e}
+.box ul{margin:4px 0 0 20px;padding:0}
+table{border-collapse:collapse;margin:8px 0;font-size:.95rem}
+td,th{border:1px solid #cbd5e1;padding:5px 12px;text-align:left}
+th{background:#f1f5f9}
+.aline{display:flex;gap:12px;width:100%;border:0;background:transparent;color:#e2e8f0;text-align:left;padding:3px 12px;cursor:pointer;font-family:Consolas,monospace;font-size:1rem}
+.aline:hover{background:#1e293b}.aline.sel{background:#1d4ed8}
+.aline .n{color:#64748b;width:16px;text-align:right}
+.acode{background:#0f172a;border-radius:10px;padding:8px 0}
+.aexp{background:#fff;border:2px dashed #93c5fd;border-radius:10px;padding:10px 14px;margin-top:8px;min-height:70px}
+.choice{display:block;width:100%;text-align:left;margin:6px 0;padding:9px 14px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font:inherit;font-size:1rem;cursor:pointer}
+.choice:hover{border-color:#2563eb}
+.choice.right{background:#dcfce7;border-color:#22c55e}.choice.wrong{background:#fee2e2;border-color:#ef4444}
+.nav{display:flex;justify-content:space-between;margin:8px 0 40px}
+.fin{background:#ecfdf5;border:2px solid #22c55e}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🖥️ เรียนภาษาซี: คำสั่งเบื้องต้น</h1>
+  <p class="sub">ทำทีละขั้น: อ่าน → ลองรัน → ทำภารกิจ → ตอบคำถาม</p>
+  <div class="steps" id="steps"></div>
+  <div id="page"></div>
+</div>
+
+<script>
+/* ================= ตัวจำลองภาษาซีแบบย่อ ================= */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+class CErr extends Error{constructor(m,line,kind){super(m);this.line=line||0;this.kind=kind||'compile';}}
+const KW=['int','float','double','char','return','if','else','for','while','void','main','printf','scanf','include'];
+const unesc=s=>s.replace(/\\(n|t|\\|"|')/g,(m,c)=>({n:'\n',t:'\t','\\':'\\','"':'"',"'":"'"}[c]));
+const lineAt=(s,i)=>{let n=1;for(let k=0;k<i&&k<s.length;k++)if(s[k]==='\n')n++;return n;};
+
+function strip(src){
+  let o='',i=0,q=null;
+  while(i<src.length){
+    const c=src[i],d=src[i+1];
+    if(q){
+      if(c==='\n')throw new CErr('ข้อความหรืออักขระเปิดเครื่องหมาย '+q+' แต่ไม่ได้ปิด',lineAt(src,i));
+      o+=c;
+      if(c==='\\'){o+=src[i+1]||'';i+=2;continue;}
+      if(c===q)q=null;
+      i++;continue;
+    }
+    if(c==='"'||c==="'"){q=c;o+=c;i++;continue;}
+    if(c==='/'&&d==='/'){while(i<src.length&&src[i]!=='\n'){o+=' ';i++;}continue;}
+    if(c==='/'&&d==='*'){
+      const j=src.indexOf('*/',i+2);
+      if(j<0)throw new CErr('คอมเมนต์ /* ไม่ได้ปิดด้วย */',lineAt(src,i));
+      for(;i<j+2;i++)o+=src[i]==='\n'?'\n':' ';
+      continue;
+    }
+    o+=c;i++;
+  }
+  return o;
+}
+function splitTop(s,L){
+  const parts=[];let depth=0,cur='',q=null;
+  for(let i=0;i<s.length;i++){
+    const c=s[i];
+    if(q){cur+=c;if(c==='\\'){cur+=s[++i]||'';}else if(c===q)q=null;continue;}
+    if(c==='"'||c==="'"){q=c;cur+=c;continue;}
+    if(c==='(')depth++;
+    if(c===')')depth--;
+    if(c===','&&depth===0){parts.push(cur.trim());cur='';continue;}
+    cur+=c;
+  }
+  parts.push(cur.trim());
+  return parts;
+}
+function evalE(text,env,L,warn){
+  const tk=[];let i=0,m;
+  while(i<text.length){
+    const r=text.slice(i);
+    if(/^\s/.test(r)){i++;continue;}
+    if((m=/^(\d+\.\d*|\.\d+|\d+)/.exec(r))){tk.push({k:'n',v:parseFloat(m[0]),t:m[0].includes('.')?'d':'i'});i+=m[0].length;continue;}
+    if((m=/^'(\\.|[^\\'])'/.exec(r))){tk.push({k:'n',v:unesc(m[1]).charCodeAt(0),t:'i'});i+=m[0].length;continue;}
+    if((m=/^[A-Za-z_]\w*/.exec(r))){tk.push({k:'id',v:m[0]});i+=m[0].length;continue;}
+    tk.push({k:'op',v:r[0]});i++;
+  }
+  let p=0;
+  const op=v=>tk[p]&&tk[p].k==='op'&&tk[p].v===v;
+  const bad=()=>new CErr('นิพจน์ "'+text.trim()+'" เขียนไม่ถูกต้อง ลองตรวจเครื่องหมายและวงเล็บอีกครั้ง',L);
+  function ar(o,a,b){
+    const d=a.t==='d'||b.t==='d';
+    if(o==='+')return d?{v:a.v+b.v,t:'d'}:{v:(a.v+b.v)|0,t:'i'};
+    if(o==='-')return d?{v:a.v-b.v,t:'d'}:{v:(a.v-b.v)|0,t:'i'};
+    if(o==='*')return d?{v:a.v*b.v,t:'d'}:{v:Math.imul(a.v,b.v),t:'i'};
+    if(o==='/'){
+      if(d)return{v:a.v/b.v,t:'d'};
+      if(b.v===0)throw new CErr('หารจำนวนเต็มด้วยศูนย์ไม่ได้',L,'run');
+      return{v:Math.trunc(a.v/b.v),t:'i'};
+    }
+    if(d)throw new CErr('เครื่องหมาย % ใช้ได้กับจำนวนเต็มเท่านั้น',L);
+    if(b.v===0)throw new CErr('หารด้วยศูนย์ไม่ได้',L,'run');
+    return{v:a.v%b.v,t:'i'};
+  }
+  function add(){let l=mul();while(op('+')||op('-')){const o=tk[p++].v;l=ar(o,l,mul());}return l;}
+  function mul(){let l=un();while(op('*')||op('/')||op('%')){const o=tk[p++].v;l=ar(o,l,un());}return l;}
+  function un(){
+    if(op('-')){p++;const x=un();return{v:-x.v,t:x.t};}
+    if(op('+')){p++;return un();}
+    if(op('(')&&tk[p+1]&&tk[p+1].k==='id'&&['int','float','double'].includes(tk[p+1].v)&&tk[p+2]&&tk[p+2].v===')'){
+      const ty=tk[p+1].v;p+=3;const x=un();
+      return ty==='int'?{v:Math.trunc(x.v),t:'i'}:{v:x.v,t:'d'};
+    }
+    return pr();
+  }
+  function pr(){
+    const t=tk[p];if(!t)throw bad();
+    if(t.k==='n'){p++;return{v:t.v,t:t.t};}
+    if(t.k==='id'){
+      p++;const va=env[t.v];
+      if(!va)throw new CErr(`ยังไม่ได้ประกาศตัวแปร '${t.v}' (ต้องประกาศก่อนใช้ เช่น int ${t.v}; และพิมพ์เล็ก-ใหญ่ต้องตรงกัน)`,L);
+      if(!va.init)warn(`ตัวแปร '${t.v}' ยังไม่ได้ใส่ค่า จึงได้ค่าขยะ`);
+      return{v:va.init?va.v:0,t:(va.type==='float'||va.type==='double')?'d':'i'};
+    }
+    if(t.k==='op'&&t.v==='('){p++;const x=add();if(!op(')'))throw bad();p++;return x;}
+    throw bad();
+  }
+  const r=add();
+  if(p<tk.length)throw bad();
+  return r;
+}
+function store(va,x,L,warn){
+  if((va.type==='int'||va.type==='char')&&x.t==='d'&&!Number.isInteger(x.v))
+    warn(`เก็บค่าทศนิยม ${Number(x.v.toPrecision(8))} ลงตัวแปร ${va.type} ('${va.name}') ส่วนทศนิยมจะหายไป`);
+  if(va.type==='int')va.v=Math.trunc(x.v)|0;
+  else if(va.type==='char')va.v=(Math.trunc(x.v)<<24)>>24;
+  else if(va.type==='float')va.v=Math.fround(x.v);
+  else va.v=x.v;
+  va.init=true;
+}
+function runC(src,stdin){
+  const res={shown:[],raw:'',vars:[],warns:[],error:null};
+  const env={};const seen={};
+  let L=0;
+  const warn=m=>{const k=L+m;if(!seen[k]){seen[k]=1;res.warns.push({line:L,msg:m});}};
+  try{
+    let code=strip(src);let hasStdio=false;
+    code=code.split('\n').map((ln,idx)=>{
+      if(/^\s*#/.test(ln)){
+        if(/^\s*#\s*include\s*<stdio\.h>\s*$/.test(ln)){hasStdio=true;return'';}
+        throw new CErr('บรรทัด # ไม่ถูกต้อง ต้องเขียนเป็น #include <stdio.h>',idx+1);
+      }
+      return ln;
+    }).join('\n');
+    const mm=/int\s+main\s*\(\s*(void)?\s*\)\s*\{/.exec(code);
+    if(!mm)throw new CErr('ไม่พบ int main(void) { ... } โปรแกรมภาษาซีต้องมีฟังก์ชัน main เสมอ',1);
+    if(code.slice(0,mm.index).trim())throw new CErr('บทเรียนนี้ให้เขียนโค้ดภายใน main เท่านั้น',lineAt(code,code.slice(0,mm.index).search(/\S/)));
+    const start=mm.index+mm[0].length;
+    let depth=1,q=null,end=-1;
+    for(let i=start;i<code.length;i++){
+      const c=code[i];
+      if(q){if(c==='\\')i++;else if(c===q)q=null;continue;}
+      if(c==='"'||c==="'"){q=c;continue;}
+      if(c==='{')depth++;
+      else if(c==='}'){depth--;if(depth===0){end=i;break;}}
+    }
+    if(end<0)throw new CErr('ขาดเครื่องหมาย } ปิดท้ายฟังก์ชัน main',lineAt(code,code.length));
+    const body=code.slice(start,end);
+    if(/[{}]/.test(body.replace(/"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/g,'')))throw new CErr('บทเรียนนี้ยังไม่ใช้ { } ซ้อนใน main (เช่น if, for จะเรียนในบทถัดไป)',lineAt(code,start));
+    const stmts=[];let cur='',st=-1,pd=0;q=null;
+    for(let k=0;k<body.length;k++){
+      const c=body[k];
+      if(st<0&&!/\s/.test(c))st=k;
+      if(q){cur+=c;if(c==='\\')cur+=body[++k]||'';else if(c===q)q=null;continue;}
+      if(c==='"'||c==="'"){q=c;cur+=c;continue;}
+      if(c==='(')pd++;
+      if(c===')')pd--;
+      if(c===';'&&pd<=0){stmts.push({t:cur.trim(),line:lineAt(code,start+st)});cur='';st=-1;pd=0;continue;}
+      cur+=c;
+    }
+    if(cur.trim())throw new CErr('คำสั่งสุดท้ายลืมใส่เครื่องหมาย ; ปิดท้าย',lineAt(code,start+st));
+    /* stdin */
+    const toks=(stdin||'').trim().split(/\s+/).filter(Boolean);let tp=0;
+    let returned=false;
+    for(const s of stmts){
+      if(!s.t)continue;
+      L=s.line;
+      const t=s.t;let m;
+      const nl=/\n\s*(printf|scanf|int|float|double|char|return)\b/.exec(t);
+      if(nl){const before=t.slice(0,nl.index);throw new CErr('บรรทัดนี้น่าจะลืมใส่เครื่องหมาย ; ปิดท้ายคำสั่ง',s.line+(before.match(/\n/g)||[]).length);}
+      if(returned){warn('คำสั่งหลัง return จะไม่ถูกทำงาน');break;}
+      if((m=/^(int|float|double|char)\b([\s\S]*)$/.exec(t))){
+        if(!m[2].trim())throw new CErr(`หลัง ${m[1]} ต้องมีชื่อตัวแปร`,L);
+        for(const part of splitTop(m[2],L)){
+          const dm=/^([A-Za-z_]\w*)\s*(?:=([\s\S]+))?$/.exec(part);
+          if(!dm){
+            if(/^\d/.test(part))throw new CErr(`ชื่อตัวแปรห้ามขึ้นต้นด้วยตัวเลข: '${part}'`,L);
+            throw new CErr(`ชื่อหรือรูปแบบการประกาศตัวแปรไม่ถูกต้อง: '${part}'`,L);
+          }
+          if(KW.includes(dm[1]))throw new CErr(`'${dm[1]}' เป็นคำที่ภาษาซีสงวนไว้ ใช้เป็นชื่อตัวแปรไม่ได้`,L);
+          if(env[dm[1]])throw new CErr(`ประกาศตัวแปร '${dm[1]}' ซ้ำ`,L);
+          const va={name:dm[1],type:m[1],v:0,init:false};
+          if(dm[2]!==undefined)store(va,evalE(dm[2],env,L,warn),L,warn);
+          env[dm[1]]=va;
+        }
+      }else if(/^printf\b/.test(t)){
+        if(!hasStdio)throw new CErr('ใช้ printf ต้องเขียน #include <stdio.h> ไว้บรรทัดบนสุดก่อน',L);
+        const pm=/^printf\s*\(([\s\S]*)\)$/.exec(t);
+        if(!pm)throw new CErr('รูปแบบ printf ไม่ถูกต้อง ตรวจวงเล็บและเครื่องหมายฟันหนู',L);
+        const args=splitTop(pm[1],L);
+        const fm=/^"((?:[^"\\]|\\.)*)"$/.exec(args[0]);
+        if(!fm)throw new CErr('ข้อความใน printf ต้องอยู่ในเครื่องหมายฟันหนู " "',L);
+        const vals=args.slice(1);let ai=0;
+        const out=unesc(fm[1]).replace(/%(-?)(\d*)(?:\.(\d+))?l?([dfcs%])/g,(all,left,w,pr,cv)=>{
+          if(cv==='%')return'%';
+          if(ai>=vals.length)throw new CErr(`${all} ไม่มีค่ามาแทน (ใส่ตัวแปรหรือค่าให้ครบหลังเครื่องหมายคอมมา)`,L);
+          const src2=vals[ai++];let s2;
+          if(cv==='s'){
+            const sm=/^"((?:[^"\\]|\\.)*)"$/.exec(src2);
+            if(!sm)throw new CErr('%s ในบทนี้ใช้กับข้อความใน " " เท่านั้น',L);
+            s2=unesc(sm[1]);
+          }else{
+            const x=evalE(src2,env,L,warn);
+            if(cv==='d'){
+              if(x.t==='d'){warn(`${all} ใช้กับจำนวนเต็ม แต่ '${src2}' เป็นทศนิยม ควรใช้ %f`);s2='0';}
+              else s2=String(x.v);
+            }else if(cv==='f'){
+              if(x.t!=='d'){warn(`${all} ใช้กับทศนิยม แต่ '${src2}' เป็นจำนวนเต็ม ควรใช้ %d`);s2=(0).toFixed(pr===undefined?6:+pr);}
+              else s2=x.v.toFixed(pr===undefined?6:+pr);
+            }else s2=String.fromCharCode(x.v&255);
+          }
+          if(w&&s2.length<+w)s2=left?s2.padEnd(+w):s2.padStart(+w);
+          return s2;
+        });
+        if(vals.length>ai)warn('ใส่ค่าให้ printf เกินจำนวน % ที่เขียนไว้ ค่าที่เกินจะไม่แสดง');
+        res.shown.push(esc(out));res.raw+=out;
+      }else if(/^scanf\b/.test(t)){
+        if(!hasStdio)throw new CErr('ใช้ scanf ต้องเขียน #include <stdio.h> ก่อน',L);
+        const pm=/^scanf\s*\(([\s\S]*)\)$/.exec(t);
+        if(!pm)throw new CErr('รูปแบบ scanf ไม่ถูกต้อง ตรวจวงเล็บและเครื่องหมายฟันหนู',L);
+        const args=splitTop(pm[1],L);
+        const fm=/^"([^"]*)"$/.exec(args[0]);
+        if(!fm)throw new CErr('ข้อความแรกของ scanf ต้องอยู่ในเครื่องหมาย " " เช่น "%d"',L);
+        const specs=[...fm[1].matchAll(/%(l?[dfc])/g)].map(x=>x[1]);
+        const tg=args.slice(1);
+        if(specs.length!==tg.length)throw new CErr(`scanf มี % ${specs.length} ตัว แต่มีตัวแปร ${tg.length} ตัว ต้องเท่ากัน`,L);
+        specs.forEach((sp,i)=>{
+          const tm=/^&\s*([A-Za-z_]\w*)$/.exec(tg[i]);
+          if(!tm)throw new CErr(`ตัวแปรใน scanf ต้องมี & นำหน้า เช่น &x (พบ '${tg[i]}')`,L);
+          const va=env[tm[1]];
+          if(!va)throw new CErr(`ยังไม่ได้ประกาศตัวแปร '${tm[1]}'`,L);
+          const want={int:'d',float:'f',double:'lf',char:'c'}[va.type];
+          if(sp!==want)throw new CErr(`ตัวแปร '${va.name}' เป็นชนิด ${va.type} ต้องใช้ %${want} ใน scanf (ไม่ใช่ %${sp})`,L);
+          if(tp>=toks.length)throw new CErr('ไม่มีข้อมูลให้ scanf อ่าน ให้พิมพ์ค่าในช่อง "ข้อมูลที่ต้องพิมพ์ให้โปรแกรม" ก่อนกดรัน',L,'run');
+          const tok=toks[tp++];
+          res.shown.push('<i>'+esc(tok)+(i===specs.length-1?'\n':' ')+'</i>');
+          if(sp==='d'){
+            if(!/^[+-]?\d+$/.test(tok))throw new CErr(`'${tok}' ไม่ใช่จำนวนเต็ม แต่ %d ต้องการจำนวนเต็ม`,L,'run');
+            va.v=parseInt(tok,10)|0;
+          }else if(sp==='c')va.v=tok.charCodeAt(0);
+          else{
+            if(!isFinite(Number(tok)))throw new CErr(`'${tok}' ไม่ใช่ตัวเลข`,L,'run');
+            va.v=va.type==='float'?Math.fround(Number(tok)):Number(tok);
+          }
+          va.init=true;
+        });
+      }else if(/^return\b/.test(t)){
+        returned=true;
+      }else if((m=/^([A-Za-z_]\w*)\s*(\+|-|\*|\/|%)?=(?!=)([\s\S]*)$/.exec(t))){
+        const va=env[m[1]];
+        if(!va)throw new CErr(`ยังไม่ได้ประกาศตัวแปร '${m[1]}' (ต้องเขียน เช่น int ${m[1]}; ก่อนใช้)`,L);
+        let rhs=evalE(m[3],env,L,warn);
+        if(m[2]){
+          const cu={v:va.v,t:(va.type==='float'||va.type==='double')?'d':'i'};
+          rhs=evalE(String(cu.v)+' '+m[2]+' ('+rhs.v+(rhs.t==='d'&&Number.isInteger(rhs.v)?'.0':'')+')',env,L,warn);
+        }
+        store(va,rhs,L,warn);
+      }else if((m=/^([A-Za-z_]\w*)\s*(\+\+|--)$/.exec(t))){
+        const va=env[m[1]];
+        if(!va)throw new CErr(`ยังไม่ได้ประกาศตัวแปร '${m[1]}'`,L);
+        store(va,{v:va.v+(m[2]==='++'?1:-1),t:'i'},L,warn);
+      }else{
+        const w=/^([A-Za-z_]\w*)/.exec(t);
+        if(w&&w[1]!==w[1].toLowerCase()&&KW.includes(w[1].toLowerCase()))
+          throw new CErr(`ไม่รู้จัก '${w[1]}' ภาษาซีแยกตัวพิมพ์เล็ก-ใหญ่ ต้องเขียนเป็น '${w[1].toLowerCase()}'`,L);
+        if(w&&/^[A-Za-z_]\w*\s*\(/.test(t))throw new CErr(`ไม่รู้จักคำสั่ง '${w[1]}' ตรวจการสะกดอีกครั้ง`,L);
+        throw new CErr(`ไม่เข้าใจคำสั่ง '${t.length>40?t.slice(0,40)+'...':t}' ตรวจการสะกด และ ; ของบรรทัดก่อนหน้า`,L);
+      }
+    }
+    res.vars=Object.values(env);
+  }catch(e){
+    if(e instanceof CErr){
+      res.error={msg:e.message,line:e.line,kind:e.kind};
+      if(e.kind==='compile'){res.shown=[];res.raw='';}else res.vars=Object.values(env);
+    }else res.error={msg:'ข้อผิดพลาดภายในระบบ: '+e.message,line:0,kind:'compile'};
+  }
+  return res;
+}
+function showRes(r){
+  let h='';
+  if(r.error&&r.error.kind==='compile'){
+    h+=`<div class="box err"><b>❌ คอมไพล์ไม่ผ่าน</b><br>${r.error.line?'บรรทัดที่ '+r.error.line+': ':''}${esc(r.error.msg)}</div>`;
+  }else{
+    h+=`<div class="tlabel">ผลลัพธ์บนหน้าจอ (ตัวอักษรสีเหลืองคือสิ่งที่ผู้ใช้พิมพ์)</div><div class="term mono">${r.shown.join('')||'(ยังไม่มีข้อความแสดง)'}</div>`;
+    if(r.error)h+=`<div class="box err"><b>❌ โปรแกรมหยุดทำงาน</b><br>บรรทัดที่ ${r.error.line}: ${esc(r.error.msg)}</div>`;
+    else h+=`<div class="box good">✅ โปรแกรมทำงานสำเร็จ</div>`;
+  }
+  if(r.warns.length)h+=`<div class="box warn"><b>⚠️ ข้อสังเกต</b><ul>${r.warns.map(w=>`<li>บรรทัดที่ ${w.line}: ${esc(w.msg)}</li>`).join('')}</ul></div>`;
+  if(r.vars.length&&!(r.error&&r.error.kind==='compile')){
+    h+=`<div class="tlabel">ตัวแปรในหน่วยความจำ</div><table><tr><th>ชื่อ</th><th>ชนิด</th><th>ค่า</th></tr>${r.vars.map(v=>`<tr><td><code>${esc(v.name)}</code></td><td>${v.type}</td><td>${!v.init?'<i>ยังไม่มีค่า</i>':v.type==='char'?`'${esc(String.fromCharCode(v.v))}' (รหัส ${v.v})`:v.type==='float'?Number(v.v.toPrecision(7)):v.v}</td></tr>`).join('')}</table>`;
+  }
+  return h;
+}
+
+/* ================= ส่วนประกอบหน้าเว็บ ================= */
+let progress={};
+try{progress=JSON.parse(localStorage.getItem('clab_basic')||'{}');}catch(e){}
+const saveP=()=>{try{localStorage.setItem('clab_basic',JSON.stringify(progress));}catch(e){}};
+
+function mkEditor(host,cfg){
+  host.innerHTML=`<textarea class="code" spellcheck="false" wrap="off"></textarea>${cfg.input!==undefined?'<label class="lab">ข้อมูลที่ต้องพิมพ์ให้โปรแกรม (สำหรับ scanf คั่นด้วยเว้นวรรค)<input class="inp"></label>':''}<div class="btns"><button class="btn go">▶ รันโปรแกรม</button><button class="btn rs">↺ เริ่มใหม่</button></div><div class="res"></div>`;
+  const ta=$('textarea',host),inp=$('.inp',host),res=$('.res',host);
+  ta.value=cfg.code;ta.rows=Math.min(16,cfg.code.split('\n').length+1);
+  if(inp)inp.value=cfg.input;
+  const run=()=>{res.innerHTML=showRes(runC(ta.value,inp?inp.value:''));};
+  $('.go',host).onclick=run;
+  $('.rs',host).onclick=()=>{ta.value=cfg.code;if(inp)inp.value=cfg.input;res.innerHTML='';};
+  ta.addEventListener('keydown',e=>{
+    if(e.key==='Tab'){e.preventDefault();ta.setRangeText('    ',ta.selectionStart,ta.selectionEnd,'end');}
+    if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();run();}
+  });
+  (cfg.tries||[]).forEach(t=>{
+    const b=document.createElement('button');b.className='btn';b.textContent=t.label;
+    b.onclick=()=>{ta.value=t.fn(ta.value);run();};
+    $('.btns',host).appendChild(b);
+  });
+  return{get:()=>ta.value,input:()=>inp?inp.value:''};
+}
+const norm=s=>s.replace(/\r/g,'').replace(/[ \t]+\n/g,'\n').trim();
+function mkMission(host,cfg,stepId,onDone){
+  const hasIn=cfg.tests.some(t=>t.input!==undefined);
+  host.innerHTML=`<h3>🎯 ภารกิจ: ${cfg.title}</h3>${cfg.task}
+  <table><tr>${hasIn?'<th>พิมพ์ให้โปรแกรม</th>':''}<th>ต้องได้ผลลัพธ์</th></tr>${cfg.tests.map(t=>`<tr>${hasIn?`<td><code>${esc(t.input||'')}</code></td>`:''}<td><pre style="margin:0" class="mono">${esc(t.expected)}</pre></td></tr>`).join('')}</table>
+  <div class="ed"></div>
+  <div class="btns"><button class="btn ok chk">✔ ตรวจคำตอบ</button><button class="btn hint">💡 ขอคำใบ้</button><button class="btn sol">👀 ดูเฉลย</button></div>
+  <div class="hb"></div><div class="cr"></div>`;
+  const ed=mkEditor($('.ed',host),{code:cfg.code,input:hasIn?cfg.tests[0].input:undefined});
+  $('.hint',host).onclick=()=>{$('.hb',host).innerHTML=`<div class="box warn">💡 ${cfg.hint}</div>`;};
+  $('.sol',host).onclick=()=>{$('.hb',host).innerHTML=`<div class="box warn">เฉลย (ลองทำเองก่อนนะ แล้วค่อยเทียบ)<pre class="show"></pre></div>`;$('.hb pre',host).textContent=cfg.solution;};
+  $('.chk',host).onclick=()=>{
+    const code=ed.get();let all=true,h='<ul>';
+    (cfg.requires||[]).forEach(q=>{const ok=q.re.test(code);if(!ok)all=false;h+=`<li>${ok?'✅':'❌'} ${q.msg}</li>`;});
+    cfg.tests.forEach((t,i)=>{
+      const r=runC(code,t.input||'');
+      if(r.error){all=false;h+=`<li>❌ ชุดทดสอบที่ ${i+1}: ${r.error.kind==='compile'?'คอมไพล์ไม่ผ่าน':'โปรแกรมหยุดทำงาน'} (บรรทัด ${r.error.line}) ${esc(r.error.msg)}</li>`;return;}
+      const ok=norm(r.raw)===norm(t.expected);if(!ok)all=false;
+      h+=`<li>${ok?'✅':'❌'} ชุดทดสอบที่ ${i+1}${t.input?` (พิมพ์ <code>${esc(t.input)}</code>)`:''}`;
+      if(!ok)h+=`<br>ต้องได้:<pre class="show">${esc(t.expected)}</pre>แต่ได้:<pre class="show">${esc(r.raw)||'(ว่างเปล่า)'}</pre>`;
+      h+='</li>';
+    });
+    h+='</ul>';
+    if(all){progress[stepId]=true;saveP();onDone();h='<div class="box good"><b>🎉 ผ่านแล้ว เก่งมาก!</b></div>'+h;}
+    else h='<div class="box err"><b>ยังไม่ผ่าน ไม่เป็นไร ลองดูผลเปรียบเทียบแล้วแก้อีกนิด</b></div>'+h;
+    $('.cr',host).innerHTML=h;
+  };
+  if(progress[stepId])$('.cr',host).innerHTML='<div class="box good">✅ คุณเคยทำภารกิจนี้ผ่านแล้ว</div>';
+}
+function mkQuiz(host,cfg){
+  host.innerHTML=`<h3>🤔 ถามเล็กๆ</h3><p>${cfg.q}</p>${cfg.c.map((c,i)=>`<button class="choice" data-i="${i}">${esc(c)}</button>`).join('')}<div class="fb"></div>`;
+  host.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;
+    if(i===cfg.a){b.classList.remove('wrong');b.classList.add('right');$('.fb',host).innerHTML=`<div class="box good">✅ ถูกต้อง! ${cfg.e}</div>`;}
+    else{b.classList.add('wrong');$('.fb',host).innerHTML='<div class="box err">ยังไม่ใช่ ลองเลือกใหม่ได้เลย</div>';}
+  });
+}
+function mkAnnot(host,cfg){
+  host.innerHTML=`<div class="acode">${cfg.map((l,i)=>`<button class="aline" data-i="${i}"><span class="n">${i+1}</span><span>${esc(l.c)||'&nbsp;'}</span></button>`).join('')}</div><div class="aexp">👆 คลิกที่บรรทัดของโปรแกรม เพื่ออ่านว่าบรรทัดนั้นทำอะไร</div>`;
+  host.querySelectorAll('.aline').forEach(b=>b.onclick=()=>{
+    host.querySelectorAll('.aline').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
+    $('.aexp',host).innerHTML=cfg[+b.dataset.i].e;
+  });
+}
+
+/* ================= เนื้อหา 5 ขั้น ================= */
+const C=String.raw;
+const STEPS=[
+{name:'1 หน้าตาโปรแกรม',title:'ขั้นที่ 1: โปรแกรมภาษาซีหน้าตาเป็นอย่างไร',
+ learn:`<p>โปรแกรมภาษาซีทุกโปรแกรมมี <b>โครงสร้างพื้นฐานเหมือนกัน</b> เหมือนแบบฟอร์มที่ต้องกรอกตามช่อง</p>`,
+ annot:[
+  {c:'#include <stdio.h>',e:'<b>ขอเครื่องมือมาใช้</b><br>บอกให้คอมพิวเตอร์เตรียมชุดคำสั่งรับ-แสดงผล (เช่น <code>printf</code>) บรรทัดที่ขึ้นต้นด้วย # <b>ไม่ต้องมี ;</b>'},
+  {c:'',e:'บรรทัดว่างไว้ให้อ่านง่าย ไม่มีผลต่อการทำงาน'},
+  {c:'int main(void)',e:'<b>จุดเริ่มต้นของโปรแกรม</b><br>คอมพิวเตอร์จะเริ่มทำงานจากตรงนี้เสมอ ทุกโปรแกรมต้องมี <code>main</code>'},
+  {c:'{',e:'<b>เปิดวงเล็บปีกกา</b> = จุดเริ่มต้นของคำสั่งทั้งหมดใน main'},
+  {c:'    printf("Hello, C!\\n");',e:'<b>คำสั่งแสดงข้อความ</b><br>ข้อความในเครื่องหมาย " " จะโชว์บนหน้าจอ และ <code>\\n</code> คือขึ้นบรรทัดใหม่ <b>ทุกคำสั่งต้องจบด้วย ;</b>'},
+  {c:'    return 0;',e:'<b>จบโปรแกรม</b> บอกระบบว่าทำงานเสร็จเรียบร้อย (0 = สำเร็จ)'},
+  {c:'}',e:'<b>ปิดวงเล็บปีกกา</b> ต้องมีคู่กับ <code>{</code> เสมอ'}],
+ tryTitle:'ลองรันดูเลย แล้วกดปุ่ม "ลองทำให้ผิด" เพื่อดูว่าคอมพิวเตอร์บ่นว่าอะไร',
+ ed:{code:C`#include <stdio.h>
+
+int main(void)
+{
+    printf("Hello, C!\n");
+    return 0;
+}`,tries:[
+  {label:'😈 ลบ ; ออก',fn:c=>c.replace('");','")')},
+  {label:'😈 เปลี่ยนเป็น Printf',fn:c=>c.replace('printf','Printf')},
+  {label:'😈 ลบ #include',fn:c=>c.replace('#include <stdio.h>\n','')}]},
+ mission:{title:'ทักทายโลก',task:'<p>แก้โปรแกรมให้แสดงข้อความ <code>I love C</code> (ขึ้นบรรทัดใหม่ท้ายข้อความ)</p>',hint:'แก้ข้อความที่อยู่ในเครื่องหมาย " " ของ printf เท่านั้น',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    printf("Hello, C!\n");
+    return 0;
+}`,tests:[{expected:'I love C\n'}],solution:C`#include <stdio.h>
+
+int main(void)
+{
+    printf("I love C\n");
+    return 0;
+}`},
+ quiz:{q:'โปรแกรมภาษาซีเริ่มทำงานที่ไหนก่อน?',c:['บรรทัดแรกสุดของไฟล์','ฟังก์ชัน main','คำสั่ง return','บรรทัดที่มี printf'],a:1,e:'ทุกโปรแกรมเริ่มที่ <code>main</code> เสมอ'}},
+
+{name:'2 printf',title:'ขั้นที่ 2: printf แสดงข้อความ',
+ learn:C`<p><code>printf("ข้อความ");</code> ใช้แสดงข้อความบนหน้าจอ</p>
+ <table><tr><th>พิมพ์</th><th>ความหมาย</th></tr><tr><td><code>\n</code></td><td>ขึ้นบรรทัดใหม่</td></tr><tr><td><code>\t</code></td><td>เว้นระยะ (tab)</td></tr><tr><td><code>\"</code></td><td>แสดงเครื่องหมาย "</td></tr><tr><td><code>%%</code></td><td>แสดงเครื่องหมาย %</td></tr></table>
+ <p>💡 <code>printf</code> <b>ไม่ขึ้นบรรทัดใหม่ให้เอง</b> ต้องใส่ <code>\n</code> เอง ใช้ภาษาอังกฤษในข้อความจะแสดงผลได้ชัวร์กว่า</p>`,
+ tryTitle:'ลองลบ \\n ออกทีละตัว แล้วดูว่าผลลัพธ์เปลี่ยนไปอย่างไร',
+ ed:{code:C`#include <stdio.h>
+
+int main(void)
+{
+    printf("Name:\tSomchai\n");
+    printf("Say: \"Hi!\"\n");
+    printf("Discount 50%%\n");
+    return 0;
+}`},
+ mission:{title:'วาดกรอบข้อความ',task:'<p>เขียนโปรแกรมแสดงผล 3 บรรทัดตามตาราง</p>',hint:'ใช้ printf 3 คำสั่ง คำสั่งละ 1 บรรทัด แต่ละอันลงท้ายด้วย \\n และ ;',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    /* เขียน printf ตรงนี้ */
+
+    return 0;
+}`,tests:[{expected:'*****\nHello C\n*****\n'}],requires:[{re:/printf\s*\(/,msg:'ใช้คำสั่ง printf'}],
+  solution:C`#include <stdio.h>
+
+int main(void)
+{
+    printf("*****\n");
+    printf("Hello C\n");
+    printf("*****\n");
+    return 0;
+}`},
+ quiz:{q:'ต้องการให้ printf แสดงเครื่องหมาย % ต้องเขียนอย่างไร?',c:['%','\\%','%%','$%'],a:2,e:'เพราะ % ใช้นำหน้าตัวแทนค่า เช่น %d จึงต้องเขียน %% เพื่อแสดง % จริงๆ'}},
+
+{name:'3 ตัวแปร',title:'ขั้นที่ 3: ตัวแปร ที่เก็บข้อมูล',
+ learn:C`<p><b>ตัวแปร</b> เหมือนกล่องที่ติดชื่อ ไว้เก็บข้อมูล ต้องบอกชนิดของกล่องก่อนใช้</p>
+ <pre class="show">int age = 16;        // กล่องเก็บจำนวนเต็ม</pre>
+ <table><tr><th>ชนิด</th><th>เก็บอะไร</th><th>ใช้ใน printf</th></tr>
+ <tr><td><code>int</code></td><td>จำนวนเต็ม เช่น 16</td><td><code>%d</code></td></tr>
+ <tr><td><code>float</code></td><td>ทศนิยม เช่น 165.5</td><td><code>%f</code> (<code>%.1f</code> = โชว์ 1 ตำแหน่ง)</td></tr>
+ <tr><td><code>char</code></td><td>ตัวอักษร 1 ตัว เช่น 'A'</td><td><code>%c</code></td></tr></table>
+ <p><b>กฎตั้งชื่อ:</b> ใช้ a-z A-Z 0-9 และ _ เท่านั้น ห้ามขึ้นต้นด้วยตัวเลข ห้ามเว้นวรรค และ <code>score</code> กับ <code>Score</code> ถือเป็นคนละตัว</p>`,
+ tryTitle:'ลองเปลี่ยนค่าในตัวแปร หรือลองเปลี่ยน %d เป็น %f เพื่อดูคำเตือน',
+ ed:{code:C`#include <stdio.h>
+
+int main(void)
+{
+    int age = 16;
+    float height = 165.5;
+    char grade = 'A';
+
+    printf("Age = %d\n", age);
+    printf("Height = %.1f\n", height);
+    printf("Grade = %c\n", grade);
+    return 0;
+}`},
+ mission:{title:'บัตรประจำตัว',task:'<p>ประกาศตัวแปร <code>age</code> (int) = 16, <code>height</code> (float) = 165.5 และ <code>grade</code> (char) = \'A\' แล้วแสดงผลตามตาราง</p>',hint:'ใช้ %d กับ age, %.1f กับ height และ %c กับ grade',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    /* 1. ประกาศตัวแปร */
+
+    /* 2. แสดงผลด้วย printf */
+
+    return 0;
+}`,tests:[{expected:'Age: 16\nHeight: 165.5\nGrade: A\n'}],requires:[{re:/\bint\s+age\b/,msg:'ประกาศ int age'},{re:/\bfloat\s+height\b/,msg:'ประกาศ float height'},{re:/\bchar\s+grade\b/,msg:'ประกาศ char grade'}],
+  solution:C`#include <stdio.h>
+
+int main(void)
+{
+    int age = 16;
+    float height = 165.5;
+    char grade = 'A';
+
+    printf("Age: %d\n", age);
+    printf("Height: %.1f\n", height);
+    printf("Grade: %c\n", grade);
+    return 0;
+}`},
+ quiz:{q:'ข้อไหนตั้งชื่อตัวแปรได้ถูกต้อง?',c:['2score','my-name','total_score','float'],a:2,e:'ห้ามขึ้นต้นด้วยตัวเลข ห้ามมีเครื่องหมาย - และห้ามตรงกับคำสงวนอย่าง float'}},
+
+{name:'4 scanf',title:'ขั้นที่ 4: scanf รับค่าจากผู้ใช้',
+ learn:C`<p><code>scanf</code> ใช้ให้ผู้ใช้พิมพ์ข้อมูลเข้าโปรแกรม</p>
+ <pre class="show">scanf("%d", &age);        // รับจำนวนเต็มเก็บใน age
+scanf("%d %d", &a, &b);   // รับจำนวนเต็ม 2 ค่า</pre>
+ <ul><li>ต้องมี <code>&</code> หน้าชื่อตัวแปรเสมอ (ลืมบ่อยมาก!)</li><li>ตัวแทนต้องตรงชนิด: <code>%d</code> = int, <code>%f</code> = float, <code>%c</code> = char</li><li>ควรใช้ <code>printf</code> บอกผู้ใช้ก่อนว่าให้พิมพ์อะไร</li></ul>
+ <div class="box warn">ในเว็บนี้ ให้พิมพ์ค่าที่ต้องการในช่อง <b>"ข้อมูลที่ต้องพิมพ์ให้โปรแกรม"</b> ก่อนกดรัน</div>`,
+ tryTitle:'ลองเปลี่ยนตัวเลขในช่องข้อมูล หรือลองลบ & ออกดู',
+ ed:{input:'16',code:C`#include <stdio.h>
+
+int main(void)
+{
+    int age;
+
+    printf("How old are you? ");
+    scanf("%d", &age);
+    printf("Next year you will be %d\n", age + 1);
+    return 0;
+}`,tries:[{label:'😈 ลบ & ออก',fn:c=>c.replace('&age','age')}]},
+ mission:{title:'เครื่องบวกเลข',task:'<p>รับจำนวนเต็ม 2 จำนวน (<code>a</code> และ <code>b</code>) แล้วแสดงผลบวกในรูปแบบ <code>Sum=…</code></p>',hint:'scanf("%d %d", &a, &b); แล้ว printf("Sum=%d\\n", a + b);',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int a, b;
+
+    /* รับค่า a และ b */
+
+    /* แสดงผลบวก */
+
+    return 0;
+}`,tests:[{input:'7 3',expected:'Sum=10\n'},{input:'20 15',expected:'Sum=35\n'},{input:'-4 6',expected:'Sum=2\n'}],requires:[{re:/scanf\s*\(/,msg:'ใช้ scanf รับค่า'}],
+  solution:C`#include <stdio.h>
+
+int main(void)
+{
+    int a, b;
+    scanf("%d %d", &a, &b);
+    printf("Sum=%d\n", a + b);
+    return 0;
+}`},
+ quiz:{q:'scanf("%d", x); ผิดตรงไหน?',c:['ลืมเครื่องหมาย & หน้า x','ต้องใช้ %f','ต้องไม่มีเครื่องหมาย "','ไม่ผิด'],a:0,e:'scanf ต้องรู้ตำแหน่งของตัวแปรในหน่วยความจำ จึงต้องเขียน &x'}},
+
+{name:'5 คำนวณ',title:'ขั้นที่ 5: คำนวณด้วยภาษาซี',
+ learn:C`<table><tr><th>เครื่องหมาย</th><th>ความหมาย</th><th>ตัวอย่าง</th><th>ผล</th></tr>
+ <tr><td><code>+ - *</code></td><td>บวก ลบ คูณ</td><td><code>7 * 2</code></td><td>14</td></tr>
+ <tr><td><code>/</code></td><td>หาร</td><td><code>7 / 2</code></td><td><b>3</b> (ไม่ใช่ 3.5!)</td></tr>
+ <tr><td><code>/</code></td><td>หาร (มีทศนิยม)</td><td><code>7 / 2.0</code></td><td>3.5</td></tr>
+ <tr><td><code>%</code></td><td>เศษจากการหาร</td><td><code>7 % 2</code></td><td>1</td></tr></table>
+ <div class="box warn"><b>ข้อควรจำ:</b> จำนวนเต็มหารจำนวนเต็ม จะได้จำนวนเต็ม ส่วนทศนิยมจะถูกตัดทิ้ง ถ้าอยากได้ทศนิยมให้ตัวใดตัวหนึ่งเป็นทศนิยม เช่น <code>2.0</code></div>
+ <p>ลัด: <code>a += 3;</code> คือ <code>a = a + 3;</code> และ <code>a++;</code> คือเพิ่มค่าทีละ 1</p>`,
+ tryTitle:'ลองเปลี่ยน 2.0 เป็น 2 แล้วเปรียบเทียบผลลัพธ์ของ Average',
+ ed:{input:'7 2',code:C`#include <stdio.h>
+
+int main(void)
+{
+    int a, b;
+    float avg;
+
+    scanf("%d %d", &a, &b);
+
+    avg = (a + b) / 2.0;
+    printf("Quotient  = %d\n", a / b);
+    printf("Remainder = %d\n", a % b);
+    printf("Average   = %.2f\n", avg);
+    return 0;
+}`},
+ mission:{title:'หาค่าเฉลี่ย',task:'<p>รับจำนวนเต็ม 2 จำนวน แล้วแสดงค่าเฉลี่ยในรูปแบบ <code>Average = …</code> ทศนิยม 2 ตำแหน่ง</p>',hint:'ถ้าเขียน (a + b) / 2 จะได้จำนวนเต็ม ให้เปลี่ยนเป็น / 2.0 แล้วเก็บใส่ตัวแปร float และแสดงด้วย %.2f',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int a, b;
+    float avg;
+
+    /* รับค่า คำนวณ และแสดงผล */
+
+    return 0;
+}`,tests:[{input:'7 2',expected:'Average = 4.50\n'},{input:'10 5',expected:'Average = 7.50\n'},{input:'3 4',expected:'Average = 3.50\n'}],requires:[{re:/scanf\s*\(/,msg:'ใช้ scanf รับค่า'}],
+  solution:C`#include <stdio.h>
+
+int main(void)
+{
+    int a, b;
+    float avg;
+    scanf("%d %d", &a, &b);
+    avg = (a + b) / 2.0;
+    printf("Average = %.2f\n", avg);
+    return 0;
+}`},
+ quiz:{q:'printf("%d", 17 / 5); แสดงผลอะไร?',c:['3.4','3','4','2'],a:1,e:'17 / 5 เป็นจำนวนเต็มหารจำนวนเต็ม ได้ 3 (ตัดทศนิยมทิ้ง) ส่วน 17 % 5 จะได้เศษคือ 2'},
+ last:true}
+];
+
+/* ================= ระบบหน้า ================= */
+let cur=0;
+function renderDots(){
+  $('#steps').innerHTML=STEPS.map((s,i)=>`<button class="dot ${i===cur?'cur':''} ${progress['s'+i]?'done':''}" data-i="${i}">${progress['s'+i]?'✅ ':''}${s.name}</button>`).join('');
+  document.querySelectorAll('.dot').forEach(b=>b.onclick=()=>go(+b.dataset.i));
+}
+function go(i){
+  cur=i;const S=STEPS[i];
+  $('#page').innerHTML=`<div class="card learn"><h2>${S.title}</h2>${S.learn}${S.annot?'<div id="an"></div>':''}</div>
+  <div class="card"><h3>🧪 ลองรันดู</h3><p>${S.tryTitle}</p><div id="ed"></div></div>
+  <div class="card mission" id="ms"></div>
+  <div class="card quiz" id="qz"></div>
+  ${S.last?'<div class="card fin"><h2>🎉 จบบทเรียนแล้ว!</h2><p>ตอนนี้คุณเขียนโปรแกรมที่ แสดงผล (<code>printf</code>) เก็บข้อมูล (ตัวแปร) รับค่า (<code>scanf</code>) และคำนวณ ได้แล้ว ขั้นต่อไปคือการตัดสินใจด้วย <code>if-else</code> และการวนซ้ำด้วย <code>for</code></p></div>':''}
+  <div class="nav"><button class="btn" id="pv" ${i===0?'disabled':''}>◀ ขั้นก่อนหน้า</button><button class="btn go" id="nx" ${i===STEPS.length-1?'disabled':''}>ขั้นต่อไป ▶</button></div>`;
+  if(S.annot)mkAnnot($('#an'),S.annot);
+  mkEditor($('#ed'),S.ed);
+  mkMission($('#ms'),S.mission,'s'+i,renderDots);
+  mkQuiz($('#qz'),S.quiz);
+  $('#pv').onclick=()=>go(i-1);
+  $('#nx').onclick=()=>go(i+1);
+  renderDots();
+  window.scrollTo(0,0);
+}
+go(0);
+</script>
+</body>
+</html>

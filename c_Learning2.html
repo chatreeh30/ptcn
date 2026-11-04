@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>เรียนภาษาซีขั้นต่อไป: เงื่อนไข ลูป และฟังก์ชัน</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5f9;color:#1e293b;font-family:'Sarabun','Noto Sans Thai',Tahoma,sans-serif;font-size:18px;line-height:1.7}
+.wrap{max-width:860px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:8px 0 2px}
+h2{font-size:1.4rem;margin:0 0 8px;color:#1d4ed8}
+h3{margin:12px 0 6px}
+.sub{color:#64748b;margin:0 0 12px}
+code,pre,textarea,.mono{font-family:Consolas,'Courier New',monospace}
+code{background:#e0e7ff;color:#3730a3;padding:1px 6px;border-radius:5px;font-size:.92em}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 16px}
+.dot{flex:1;min-width:96px;border:2px solid #cbd5e1;background:#fff;border-radius:12px;padding:6px 4px;cursor:pointer;font:inherit;font-size:.85rem;text-align:center}
+.dot.cur{border-color:#2563eb;background:#dbeafe;font-weight:700}
+.dot.done{border-color:#22c55e}
+.card{background:#fff;border-radius:16px;padding:18px 22px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.learn{background:#eff6ff;border-left:6px solid #2563eb}
+.mission{background:#faf5ff;border-left:6px solid #9333ea}
+.quiz{background:#fffbeb;border-left:6px solid #f59e0b}
+.fin{background:#ecfdf5;border:2px solid #22c55e}
+pre.show{background:#0f172a;color:#e2e8f0;padding:10px 14px;border-radius:10px;overflow-x:auto;font-size:.95rem;margin:8px 0}
+textarea.code{width:100%;background:#0f172a;color:#e2e8f0;border:0;border-radius:10px;padding:12px;font-size:1rem;line-height:1.55;resize:vertical;white-space:pre;tab-size:4}
+.inp,.txt,select{border:2px solid #cbd5e1;border-radius:8px;padding:6px 10px;font-size:1rem;font-family:Consolas,monospace;background:#fff}
+.inp{width:100%}
+.lab{display:block;font-size:.9rem;color:#475569;margin-top:8px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.btn{border:2px solid #cbd5e1;background:#fff;border-radius:10px;padding:8px 16px;font:inherit;font-size:1rem;cursor:pointer}
+.btn:hover{background:#f1f5f9}
+.btn.go{background:#2563eb;border-color:#2563eb;color:#fff;font-weight:700}
+.btn.ok{background:#16a34a;border-color:#16a34a;color:#fff;font-weight:700}
+.btn:disabled{opacity:.4;cursor:default}
+.term{background:#020617;color:#4ade80;border-radius:10px;padding:10px 14px;min-height:44px;white-space:pre-wrap;font-size:1rem;margin-top:6px}
+.term i{color:#fde68a;font-style:normal}
+.tlabel{font-size:.82rem;color:#64748b;margin-top:8px}
+.box{padding:10px 14px;border-radius:10px;margin-top:8px;font-size:.98rem}
+.err{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+.good{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+.warn{background:#fffbeb;border:1px solid #fcd34d;color:#92400e}
+.box ul{margin:4px 0 0 20px;padding:0}
+table{border-collapse:collapse;margin:8px 0;font-size:.95rem}
+td,th{border:1px solid #cbd5e1;padding:5px 12px;text-align:left;vertical-align:top}
+th{background:#f1f5f9}
+.tw{overflow-x:auto}
+.aline{display:flex;gap:12px;width:100%;border:0;background:transparent;color:#e2e8f0;text-align:left;padding:3px 12px;cursor:pointer;font-family:Consolas,monospace;font-size:1rem;white-space:pre}
+.aline:hover{background:#1e293b}.aline.sel{background:#1d4ed8}
+.aline .n{color:#64748b;min-width:18px;text-align:right}
+.acode{background:#0f172a;border-radius:10px;padding:8px 0;overflow-x:auto}
+.aexp{background:#fff;border:2px dashed #93c5fd;border-radius:10px;padding:10px 14px;margin-top:8px;min-height:70px}
+.choice{display:block;width:100%;text-align:left;margin:6px 0;padding:9px 14px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font:inherit;font-size:1rem;cursor:pointer}
+.choice:hover{border-color:#2563eb}
+.choice.right{background:#dcfce7;border-color:#22c55e}.choice.wrong{background:#fee2e2;border-color:#ef4444}
+.q{border:1px solid #fde68a;border-radius:12px;padding:8px 14px;margin:10px 0;background:#fff}
+.nav{display:flex;justify-content:space-between;margin:8px 0 12px}
+.reset{background:none;border:0;color:#64748b;text-decoration:underline;cursor:pointer;font:inherit;font-size:.85rem;margin-bottom:40px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:8px}
+.row label{font-size:.9rem;display:flex;flex-direction:column;gap:2px}
+.row .txt{width:90px}
+td.t{color:#166534;font-weight:700}td.f{color:#991b1b;font-weight:700}
+.trace{margin-top:10px}
+.trace summary{cursor:pointer;color:#1d4ed8;font-weight:600}
+.tr{background:#0f172a;border-radius:10px;padding:6px 0;margin-top:6px;overflow-x:auto}
+.trl{display:flex;gap:10px;padding:1px 12px;font-family:Consolas,monospace;font-size:.9rem;color:#e2e8f0;white-space:pre}
+.trl.off{opacity:.4}.trl.on{background:#14532d}
+.tn{color:#94a3b8;min-width:22px;text-align:right}
+.tc{min-width:46px;color:#fde68a;font-weight:700}
+.trl code{background:none;color:inherit;padding:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🔀 เรียนภาษาซีขั้นต่อไป: เงื่อนไข ลูป และฟังก์ชัน</h1>
+  <p class="sub">ทำทีละขั้น: อ่าน → ลองรัน → ทำภารกิจ → ตอบคำถาม (ควรเรียนเรื่อง printf, ตัวแปร, scanf และการคำนวณมาก่อน)</p>
+  <div class="steps" id="steps"></div>
+  <div id="page"></div>
+  <button class="reset" id="rstp">ล้างความก้าวหน้าทั้งหมด</button>
+</div>
+
+<script>
+/* =====================================================================
+   ส่วนที่ 1: ตัวจำลองภาษาซีแบบย่อ (lexer -> parser -> interpreter)
+   ===================================================================== */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+class CErr extends Error{constructor(m,line,kind){super(m);this.line=line||0;this.kind=kind||'compile';}}
+const KWS=new Set(['auto','break','case','char','const','continue','default','do','double','else','enum','extern','float','for','goto','if','int','long','register','return','short','signed','sizeof','static','struct','switch','typedef','union','unsigned','void','volatile','while']);
+const VT=['int','float','double','char','long'];
+const ESC={n:'\n',t:'\t','\\':'\\','"':'"',"'":"'",'0':'\0',r:'\r',a:'\x07'};
+const OPS2=['==','!=','<=','>=','&&','||','++','--','+=','-=','*=','/=','%='];
+const OPS1='+-*/%=<>!(){};,:?&[]';
+const RX_NUM=/(\d+\.\d*|\.\d+|\d+)([eE][+-]?\d+)?[fFlL]*/y;
+const RX_ID=/[A-Za-z_]\w*/y;
+const RX_CHR=/'(\\.|[^\\'\n])'/y;
+const FMT_RE=/%([-+0 ]*)(\d*)(?:\.(\d+))?(ll|l)?([dicfsu%])/g;
+const BUILTINS={printf:{h:'stdio.h'},scanf:{h:'stdio.h'},sqrt:{h:'math.h',n:1},pow:{h:'math.h',n:2},fabs:{h:'math.h',n:1},abs:{h:'stdlib.h',n:1}};
+
+function lex(src){
+  const toks=[],inc=new Set();let i=0,line=1;const n=src.length;
+  const add=(t,v,x)=>toks.push(Object.assign({t,v,line},x||{}));
+  while(i<n){
+    const c=src[i];
+    if(c==='\n'){line++;i++;continue;}
+    if(/\s/.test(c)){i++;continue;}
+    if(c==='/'&&src[i+1]==='/'){while(i<n&&src[i]!=='\n')i++;continue;}
+    if(c==='/'&&src[i+1]==='*'){
+      const j=src.indexOf('*/',i+2);
+      if(j<0)throw new CErr('คอมเมนต์ /* ไม่ได้ปิดด้วย */',line);
+      for(let k=i;k<j;k++)if(src[k]==='\n')line++;
+      i=j+2;continue;
+    }
+    if(c==='#'){
+      let j=i;while(j<n&&src[j]!=='\n')j++;
+      const ln=src.slice(i,j).trim();
+      const m=/^#\s*include\s*<(stdio\.h|math\.h|stdlib\.h)>$/.exec(ln);
+      if(!m)throw new CErr(`บรรทัด "${ln}" ไม่ถูกต้องหรือยังไม่รองรับ (ใช้ได้: #include <stdio.h>, <math.h>, <stdlib.h>)`,line);
+      inc.add(m[1]);i=j;continue;
+    }
+    if(c==='"'){
+      let j=i+1,s='',closed=false;
+      while(j<n){
+        const d=src[j];
+        if(d==='\n')break;
+        if(d==='"'){closed=true;break;}
+        if(d==='\\'&&j+1<n){const e=src[j+1];s+=(e in ESC)?ESC[e]:e;j+=2;continue;}
+        s+=d;j++;
+      }
+      if(!closed)throw new CErr('ข้อความที่เปิดด้วยเครื่องหมาย " ไม่ได้ปิดด้วย " ในบรรทัดเดียวกัน',line);
+      add('str',s);i=j+1;continue;
+    }
+    if(c==="'"){
+      RX_CHR.lastIndex=i;const m=RX_CHR.exec(src);
+      if(!m)throw new CErr("ค่าอักขระ (char) ต้องมี 1 ตัวอักษรในเครื่องหมาย ' ' เช่น 'A' (ถ้าเป็นข้อความหลายตัวอักษรให้ใช้ \" \")",line);
+      const ch=m[1].length===2?((m[1][1] in ESC)?ESC[m[1][1]]:m[1][1]):m[1];
+      add('chr',ch.charCodeAt(0));i+=m[0].length;continue;
+    }
+    if(/[0-9]/.test(c)||(c==='.'&&/[0-9]/.test(src[i+1]||''))){
+      RX_NUM.lastIndex=i;const m=RX_NUM.exec(src);
+      const body=m[0].replace(/[fFlL]+$/,'');
+      const isD=/[.eE]/.test(body);const v=parseFloat(body);
+      add('num',v,{ty:isD?'d':(v>2147483647?'l':'i'),raw:m[0]});i+=m[0].length;continue;
+    }
+    if(/[A-Za-z_]/.test(c)){RX_ID.lastIndex=i;const m=RX_ID.exec(src);add('id',m[0]);i+=m[0].length;continue;}
+    const two=src.substr(i,2);
+    if(OPS2.includes(two)){add('op',two);i+=2;continue;}
+    if(OPS1.includes(c)){add('op',c);i++;continue;}
+    if(c==='|')throw new CErr("ต้องเขียน || (สองตัวติดกัน) สำหรับ 'หรือ'",line);
+    throw new CErr(`ใช้อักขระ '${c}' ในตำแหน่งนี้ไม่ได้ (ข้อความภาษาไทยเขียนได้เฉพาะในคอมเมนต์ หรือในเครื่องหมาย " ")`,line);
+  }
+  toks.push({t:'eof',v:'',line});
+  return{toks,inc};
+}
+
+class Parser{
+  constructor(toks,inc){
+    this.toks=toks;this.p=0;this.inc=inc;this.funcs=new Map();
+    this.scopes=[new Map()];this.warns=[];this.loopDepth=0;this.switchDepth=0;this.allowStr=false;
+  }
+  get tk(){return this.toks[this.p];}
+  peek(k){return this.toks[Math.min(this.p+k,this.toks.length-1)];}
+  prevLine(){return this.p>0?this.toks[this.p-1].line:1;}
+  isOp(v){const t=this.tk;return t.t==='op'&&t.v===v;}
+  isId(v){const t=this.tk;return t.t==='id'&&t.v===v;}
+  eatOp(v){if(this.isOp(v)){this.p++;return true;}return false;}
+  desc(t){
+    if(t.t==='eof')return 'จบไฟล์';
+    if(t.t==='str')return '"'+t.v+'"';
+    if(t.t==='chr')return "'"+String.fromCharCode(t.v)+"'";
+    if(t.t==='num')return t.raw;
+    return t.v;
+  }
+  expectOp(v,why,force){
+    if(this.isOp(v)){return this.toks[this.p++];}
+    const t=this.tk;
+    if(force)throw new CErr(why,this.prevLine());
+    if(v===';')throw new CErr(`ขาดเครื่องหมาย ; ท้ายคำสั่ง (ตรวจท้ายบรรทัดที่ ${this.prevLine()}) เพราะถัดมาพบ '${this.desc(t)}'`,this.prevLine());
+    throw new CErr(`ต้องมีเครื่องหมาย ${v} ${why||''} (แต่พบ '${this.desc(t)}')`,t.line);
+  }
+  pushS(){this.scopes.push(new Map());}
+  popS(){this.scopes.pop();}
+  declare(name,type,line){
+    if(KWS.has(name))throw new CErr(`'${name}' เป็นคำสงวนของภาษาซี ใช้เป็นชื่อไม่ได้`,line);
+    const s=this.scopes[this.scopes.length-1];
+    if(s.has(name))throw new CErr(`ประกาศตัวแปร '${name}' ซ้ำในขอบเขตเดียวกัน`,line);
+    s.set(name,type);
+  }
+  lookup(name){for(let i=this.scopes.length-1;i>=0;i--)if(this.scopes[i].has(name))return this.scopes[i].get(name);return null;}
+  unknown(name,line,isCall){
+    const low=name.toLowerCase();
+    if(low!==name&&(KWS.has(low)||BUILTINS[low]))return new CErr(`ไม่รู้จัก '${name}' ภาษาซีแยกตัวพิมพ์เล็ก-ใหญ่ (case-sensitive) ต้องเขียนเป็น '${low}'`,line);
+    for(const f of this.funcs.keys())if(f!==name&&f.toLowerCase()===low)return new CErr(`ไม่รู้จัก '${name}' คุณหมายถึง '${f}' หรือเปล่า (ตัวพิมพ์เล็ก-ใหญ่ต้องตรงกัน)`,line);
+    if(isCall)return new CErr(`ไม่รู้จักฟังก์ชัน '${name}' ต้องเขียนฟังก์ชันไว้ก่อนจุดที่เรียกใช้ (เหนือ main) หรือประกาศ prototype ไว้ก่อน และตรวจการสะกดชื่อ`,line);
+    const names=[];this.scopes.forEach(s=>s.forEach((_,k)=>names.push(k)));
+    const m=names.find(k=>k.toLowerCase()===low);
+    if(m)return new CErr(`ไม่รู้จักตัวแปร '${name}' คุณหมายถึง '${m}' หรือเปล่า (ตัวพิมพ์เล็ก-ใหญ่ต้องตรงกัน)`,line);
+    return new CErr(`ยังไม่ได้ประกาศตัวแปร '${name}' ต้องประกาศก่อนใช้ เช่น int ${name}; และตรวจการสะกด`,line);
+  }
+  parseType(){
+    const t=this.tk;this.p++;
+    if(t.v==='long'){if(this.isId('long'))this.p++;if(this.isId('int'))this.p++;return 'long';}
+    return t.v;
+  }
+  /* ---------- โปรแกรมและฟังก์ชัน ---------- */
+  parseProgram(){
+    const globals=[];
+    while(this.tk.t!=='eof'){
+      const t=this.tk;
+      if(t.t==='id'&&(VT.includes(t.v)||t.v==='void')){
+        const start=this.p;
+        const ret=this.parseType();
+        const nt=this.tk;
+        if(nt.t!=='id'||KWS.has(nt.v))throw new CErr(`หลัง ${ret} ต้องมีชื่อฟังก์ชันหรือชื่อตัวแปร`+(nt.t==='id'?` ('${nt.v}' เป็นคำสงวน)`:''),nt.line);
+        const nx=this.peek(1);
+        if(nx.t==='op'&&nx.v==='('){this.p++;this.parseFunction(ret,nt);}
+        else{
+          if(ret==='void')throw new CErr('ตัวแปรชนิด void ประกาศไม่ได้',nt.line);
+          this.p=start;globals.push(this.parseDecl());
+        }
+      }else if(t.t==='op'&&t.v==='}'){
+        throw new CErr('มีเครื่องหมาย } เกินมา (ปิดบล็อกมากกว่าที่เปิดไว้) ตรวจจำนวน { และ }',t.line);
+      }else{
+        throw new CErr(`พบ '${this.desc(t)}' นอกฟังก์ชัน คำสั่งต้องเขียนอยู่ภายในฟังก์ชัน เช่น main (ตรวจว่ามี } ปิดก่อนหน้านี้เกินหรือไม่)`,t.line);
+      }
+    }
+    const m=this.funcs.get('main');
+    if(!m||!m.body)throw new CErr('ไม่พบฟังก์ชัน main โปรแกรมภาษาซีต้องมี int main(void) { ... }',1);
+    if(m.params.length)throw new CErr('ฟังก์ชัน main ในบทนี้ไม่รับพารามิเตอร์ ให้เขียนเป็น int main(void)',m.line);
+    return globals;
+  }
+  parseFunction(ret,nt){
+    const name=nt.v;
+    this.expectOp('(','หลังชื่อฟังก์ชัน');
+    const params=[];
+    if(this.isId('void')&&this.peek(1).t==='op'&&this.peek(1).v===')')this.p++;
+    else if(!this.isOp(')')){
+      do{
+        const pt=this.tk;
+        if(!(pt.t==='id'&&VT.includes(pt.v)))throw new CErr(`พารามิเตอร์ต้องขึ้นต้นด้วยชนิดข้อมูล เช่น int x (พบ '${this.desc(pt)}')`,pt.line);
+        const ty=this.parseType();const n2=this.tk;let pn=null;
+        if(n2.t==='id'&&!KWS.has(n2.v)){pn=n2.v;this.p++;}
+        params.push({type:ty,name:pn});
+      }while(this.eatOp(','));
+    }
+    this.expectOp(')','ปิดรายการพารามิเตอร์');
+    let fn=this.funcs.get(name);
+    if(fn){
+      if(fn.ret!==ret||fn.params.length!==params.length)throw new CErr(`ฟังก์ชัน '${name}' ถูกประกาศซ้ำด้วยรูปแบบที่ไม่ตรงกับครั้งแรก`,nt.line);
+    }else{fn={name,ret,params,body:null,line:nt.line};this.funcs.set(name,fn);}
+    if(this.eatOp(';'))return;
+    if(!this.isOp('{'))throw new CErr(`หลังส่วนหัวฟังก์ชัน '${name}' ต้องมี { เพื่อเริ่มเนื้อหา หรือ ; ถ้าเป็นแค่ prototype`,this.tk.line);
+    if(fn.body)throw new CErr(`ฟังก์ชัน '${name}' ถูกเขียนเนื้อหาซ้ำ`,nt.line);
+    if(params.some(p=>!p.name))throw new CErr(`พารามิเตอร์ของฟังก์ชัน '${name}' ต้องมีชื่อ เช่น int x`,nt.line);
+    fn.params=params;
+    this.pushS();params.forEach(p=>this.declare(p.name,p.type,nt.line));
+    fn.body=this.parseBlock(true);
+    this.popS();
+  }
+  /* ---------- คำสั่ง ---------- */
+  parseBlock(noScope){
+    const open=this.expectOp('{','เพื่อเริ่มบล็อก');
+    if(!noScope)this.pushS();
+    const body=[];
+    while(!this.isOp('}')){
+      if(this.tk.t==='eof')throw new CErr(`ขาดเครื่องหมาย } เพื่อปิดบล็อกที่เปิดไว้ที่บรรทัด ${open.line}`,open.line);
+      body.push(this.parseStmt());
+    }
+    this.p++;
+    if(!noScope)this.popS();
+    return{k:'block',body,line:open.line};
+  }
+  parseBody(kind){
+    this.pushS();if(kind==='loop')this.loopDepth++;
+    const s=this.parseStmt();
+    if(kind==='loop')this.loopDepth--;
+    this.popS();return s;
+  }
+  parseStmt(){
+    const t=this.tk;
+    if(t.t==='op'){
+      if(t.v==='{')return this.parseBlock();
+      if(t.v===';'){this.p++;return{k:'empty',line:t.line};}
+    }
+    if(t.t==='id'){
+      const v=t.v;
+      if(VT.includes(v))return this.parseDecl();
+      if(v==='if')return this.parseIf();
+      if(v==='while')return this.parseWhile();
+      if(v==='do')return this.parseDo();
+      if(v==='for')return this.parseFor();
+      if(v==='switch')return this.parseSwitch();
+      if(v==='break'){
+        if(!this.loopDepth&&!this.switchDepth)throw new CErr('break ใช้ได้เฉพาะภายใน loop หรือ switch',t.line);
+        this.p++;this.expectOp(';');return{k:'break',line:t.line};
+      }
+      if(v==='continue'){
+        if(!this.loopDepth)throw new CErr('continue ใช้ได้เฉพาะภายใน loop',t.line);
+        this.p++;this.expectOp(';');return{k:'continue',line:t.line};
+      }
+      if(v==='return'){
+        this.p++;let e=null;
+        if(!this.isOp(';'))e=this.parseExpr();
+        this.expectOp(';');return{k:'return',e,line:t.line};
+      }
+      if(v==='else')throw new CErr('พบ else ที่ไม่มี if คู่กัน (ตรวจว่าใส่ ; ท้าย if (...) หรือปิด { } ผิดหรือไม่)',t.line);
+      if(v==='case'||v==='default')throw new CErr(`'${v}' ใช้ได้เฉพาะภายใน switch`,t.line);
+      if(v==='void')throw new CErr('ประกาศตัวแปรชนิด void ไม่ได้',t.line);
+      if(KWS.has(v))throw new CErr(`'${v}' ยังไม่อยู่ในเนื้อหาของบทเรียนนี้`,t.line);
+    }
+    const e=this.parseExpr();
+    this.expectOp(';');
+    return{k:'expr',e,line:t.line};
+  }
+  parseDecl(){
+    const first=this.tk;
+    const type=this.parseType();
+    const decls=[];
+    do{
+      const nt=this.tk;
+      if(nt.t==='num')throw new CErr(`ชื่อตัวแปรห้ามขึ้นต้นด้วยตัวเลข (พบ '${nt.raw}')`,nt.line);
+      if(nt.t!=='id')throw new CErr(`หลัง ${type} ต้องมีชื่อตัวแปร (พบ '${this.desc(nt)}')`,nt.line);
+      if(KWS.has(nt.v))throw new CErr(`'${nt.v}' เป็นคำสงวนของภาษาซี ใช้เป็นชื่อตัวแปรไม่ได้`,nt.line);
+      this.p++;
+      const nx=this.tk;
+      if(nx.t==='op'&&nx.v==='(')throw new CErr(`ภาษาซีไม่ให้เขียนฟังก์ชันซ้อนอยู่ในฟังก์ชันอื่น ให้ย้าย '${nt.v}' ไปไว้นอก main`,nt.line);
+      if(nx.t==='op'&&nx.v==='[')throw new CErr('อาร์เรย์ยังไม่อยู่ในเนื้อหาของบทเรียนนี้',nt.line);
+      if(nx.line===nt.line&&nx.t!=='eof'&&!(nx.t==='op'&&['=',';',','].includes(nx.v)))
+        throw new CErr(`รูปแบบการประกาศตัวแปรไม่ถูกต้อง หลังชื่อ '${nt.v}' พบ '${this.desc(nx)}' (ชื่อตัวแปรใช้ได้เฉพาะ A-Z a-z 0-9 และ _ ห้ามเว้นวรรคหรือมีเครื่องหมายอื่น)`,nt.line);
+      let init=null;
+      if(this.eatOp('='))init=this.parseAssign();
+      this.declare(nt.v,type,nt.line);
+      decls.push({name:nt.v,init,line:nt.line});
+    }while(this.eatOp(','));
+    this.expectOp(';');
+    return{k:'decl',type,decls,line:first.line};
+  }
+  checkCond(c,line,kw){
+    if(c.k==='assign'&&c.op==='=')this.warns.push({line,msg:`ใน ${kw} ใช้ = ซึ่งเป็นการกำหนดค่า ไม่ใช่การเปรียบเทียบ ถ้าต้องการเปรียบเทียบให้ใช้ ==`});
+  }
+  parseIf(){
+    const t=this.tk;this.p++;
+    this.expectOp('(','หลัง if ต้องมีวงเล็บเงื่อนไข เช่น if (x > 5)');
+    const cond=this.parseExpr();
+    this.expectOp(')','เพื่อปิดเงื่อนไขของ if');
+    this.checkCond(cond,t.line,'if');
+    const then=this.parseBody('if');
+    if(then.k==='empty')this.warns.push({line:t.line,msg:'มีเครื่องหมาย ; ต่อท้ายเงื่อนไข if ทันที ทำให้ if ควบคุมคำสั่งว่าง และคำสั่งที่ตามมาจะทำงานเสมอ ให้ลบ ; ออก'});
+    let els=null;
+    if(this.isId('else')){this.p++;els=this.parseBody('if');}
+    return{k:'if',cond,then,els,line:t.line};
+  }
+  parseWhile(){
+    const t=this.tk;this.p++;
+    this.expectOp('(','หลัง while ต้องมีวงเล็บเงื่อนไข เช่น while (i <= 5)');
+    const cond=this.parseExpr();
+    this.expectOp(')','เพื่อปิดเงื่อนไขของ while');
+    this.checkCond(cond,t.line,'while');
+    const body=this.parseBody('loop');
+    if(body.k==='empty')this.warns.push({line:t.line,msg:'มีเครื่องหมาย ; ต่อท้าย while (...) ทันที ทำให้ loop วนคำสั่งว่าง (ถ้าเงื่อนไขเป็นจริงจะวนไม่จบ) ให้ลบ ; ออก'});
+    return{k:'while',cond,body,line:t.line};
+  }
+  parseDo(){
+    const t=this.tk;this.p++;
+    const body=this.parseBody('loop');
+    if(!this.isId('while'))throw new CErr('do ต้องจบด้วย while (เงื่อนไข); เช่น do { ... } while (x < 5);',this.tk.line);
+    const w=this.tk;this.p++;
+    this.expectOp('(','หลัง while ต้องมีวงเล็บเงื่อนไข');
+    const cond=this.parseExpr();
+    this.expectOp(')','เพื่อปิดเงื่อนไขของ while');
+    this.expectOp(';');
+    return{k:'do',cond,body,line:t.line,cline:w.line};
+  }
+  parseFor(){
+    const t=this.tk;this.p++;
+    this.expectOp('(','หลัง for ต้องมีวงเล็บ เช่น for (i = 0; i < 5; i++)');
+    const msg='ภายในวงเล็บของ for ต้องมี 3 ส่วนคั่นด้วย ; สองตัว เช่น for (i = 0; i < 5; i++)';
+    this.pushS();
+    let init=null,cond=null,step=null;
+    if(this.isOp(';'))this.p++;
+    else if(this.tk.t==='id'&&VT.includes(this.tk.v))init=this.parseDecl();
+    else{init={k:'exprs',list:this.parseExprList(),line:t.line};this.expectOp(';',msg,true);}
+    if(!this.isOp(';'))cond=this.parseExpr();
+    this.expectOp(';',msg,true);
+    if(!this.isOp(')'))step=this.parseExprList();
+    this.expectOp(')','เพื่อปิดวงเล็บของ for');
+    if(cond)this.checkCond(cond,t.line,'for');
+    const body=this.parseBody('loop');
+    this.popS();
+    if(body.k==='empty')this.warns.push({line:t.line,msg:'มีเครื่องหมาย ; ต่อท้าย for (...) ทันที ทำให้ loop วนคำสั่งว่าง และคำสั่งถัดไปจะทำงานแค่ครั้งเดียวหลังวนจบ ให้ลบ ; ออก'});
+    return{k:'for',init,cond,step,body,line:t.line};
+  }
+  parseSwitch(){
+    const t=this.tk;this.p++;
+    this.expectOp('(','หลัง switch ต้องมีวงเล็บ เช่น switch (x)');
+    const e=this.parseExpr();
+    this.expectOp(')','เพื่อปิดวงเล็บของ switch');
+    const open=this.expectOp('{','เพื่อเริ่มบล็อกของ switch');
+    const cases=[];let cur=null;
+    this.switchDepth++;this.pushS();
+    while(!this.isOp('}')){
+      if(this.tk.t==='eof')throw new CErr(`ขาดเครื่องหมาย } เพื่อปิด switch ที่เปิดไว้ที่บรรทัด ${open.line}`,open.line);
+      if(this.isId('case')){
+        this.p++;const test=this.parseTernary();
+        this.expectOp(':','หลัง case เช่น case 1:');
+        cur={test,body:[]};cases.push(cur);
+      }else if(this.isId('default')){
+        this.p++;this.expectOp(':','หลัง default');
+        cur={test:null,body:[]};cases.push(cur);
+      }else{
+        if(!cur)throw new CErr('ภายใน switch ต้องขึ้นต้นด้วย case หรือ default ก่อน',this.tk.line);
+        cur.body.push(this.parseStmt());
+      }
+    }
+    this.p++;this.popS();this.switchDepth--;
+    return{k:'switch',e,cases,line:t.line};
+  }
+  /* ---------- นิพจน์ ---------- */
+  parseExpr(){return this.parseAssign();}
+  parseExprList(){const l=[this.parseAssign()];while(this.eatOp(','))l.push(this.parseAssign());return l;}
+  parseAssign(){
+    const left=this.parseTernary();
+    const t=this.tk;
+    if(t.t==='op'&&['=','+=','-=','*=','/=','%='].includes(t.v)){
+      if(left.k!=='id')throw new CErr(`ด้านซ้ายของ ${t.v} ต้องเป็นชื่อตัวแปร`,t.line);
+      this.p++;
+      const right=this.parseAssign();
+      return{k:'assign',op:t.v,name:left.name,e:right,line:t.line};
+    }
+    return left;
+  }
+  parseTernary(){
+    const c=this.parseBin(0);
+    if(this.isOp('?')){
+      const t=this.tk;this.p++;
+      const a=this.parseAssign();
+      this.expectOp(':','ในนิพจน์ ? :');
+      const b=this.parseTernary();
+      return{k:'cond',c,a,b,line:t.line};
+    }
+    return c;
+  }
+  parseBin(level){
+    const LV=[['||'],['&&'],['==','!='],['<','>','<=','>='],['+','-'],['*','/','%']];
+    if(level>=LV.length)return this.parseUnary();
+    let l=this.parseBin(level+1);
+    while(this.tk.t==='op'&&LV[level].includes(this.tk.v)){
+      const o=this.tk;this.p++;
+      const r=this.parseBin(level+1);
+      l={k:'bin',op:o.v,l,r,line:o.line};
+    }
+    return l;
+  }
+  parseUnary(){
+    const t=this.tk;
+    if(t.t==='op'){
+      if(t.v==='-'||t.v==='+'||t.v==='!'){this.p++;return{k:'un',op:t.v,e:this.parseUnary(),line:t.line};}
+      if(t.v==='++'||t.v==='--'){
+        this.p++;const e=this.parseUnary();
+        if(e.k!=='id')throw new CErr(`${t.v} ใช้กับชื่อตัวแปรเท่านั้น`,t.line);
+        return{k:'incdec',op:t.v,pre:true,name:e.name,line:t.line};
+      }
+      if(t.v==='&'){
+        this.p++;const nt=this.tk;
+        if(nt.t!=='id')throw new CErr('หลังเครื่องหมาย & ต้องเป็นชื่อตัวแปร เช่น &x',t.line);
+        this.p++;
+        if(this.lookup(nt.v)===null)throw this.unknown(nt.v,nt.line,false);
+        return{k:'addr',name:nt.v,line:t.line};
+      }
+      if(t.v==='('){
+        const a=this.peek(1),b=this.peek(2);
+        if(a.t==='id'&&VT.includes(a.v)&&b.t==='op'&&b.v===')'){
+          this.p+=3;return{k:'cast',type:a.v,e:this.parseUnary(),line:t.line};
+        }
+      }
+    }
+    return this.parsePostfix();
+  }
+  parsePostfix(){
+    const e=this.parsePrimary();
+    if(e.k==='id'&&this.tk.t==='op'&&(this.tk.v==='++'||this.tk.v==='--')){
+      const o=this.tk;this.p++;
+      return{k:'incdec',op:o.v,pre:false,name:e.name,line:o.line};
+    }
+    return e;
+  }
+  parsePrimary(){
+    const t=this.tk;
+    if(t.t==='num'){this.p++;return{k:'num',v:t.v,ty:t.ty,line:t.line};}
+    if(t.t==='chr'){this.p++;return{k:'num',v:t.v,ty:'i',line:t.line};}
+    if(t.t==='str'){
+      if(!this.allowStr)throw new CErr('ข้อความใน " " ใช้ได้เฉพาะเป็นอาร์กิวเมนต์ของ printf (บทนี้ยังไม่มีตัวแปรชนิดข้อความ)',t.line);
+      this.p++;return{k:'str',v:t.v,line:t.line};
+    }
+    if(t.t==='id'){
+      if(KWS.has(t.v))throw new CErr(`คำสงวน '${t.v}' อยู่ผิดตำแหน่ง ตรวจประโยคก่อนหน้า (มักลืม ; หรือ ) )`,t.line);
+      this.p++;
+      if(this.isOp('('))return this.parseCall(t);
+      if(this.lookup(t.v)===null)throw this.unknown(t.v,t.line,false);
+      return{k:'id',name:t.v,line:t.line};
+    }
+    if(t.t==='op'&&t.v==='('){
+      this.p++;const e=this.parseExpr();
+      this.expectOp(')','เพื่อปิดวงเล็บ');
+      return e;
+    }
+    throw new CErr(`นิพจน์ไม่สมบูรณ์ พบ '${this.desc(t)}' ในตำแหน่งที่ควรเป็นตัวเลขหรือตัวแปร (ตรวจ ; ท้ายบรรทัดก่อนหน้า)`,t.line);
+  }
+  parseCall(t){
+    const name=t.v,line=t.line;
+    this.expectOp('(','หลังชื่อฟังก์ชัน');
+    const args=[];
+    const old=this.allowStr;
+    if(name==='printf'||name==='scanf')this.allowStr=true;
+    if(!this.isOp(')')){do{args.push(this.parseAssign());}while(this.eatOp(','));}
+    this.allowStr=old;
+    this.expectOp(')',`เพื่อปิดวงเล็บของ ${name}`);
+    const user=this.funcs.get(name);
+    if(user){
+      if(args.length!==user.params.length)throw new CErr(`ฟังก์ชัน '${name}' ต้องการอาร์กิวเมนต์ ${user.params.length} ค่า แต่ส่งมา ${args.length} ค่า`,line);
+      return{k:'call',name,args,line,builtin:false};
+    }
+    const b=BUILTINS[name];
+    if(!b)throw this.unknown(name,line,true);
+    if(!this.inc.has(b.h))throw new CErr(`ใช้ ${name} ต้องเขียน #include <${b.h}> ไว้บรรทัดบนสุดก่อน`,line);
+    if(b.n!==undefined&&args.length!==b.n)throw new CErr(`${name} ต้องการอาร์กิวเมนต์ ${b.n} ค่า`,line);
+    if(name==='printf'){
+      if(!args.length||args[0].k!=='str')throw new CErr('อาร์กิวเมนต์แรกของ printf ต้องเป็นข้อความใน " "',line);
+      const specs=[...args[0].v.matchAll(FMT_RE)].filter(m=>m[5]!=='%');
+      if(args.length-1<specs.length)throw new CErr(`printf มีตัวแทนค่า (เช่น %d %f) ${specs.length} ตัว แต่ส่งค่ามาแค่ ${args.length-1} ค่า`,line);
+      if(args.length-1>specs.length)this.warns.push({line,msg:'ส่งค่าให้ printf เกินจำนวนตัวแทนค่า (% ...) ค่าที่เกินจะไม่แสดง'});
+    }
+    if(name==='scanf'){
+      if(!args.length||args[0].k!=='str')throw new CErr('อาร์กิวเมนต์แรกของ scanf ต้องเป็นข้อความรูปแบบใน " " เช่น "%d"',line);
+      const specs=[...args[0].v.matchAll(/%(ld|lf|[dfc])/g)].map(m=>m[1]);
+      const tg=args.slice(1);
+      if(specs.length!==tg.length)throw new CErr(`scanf มีตัวแทนค่า ${specs.length} ตัว แต่ระบุตัวแปร ${tg.length} ตัว ต้องเท่ากัน`,line);
+      const WANT={int:'d',float:'f',double:'lf',char:'c',long:'ld'};
+      tg.forEach((a,i)=>{
+        if(a.k!=='addr')throw new CErr(`ตัวแปรใน scanf ต้องมี & นำหน้า เช่น &${a.k==='id'?a.name:'x'} (ลืม & เป็นข้อผิดพลาดที่พบบ่อยมาก)`,line);
+        const ty=this.lookup(a.name);
+        if(specs[i]!==WANT[ty])throw new CErr(`ตัวแปร '${a.name}' เป็นชนิด ${ty} ต้องใช้ %${WANT[ty]} ใน scanf (ไม่ใช่ %${specs[i]})`,line);
+      });
+    }
+    return{k:'call',name,args,line,builtin:true};
+  }
+}
+
+const fmtF=(v,p)=>isFinite(v)?v.toFixed(Math.min(p,20)):(isNaN(v)?'nan':(v<0?'-inf':'inf'));
+const typeCat=ty=>ty==='float'||ty==='double'?'d':ty==='long'?'l':'i';
+function conv(ty,x){
+  switch(ty){
+    case 'int':return Math.trunc(x.v)|0;
+    case 'char':return(Math.trunc(x.v)<<24)>>24;
+    case 'long':return Math.trunc(x.v);
+    case 'float':return Math.fround(x.v);
+    default:return x.v;
+  }
+}
+
+function interpret(ps,globalDecls,stdin,res){
+  const funcs=ps.funcs;
+  const globals=new Map();const gf={scopes:[globals]};
+  const toks=stdin.trim().split(/\s+/).filter(Boolean);let tp=0;
+  let steps=0,depth=0,outLen=0,curLine=0;
+  const seen=new Set();
+  const warn=(m,line)=>{const k=line+'|'+m;if(!seen.has(k)){seen.add(k);res.warns.push({line,msg:m});}};
+  const hit=l=>res.hits.set(l,(res.hits.get(l)||0)+1);
+  const tick=l=>{if(++steps>400000)throw new CErr('โปรแกรมทำงานนานผิดปกติ (เกิน 400,000 ขั้นตอน) น่าจะเกิดการวนซ้ำไม่รู้จบ (infinite loop) ให้ตรวจเงื่อนไขของ loop และการเปลี่ยนค่าตัวแปร',l,'run');};
+  const emit=s=>{outLen+=s.length;if(outLen>20000)throw new CErr('แสดงผลมากเกินไป (เกิน 20,000 ตัวอักษร) น่าจะเกิดการวนซ้ำไม่รู้จบ (infinite loop) ให้ตรวจเงื่อนไขของ loop',curLine,'run');res.raw+=s;res.shown.push(esc(s));};
+  const lookupVar=(fr,name)=>{
+    for(let i=fr.scopes.length-1;i>=0;i--){const v=fr.scopes[i].get(name);if(v)return v;}
+    return globals.get(name)||null;
+  };
+  function arith(o,a,b,line){
+    const d=a.t==='d'||b.t==='d';
+    const t=d?'d':(a.t==='l'||b.t==='l')?'l':'i';
+    let v;
+    switch(o){
+      case '+':v=a.v+b.v;break;
+      case '-':v=a.v-b.v;break;
+      case '*':v=(t==='i')?Math.imul(a.v,b.v):a.v*b.v;break;
+      case '/':
+        if(t==='d'){v=a.v/b.v;break;}
+        if(b.v===0)throw new CErr('หารจำนวนเต็มด้วยศูนย์ไม่ได้ (division by zero)',line,'run');
+        v=Math.trunc(a.v/b.v);break;
+      default:
+        if(t==='d')throw new CErr('เครื่องหมาย % ใช้ได้กับจำนวนเต็มเท่านั้น (ใช้กับทศนิยมไม่ได้)',line,'run');
+        if(b.v===0)throw new CErr('หาเศษด้วยศูนย์ไม่ได้ (division by zero)',line,'run');
+        v=a.v%b.v;
+    }
+    if(t==='i')v=v|0;
+    return{v,t};
+  }
+  function store(va,x,line){
+    if((va.type==='int'||va.type==='char'||va.type==='long')&&x.t==='d'&&!Number.isInteger(x.v))
+      warn(`เก็บค่าทศนิยม ${Number(x.v.toPrecision(8))} ลงตัวแปรชนิด ${va.type} ('${va.name}') ส่วนทศนิยมจะถูกตัดทิ้ง`,line);
+    va.v=conv(va.type,x);va.init=true;
+  }
+  function ev(n,fr){
+    switch(n.k){
+      case 'num':return{v:n.v,t:n.ty};
+      case 'id':{
+        const va=lookupVar(fr,n.name);
+        if(!va.init)warn(`ตัวแปร '${n.name}' ถูกนำมาใช้ก่อนใส่ค่า จึงได้ค่าขยะที่ไม่แน่นอน`,n.line);
+        return{v:va.v,t:typeCat(va.type)};
+      }
+      case 'un':{
+        const x=ev(n.e,fr);
+        if(n.op==='!')return{v:x.v?0:1,t:'i'};
+        if(n.op==='-')return x.t==='i'?{v:(-x.v)|0,t:'i'}:{v:-x.v,t:x.t};
+        return x;
+      }
+      case 'cast':{const x=ev(n.e,fr);return{v:conv(n.type,x),t:typeCat(n.type)};}
+      case 'bin':{
+        if(n.op==='&&'){const a=ev(n.l,fr);if(!a.v)return{v:0,t:'i'};return{v:ev(n.r,fr).v?1:0,t:'i'};}
+        if(n.op==='||'){const a=ev(n.l,fr);if(a.v)return{v:1,t:'i'};return{v:ev(n.r,fr).v?1:0,t:'i'};}
+        const a=ev(n.l,fr),b=ev(n.r,fr);
+        switch(n.op){
+          case '==':return{v:a.v===b.v?1:0,t:'i'};
+          case '!=':return{v:a.v!==b.v?1:0,t:'i'};
+          case '<':return{v:a.v<b.v?1:0,t:'i'};
+          case '>':return{v:a.v>b.v?1:0,t:'i'};
+          case '<=':return{v:a.v<=b.v?1:0,t:'i'};
+          case '>=':return{v:a.v>=b.v?1:0,t:'i'};
+          default:return arith(n.op,a,b,n.line);
+        }
+      }
+      case 'assign':{
+        const va=lookupVar(fr,n.name);
+        let x=ev(n.e,fr);
+        if(n.op!=='='){
+          if(!va.init)warn(`ตัวแปร '${n.name}' ถูกนำมาใช้ก่อนใส่ค่า`,n.line);
+          x=arith(n.op[0],{v:va.v,t:typeCat(va.type)},x,n.line);
+        }
+        store(va,x,n.line);
+        return{v:va.v,t:typeCat(va.type)};
+      }
+      case 'incdec':{
+        const va=lookupVar(fr,n.name);
+        if(!va.init)warn(`ตัวแปร '${n.name}' ถูกนำมาใช้ก่อนใส่ค่า`,n.line);
+        const old={v:va.v,t:typeCat(va.type)};
+        store(va,arith(n.op==='++'?'+':'-',old,{v:1,t:'i'},n.line),n.line);
+        return n.pre?{v:va.v,t:old.t}:old;
+      }
+      case 'cond':return ev(n.c,fr).v?ev(n.a,fr):ev(n.b,fr);
+      case 'call':return callFn(n,fr);
+      case 'addr':throw new CErr('เครื่องหมาย & ในบทนี้ใช้ได้เฉพาะใน scanf',n.line,'run');
+      default:throw new CErr('ข้อความใน " " ใช้ได้เฉพาะใน printf',n.line,'run');
+    }
+  }
+  function callFn(n,fr){
+    if(n.builtin)return builtin(n,fr);
+    const fn=funcs.get(n.name);
+    if(!fn.body)throw new CErr(`ฟังก์ชัน '${n.name}' ประกาศไว้แต่ยังไม่ได้เขียนเนื้อหา`,n.line,'run');
+    if(++depth>250)throw new CErr('เรียกฟังก์ชันซ้อนกันลึกเกินไป (น่าจะเป็น recursion ที่ไม่มีเงื่อนไขหยุด)',n.line,'run');
+    const args=n.args.map(a=>ev(a,fr));
+    const nf={scopes:[new Map()]};
+    fn.params.forEach((p,i)=>{
+      if((p.type==='int'||p.type==='char'||p.type==='long')&&args[i].t==='d'&&!Number.isInteger(args[i].v))
+        warn(`ส่งค่าทศนิยมให้พารามิเตอร์ชนิด ${p.type} ('${p.name}') ส่วนทศนิยมจะถูกตัดทิ้ง`,n.line);
+      nf.scopes[0].set(p.name,{name:p.name,type:p.type,v:conv(p.type,args[i]),init:true});
+    });
+    const r=exec(fn.body,nf);
+    depth--;
+    if(fn.ret==='void')return{v:0,t:'i'};
+    const rv=(r&&r.k==='return'&&r.v)?r.v:{v:0,t:'i'};
+    return{v:conv(fn.ret,rv),t:typeCat(fn.ret)};
+  }
+  function builtin(n,fr){
+    const name=n.name;
+    if(name==='printf'){
+      const vals=n.args.slice(1);let ai=0;
+      const out=n.args[0].v.replace(FMT_RE,(all,fl,w,pr,lg,cv)=>{
+        if(cv==='%')return'%';
+        const a=vals[ai++];let s;
+        if(cv==='s'){
+          if(a.k!=='str')throw new CErr('%s ในบทนี้ใช้กับข้อความใน " " เท่านั้น',n.line,'run');
+          s=a.v;if(pr!==undefined)s=s.slice(0,+pr);
+        }else{
+          const x=ev(a,fr);
+          if(cv==='d'||cv==='i'||cv==='u'){
+            if(x.t==='d'){warn(`${all} ใช้กับจำนวนเต็ม แต่ค่าที่ส่งมาเป็นทศนิยม ควรใช้ %f (ภาษาซีจริงจะได้ผลลัพธ์เพี้ยน)`,n.line);s='0';}
+            else{s=String(x.v);if(fl.includes('+')&&x.v>=0)s='+'+s;}
+          }else if(cv==='f'){
+            const P=pr===undefined?6:+pr;
+            if(x.t!=='d'){warn(`${all} ใช้กับทศนิยม แต่ค่าที่ส่งมาเป็นจำนวนเต็ม ควรใช้ %d (ภาษาซีจริงจะได้ผลลัพธ์เพี้ยน)`,n.line);s=fmtF(0,P);}
+            else{s=fmtF(x.v,P);if(fl.includes('+')&&x.v>=0)s='+'+s;}
+          }else{
+            if(x.t==='d')warn('%c ใช้กับตัวอักษรหรือจำนวนเต็ม ไม่ใช่ทศนิยม',n.line);
+            s=String.fromCharCode(x.v&255);
+          }
+        }
+        if(w&&s.length<+w){
+          const W=+w;
+          if(fl.includes('-'))s=s.padEnd(W);
+          else if(fl.includes('0')&&cv!=='s'&&cv!=='c'){const sg=/^[+-]/.test(s)?s[0]:'';s=sg+s.slice(sg.length).padStart(W-sg.length,'0');}
+          else s=s.padStart(W);
+        }
+        return s;
+      });
+      emit(out);
+      return{v:out.length,t:'i'};
+    }
+    if(name==='scanf'){
+      const specs=[...n.args[0].v.matchAll(/%(ld|lf|[dfc])/g)].map(m=>m[1]);
+      let cnt=0;
+      for(let i=0;i<specs.length;i++){
+        const va=lookupVar(fr,n.args[i+1].name),sp=specs[i];
+        if(tp>=toks.length)throw new CErr('ไม่มีข้อมูลให้ scanf อ่าน ให้พิมพ์ค่าในช่อง "ข้อมูลที่ต้องพิมพ์ให้โปรแกรม" ให้ครบก่อนกดรัน',n.line,'run');
+        const tok=toks[tp++];
+        res.shown.push('<i>'+esc(tok)+(i===specs.length-1?'\n':' ')+'</i>');
+        if(sp==='d'||sp==='ld'){
+          if(!/^[+-]?\d+$/.test(tok))throw new CErr(`ข้อมูล '${tok}' ไม่ใช่จำนวนเต็ม แต่ %${sp} ต้องการจำนวนเต็ม`,n.line,'run');
+          va.v=conv(va.type,{v:parseInt(tok,10),t:'l'});
+        }else if(sp==='c')va.v=tok.charCodeAt(0);
+        else{
+          if(!isFinite(Number(tok)))throw new CErr(`ข้อมูล '${tok}' ไม่ใช่ตัวเลข`,n.line,'run');
+          va.v=va.type==='float'?Math.fround(Number(tok)):Number(tok);
+        }
+        va.init=true;cnt++;
+      }
+      return{v:cnt,t:'i'};
+    }
+    const a=n.args.map(x=>ev(x,fr));
+    if(name==='sqrt')return{v:Math.sqrt(a[0].v),t:'d'};
+    if(name==='pow')return{v:Math.pow(a[0].v,a[1].v),t:'d'};
+    if(name==='fabs')return{v:Math.abs(a[0].v),t:'d'};
+    return{v:Math.abs(a[0].v)|0,t:'i'};
+  }
+  function execDecl(s,fr){
+    for(const d of s.decls){
+      const va={name:d.name,type:s.type,v:0,init:false};
+      if(d.init)store(va,ev(d.init,fr),d.line);
+      fr.scopes[fr.scopes.length-1].set(d.name,va);
+    }
+  }
+  function exec(s,fr){
+    tick(s.line);curLine=s.line;
+    if(s.k!=='block'&&s.k!=='empty'&&s.k!=='while'&&s.k!=='for'&&s.k!=='do')hit(s.line);
+    switch(s.k){
+      case 'block':{
+        fr.scopes.push(new Map());
+        try{for(const st of s.body){const r=exec(st,fr);if(r)return r;}}
+        finally{fr.scopes.pop();}
+        return;
+      }
+      case 'empty':return;
+      case 'decl':execDecl(s,fr);return;
+      case 'expr':ev(s.e,fr);return;
+      case 'if':{
+        if(ev(s.cond,fr).v)return exec(s.then,fr);
+        if(s.els)return exec(s.els,fr);
+        return;
+      }
+      case 'while':{
+        while(true){
+          tick(s.line);hit(s.line);
+          if(!ev(s.cond,fr).v)break;
+          const r=exec(s.body,fr);
+          if(r){if(r.k==='break')break;if(r.k!=='continue')return r;}
+        }
+        return;
+      }
+      case 'do':{
+        while(true){
+          tick(s.line);hit(s.line);
+          const r=exec(s.body,fr);
+          if(r){if(r.k==='break')break;if(r.k!=='continue')return r;}
+          hit(s.cline);
+          if(!ev(s.cond,fr).v)break;
+        }
+        return;
+      }
+      case 'for':{
+        fr.scopes.push(new Map());
+        try{
+          if(s.init){if(s.init.k==='decl')execDecl(s.init,fr);else s.init.list.forEach(e=>ev(e,fr));}
+          while(true){
+            tick(s.line);hit(s.line);
+            if(s.cond&&!ev(s.cond,fr).v)break;
+            const r=exec(s.body,fr);
+            if(r){if(r.k==='break')break;if(r.k!=='continue')return r;}
+            if(s.step)s.step.forEach(e=>ev(e,fr));
+          }
+        }finally{fr.scopes.pop();}
+        return;
+      }
+      case 'switch':{
+        const x=ev(s.e,fr);
+        fr.scopes.push(new Map());
+        try{
+          let start=-1;
+          for(let i=0;i<s.cases.length;i++){const c=s.cases[i];if(c.test&&ev(c.test,fr).v===x.v){start=i;break;}}
+          if(start<0)start=s.cases.findIndex(c=>!c.test);
+          if(start>=0){
+            for(let i=start;i<s.cases.length;i++){
+              for(const st of s.cases[i].body){
+                const r=exec(st,fr);
+                if(r){if(r.k==='break')return;return r;}
+              }
+            }
+          }
+        }finally{fr.scopes.pop();}
+        return;
+      }
+      case 'break':return{k:'break'};
+      case 'continue':return{k:'continue'};
+      case 'return':return{k:'return',v:s.e?ev(s.e,fr):null};
+    }
+  }
+  for(const d of globalDecls)execDecl(d,gf);
+  const main=funcs.get('main');
+  const r=callFn({name:'main',args:[],line:main.line,builtin:false},gf);
+  res.exit=r.v;
+}
+
+function runC(src,stdin){
+  const res={shown:[],raw:'',warns:[],error:null,exit:0,hits:new Map()};
+  try{
+    const {toks,inc}=lex(src);
+    const ps=new Parser(toks,inc);
+    const g=ps.parseProgram();
+    ps.warns.forEach(w=>res.warns.push(w));
+    interpret(ps,g,stdin||'',res);
+  }catch(e){
+    if(e instanceof CErr){
+      res.error={msg:e.message,line:e.line,kind:e.kind};
+      if(e.kind==='compile'){res.shown=[];res.raw='';res.hits=new Map();}
+    }else if(e instanceof RangeError){
+      res.error={msg:'เรียกฟังก์ชันซ้อนกันลึกเกินไป (recursion ไม่มีเงื่อนไขหยุด)',line:0,kind:'run'};
+    }else res.error={msg:'ข้อผิดพลาดภายในระบบ: '+e.message,line:0,kind:'compile'};
+  }
+  return res;
+}
+
+function showRes(r,src,openTrace){
+  let h='';
+  const compileErr=r.error&&r.error.kind==='compile';
+  if(compileErr){
+    h+=`<div class="box err"><b>❌ คอมไพล์ไม่ผ่าน</b><br>${r.error.line?'บรรทัดที่ '+r.error.line+': ':''}${esc(r.error.msg)}</div>`;
+  }else{
+    h+=`<div class="tlabel">ผลลัพธ์บนหน้าจอ (ตัวอักษรสีเหลืองคือสิ่งที่ผู้ใช้พิมพ์)</div><div class="term mono">${r.shown.join('')||'(ยังไม่มีข้อความแสดง)'}</div>`;
+    if(r.error)h+=`<div class="box err"><b>❌ โปรแกรมหยุดทำงาน</b><br>${r.error.line?'บรรทัดที่ '+r.error.line+': ':''}${esc(r.error.msg)}</div>`;
+    else h+=`<div class="box good">✅ โปรแกรมทำงานสำเร็จ</div>`;
+  }
+  if(r.warns.length)h+=`<div class="box warn"><b>⚠️ ข้อสังเกต</b><ul>${r.warns.map(w=>`<li>บรรทัดที่ ${w.line}: ${esc(w.msg)}</li>`).join('')}</ul></div>`;
+  if(!compileErr&&r.hits.size){
+    const lines=src.split('\n');
+    h+=`<details class="trace" ${openTrace?'open':''}><summary>🔍 ดูว่าแต่ละบรรทัดทำงานกี่ครั้ง</summary><div class="tlabel">แถบสีเขียว = บรรทัดที่ทำงาน (×จำนวนครั้ง) บรรทัดจาง = ไม่ได้ทำงาน หรือเป็นเครื่องหมาย { } คอมเมนต์ บรรทัดว่าง</div><div class="tr">${lines.map((l,i)=>{const c=r.hits.get(i+1)||0;return `<div class="trl ${c?'on':'off'}"><span class="tn">${i+1}</span><span class="tc">${c?'×'+c:''}</span><code>${esc(l)||' '}</code></div>`;}).join('')}</div></details>`;
+  }
+  return h;
+}
+
+/* =====================================================================
+   ส่วนที่ 2: ส่วนประกอบหน้าเว็บ
+   ===================================================================== */
+let progress={};
+try{progress=JSON.parse(localStorage.getItem('clab_adv')||'{}');}catch(e){}
+const saveP=()=>{try{localStorage.setItem('clab_adv',JSON.stringify(progress));}catch(e){}};
+
+function mkEditor(host,cfg){
+  host.innerHTML=`<textarea class="code" spellcheck="false" wrap="off"></textarea>${cfg.input!==undefined?'<label class="lab">ข้อมูลที่ต้องพิมพ์ให้โปรแกรม (สำหรับ scanf คั่นด้วยเว้นวรรค)<input class="inp"></label>':''}<div class="btns"><button class="btn go">▶ รันโปรแกรม</button><button class="btn rs">↺ เริ่มใหม่</button></div><div class="res"></div>`;
+  const ta=$('textarea',host),inp=$('.inp',host),res=$('.res',host);
+  ta.value=cfg.code;ta.rows=Math.min(24,cfg.code.split('\n').length+1);
+  if(inp)inp.value=cfg.input;
+  const run=()=>{const src=ta.value;res.innerHTML=showRes(runC(src,inp?inp.value:''),src,!!cfg.trace);};
+  $('.go',host).onclick=run;
+  $('.rs',host).onclick=()=>{ta.value=cfg.code;if(inp)inp.value=cfg.input;res.innerHTML='';};
+  ta.addEventListener('keydown',e=>{
+    if(e.key==='Tab'){e.preventDefault();ta.setRangeText('    ',ta.selectionStart,ta.selectionEnd,'end');}
+    if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();run();}
+  });
+  (cfg.tries||[]).forEach(t=>{
+    const b=document.createElement('button');b.className='btn';b.textContent=t.label;
+    b.onclick=()=>{ta.value=t.fn(ta.value);run();};
+    $('.btns',host).appendChild(b);
+  });
+  return{get:()=>ta.value};
+}
+const norm=s=>s.replace(/\r/g,'').replace(/[ \t]+\n/g,'\n').trim();
+function mkMission(host,cfg,stepId,onDone){
+  const hasIn=cfg.tests.some(t=>t.input!==undefined);
+  host.innerHTML=`<h3 style="margin-top:0">🎯 ภารกิจ: ${cfg.title}</h3>${cfg.task}
+  <div class="tw"><table><tr>${hasIn?'<th>พิมพ์ให้โปรแกรม</th>':''}<th>ต้องได้ผลลัพธ์</th></tr>${cfg.tests.map(t=>`<tr>${hasIn?`<td><code>${esc(t.input||'')}</code></td>`:''}<td><pre style="margin:0" class="mono">${t.expected===''?'(ไม่แสดงอะไรเลย)':esc(t.expected)}</pre></td></tr>`).join('')}</table></div>
+  <div class="ed"></div>
+  <div class="btns"><button class="btn ok chk">✔ ตรวจคำตอบ</button><button class="btn hint">💡 ขอคำใบ้</button><button class="btn sol">👀 ดูเฉลย</button></div>
+  <div class="hb"></div><div class="cr"></div>`;
+  const ed=mkEditor($('.ed',host),{code:cfg.code,input:hasIn?cfg.tests[0].input:undefined});
+  $('.hint',host).onclick=()=>{$('.hb',host).innerHTML=`<div class="box warn">💡 ${cfg.hint}</div>`;};
+  $('.sol',host).onclick=()=>{$('.hb',host).innerHTML='<div class="box warn">เฉลย (ลองทำเองก่อน แล้วค่อยเทียบนะ)<pre class="show"></pre></div>';$('.hb pre',host).textContent=cfg.solution;};
+  $('.chk',host).onclick=()=>{
+    const code=ed.get();let all=true,h='<ul>';
+    (cfg.requires||[]).forEach(q=>{const ok=q.re.test(code);if(!ok)all=false;h+=`<li>${ok?'✅':'❌'} ${q.msg}</li>`;});
+    cfg.tests.forEach((t,i)=>{
+      const r=runC(code,t.input||'');
+      if(r.error){all=false;h+=`<li>❌ ชุดทดสอบที่ ${i+1}: ${r.error.kind==='compile'?'คอมไพล์ไม่ผ่าน':'โปรแกรมหยุดทำงาน'} ${r.error.line?'(บรรทัด '+r.error.line+') ':''}${esc(r.error.msg)}</li>`;return;}
+      const ok=norm(r.raw)===norm(t.expected);if(!ok)all=false;
+      h+=`<li>${ok?'✅':'❌'} ชุดทดสอบที่ ${i+1}${t.input?` (พิมพ์ <code>${esc(t.input)}</code>)`:''}`;
+      if(!ok)h+=`<br>ต้องได้:<pre class="show">${esc(t.expected)||'(ไม่แสดงอะไรเลย)'}</pre>แต่ได้:<pre class="show">${esc(r.raw)||'(ว่างเปล่า)'}</pre>`;
+      h+='</li>';
+    });
+    h+='</ul>';
+    if(all){progress[stepId]=true;saveP();onDone();h='<div class="box good"><b>🎉 ผ่านแล้ว เก่งมาก!</b></div>'+h;}
+    else h='<div class="box err"><b>ยังไม่ผ่าน ไม่เป็นไร ลองดูผลเปรียบเทียบแล้วแก้อีกนิด</b></div>'+h;
+    $('.cr',host).innerHTML=h;
+  };
+  if(progress[stepId])$('.cr',host).innerHTML='<div class="box good">✅ คุณเคยทำภารกิจนี้ผ่านแล้ว</div>';
+}
+function mkQuiz(host,list){
+  host.innerHTML='<h3 style="margin-top:0">🤔 ถามเล็กๆ</h3>'+list.map((q,qi)=>`<div class="q" data-q="${qi}"><p><b>ข้อ ${qi+1}.</b> ${q.q}</p>${q.c.map((c,i)=>`<button class="choice" data-i="${i}">${esc(c)}</button>`).join('')}<div class="fb"></div></div>`).join('');
+  list.forEach((q,qi)=>{
+    const box=host.querySelector(`.q[data-q="${qi}"]`);
+    box.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i;const fb=$('.fb',box);
+      if(i===q.a){b.classList.remove('wrong');b.classList.add('right');fb.innerHTML=`<div class="box good">✅ ถูกต้อง! ${q.e}</div>`;}
+      else{b.classList.add('wrong');fb.innerHTML='<div class="box err">ยังไม่ใช่ ลองเลือกใหม่ได้เลย</div>';}
+    });
+  });
+}
+function mkAnnot(host,cfg){
+  host.innerHTML=`<div class="acode">${cfg.map((l,i)=>`<button class="aline" data-i="${i}"><span class="n">${i+1}</span><span>${esc(l.c)||' '}</span></button>`).join('')}</div><div class="aexp">👆 คลิกที่บรรทัดของโปรแกรม เพื่ออ่านว่าบรรทัดนั้นทำอะไร</div>`;
+  host.querySelectorAll('.aline').forEach(b=>b.onclick=()=>{
+    host.querySelectorAll('.aline').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
+    $('.aexp',host).innerHTML=cfg[+b.dataset.i].e;
+  });
+}
+function mkCompare(host){
+  host.innerHTML=`<h3>🧪 ตัวทดลองเครื่องหมายเปรียบเทียบ</h3><p>เปลี่ยนค่า a และ b แล้วดูว่านิพจน์ไหนเป็นจริง (1) หรือเท็จ (0)</p>
+  <div class="row"><label>ค่า a<input class="txt a" value="7"></label><label>ค่า b<input class="txt b" value="3"></label></div><div class="out"></div>`;
+  const rows=[['a > b',(a,b)=>a>b],['a < b',(a,b)=>a<b],['a >= b',(a,b)=>a>=b],['a <= b',(a,b)=>a<=b],['a == b',(a,b)=>a===b],['a != b',(a,b)=>a!==b],['a > 0 && b > 0',(a,b)=>a>0&&b>0],['a > 0 || b > 0',(a,b)=>a>0||b>0],['!(a > b)',(a,b)=>!(a>b)]];
+  const upd=()=>{
+    const A=Number($('.a',host).value),B=Number($('.b',host).value);
+    const o=$('.out',host);
+    if($('.a',host).value.trim()===''||$('.b',host).value.trim()===''||!isFinite(A)||!isFinite(B)){o.innerHTML='<div class="box warn">กรอก a และ b เป็นตัวเลข</div>';return;}
+    o.innerHTML=`<div class="tw"><table><tr><th>นิพจน์ในภาษาซี</th><th>ผลลัพธ์</th></tr>${rows.map(r=>{const v=r[1](A,B);return `<tr><td><code>${esc(r[0])}</code></td><td class="${v?'t':'f'}">${v?'1 (จริง)':'0 (เท็จ)'}</td></tr>`;}).join('')}</table></div>`;
+  };
+  host.querySelectorAll('input').forEach(e=>e.oninput=upd);upd();
+}
+function mkLoopSim(host){
+  host.innerHTML=`<h3>🧪 ตัวจำลองรอบของ for</h3><p>ตั้งค่า 3 ส่วนของ for แล้วดูว่า loop วนกี่รอบ ลองตั้งให้เป็น infinite loop ดูได้</p>
+  <div class="row"><label>เริ่มที่<input class="txt a" value="1"></label><label>เงื่อนไข<select class="o"><option value="<">&lt;</option><option value="<=" selected>&lt;=</option><option value=">">&gt;</option><option value=">=">&gt;=</option></select></label><label>ค่าสิ้นสุด<input class="txt b" value="5"></label><label>ปรับค่าทีละ<input class="txt s" value="1"></label></div><div class="out"></div>`;
+  const upd=()=>{
+    const q=s=>$(s,host);const o=q('.out');
+    const A=Number(q('.a').value),B=Number(q('.b').value),S=Number(q('.s').value),op=q('.o').value;
+    if([q('.a').value,q('.b').value,q('.s').value].some(x=>x.trim()==='')||![A,B,S].every(isFinite)){o.innerHTML='<div class="box warn">กรอกตัวเลขให้ครบทุกช่อง</div>';return;}
+    const test=i=>op==='<'?i<B:op==='<='?i<=B:op==='>'?i>B:i>=B;
+    const upTxt=S===1?'i++':S===-1?'i--':(S<0?`i -= ${-S}`:`i += ${S}`);
+    const code=`for (i = ${A}; i ${op} ${B}; ${upTxt}) {\n    printf("%d ", i);\n}`;
+    let i=A;const rows=[];
+    while(test(i)&&rows.length<30){rows.push(i);i+=S;}
+    const inf=rows.length>=30&&test(i);
+    let h=`<pre class="show"></pre>`;
+    if(!rows.length)h+='<div class="box warn">เงื่อนไขเป็นเท็จตั้งแต่แรก loop จึงทำงาน 0 รอบ</div>';
+    else{
+      h+=`<div class="tw"><table><tr><th>รอบที่</th><th>ค่า i</th><th>ตรวจเงื่อนไข</th></tr>${rows.map((v,k)=>`<tr><td>${k+1}</td><td>${v}</td><td>${v} ${esc(op)} ${B} เป็นจริง จึงทำงาน</td></tr>`).join('')}${inf?'':`<tr><td>-</td><td>${i}</td><td>${i} ${esc(op)} ${B} เป็นเท็จ ออกจาก loop</td></tr>`}</table></div>`;
+      h+=inf?'<div class="box err">⚠️ วนเกิน 30 รอบแล้วยังไม่จบ น่าจะเป็น <b>infinite loop</b> (ตรวจทิศทางการปรับค่ากับเงื่อนไข)</div>':`<div class="box good">วนทั้งหมด <b>${rows.length}</b> รอบ ผลที่ printf แสดง: <code>${rows.join(' ')}</code></div>`;
+    }
+    o.innerHTML=h;$('pre',o).textContent=code;
+  };
+  host.querySelectorAll('input,select').forEach(e=>e.oninput=upd);upd();
+}
+
+/* =====================================================================
+   ส่วนที่ 3: เนื้อหา 8 ขั้น
+   ===================================================================== */
+const C=String.raw;
+const STEPS=[
+/* ---------------- ขั้นที่ 1 ---------------- */
+{name:'1 if',title:'ขั้นที่ 1: if ให้โปรแกรมตัดสินใจ',widget:'compare',
+ learn:C`<p>โปรแกรมที่เขียนมาก่อนหน้านี้ทำงาน <b>เรียงจากบนลงล่างทุกบรรทัด</b> แต่โปรแกรมจริงต้อง <b>ตัดสินใจ</b> ได้ เช่น "ถ้าคะแนนถึงเกณฑ์ ให้แสดงว่าผ่าน" ภาษาซีใช้คำสั่ง <code>if</code></p>
+ <pre class="show">if (เงื่อนไข) {
+    คำสั่งที่ทำเมื่อเงื่อนไขเป็น "จริง"
+}</pre>
+ <h3>เครื่องหมายเปรียบเทียบ</h3>
+ <table><tr><th>เครื่องหมาย</th><th>ความหมาย</th><th>ตัวอย่าง</th></tr>
+ <tr><td><code>&gt;</code> <code>&lt;</code></td><td>มากกว่า / น้อยกว่า</td><td><code>age &gt; 18</code></td></tr>
+ <tr><td><code>&gt;=</code> <code>&lt;=</code></td><td>มากกว่าหรือเท่ากับ / น้อยกว่าหรือเท่ากับ</td><td><code>score &gt;= 50</code></td></tr>
+ <tr><td><code>==</code></td><td>เท่ากับ</td><td><code>x == 10</code></td></tr>
+ <tr><td><code>!=</code></td><td>ไม่เท่ากับ</td><td><code>x != 0</code></td></tr></table>
+ <h3>เครื่องหมายเชื่อมเงื่อนไข</h3>
+ <table><tr><th>เครื่องหมาย</th><th>ความหมาย</th><th>ตัวอย่าง</th></tr>
+ <tr><td><code>&amp;&amp;</code></td><td>และ (จริงทั้งคู่)</td><td><code>x &gt; 0 &amp;&amp; x &lt; 10</code></td></tr>
+ <tr><td><code>||</code></td><td>หรือ (จริงอย่างน้อยหนึ่งข้าง)</td><td><code>x &lt; 0 || x &gt; 100</code></td></tr>
+ <tr><td><code>!</code></td><td>ไม่ (กลับค่า)</td><td><code>!(x &gt; 5)</code></td></tr></table>
+ <div class="box warn"><b>ข้อควรจำ</b><ul><li>ในภาษาซี "จริง" คือ <code>1</code> และ "เท็จ" คือ <code>0</code> (ค่าอะไรก็ตามที่ไม่ใช่ 0 ถือว่าจริง)</li><li><code>=</code> คือ <b>กำหนดค่า</b> ส่วน <code>==</code> คือ <b>เปรียบเทียบ</b> สับสนกันบ่อยมาก</li><li>ไม่ควรใส่ <code>;</code> ต่อท้าย <code>if (...)</code></li></ul></div>`,
+ labs:[{tip:'รันดูด้วยคะแนนต่างๆ แล้วเปิดดู "🔍 บรรทัดที่ทำงาน" ลองกดปุ่ม 😈 เพื่อดูข้อผิดพลาดที่พบบ่อย',trace:true,input:'65',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int score;
+
+    printf("Enter your score: ");
+    scanf("%d", &score);
+
+    if (score >= 50) {
+        printf("You passed!\n");
+    }
+
+    printf("Program finished.\n");
+    return 0;
+}`,tries:[
+  {label:'😈 ใส่ ; หลัง if (...)',fn:c=>c.replace('if (score >= 50) {','if (score >= 50); {')},
+  {label:'😈 เปลี่ยน >= เป็น =',fn:c=>c.replace('score >= 50','score = 50')}]}],
+ mission:{title:'ตัดสินผ่านหรือไม่ผ่าน',task:'<p>รับคะแนน (จำนวนเต็ม) แล้ว <b>ถ้าคะแนนตั้งแต่ 50 ขึ้นไป</b> ให้แสดง <code>Pass</code> ถ้าไม่ถึงไม่ต้องแสดงอะไรเลย</p>',hint:'if (score >= 50) { printf("Pass\\n"); } อย่าลืม scanf("%d", &score); ก่อน',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int score;
+
+    /* รับค่า score */
+
+    /* ถ้า score >= 50 ให้แสดง Pass */
+
+    return 0;
+}`,tests:[{input:'70',expected:'Pass\n'},{input:'50',expected:'Pass\n'},{input:'49',expected:''}],requires:[{re:/if\s*\(/,msg:'ใช้คำสั่ง if'}],
+  solution:C`#include <stdio.h>
+
+int main(void)
+{
+    int score;
+    scanf("%d", &score);
+    if (score >= 50) {
+        printf("Pass\n");
+    }
+    return 0;
+}`},
+ quiz:[
+  {q:'<code>int x = 5; if (x &gt; 3) printf("A"); printf("B");</code> จะแสดงผลอะไร',c:['A','B','AB','ไม่แสดงอะไร'],a:2,e:'x &gt; 3 เป็นจริงจึงแสดง A และ <code>printf("B")</code> อยู่นอก if จึงทำงานเสมอ'},
+  {q:'ข้อใดใช้ตรวจว่า a เท่ากับ b ได้ถูกต้อง',c:['a = b','a == b','a === b','a equals b'],a:1,e:'<code>==</code> คือเปรียบเทียบ ส่วน <code>=</code> คือกำหนดค่า'}]},
+
+/* ---------------- ขั้นที่ 2 ---------------- */
+{name:'2 if-else',title:'ขั้นที่ 2: if-else และ else if',
+ learn:C`<p>ถ้าอยากให้ "ถ้าจริงทำอย่างหนึ่ง ถ้าเท็จทำอีกอย่าง" ใช้ <code>else</code> และถ้ามีหลายทางเลือกใช้ <code>else if</code></p>
+ <pre class="show">if (เงื่อนไข 1) {
+    ทำเมื่อเงื่อนไข 1 จริง
+} else if (เงื่อนไข 2) {
+    ทำเมื่อเงื่อนไข 1 เท็จ แต่เงื่อนไข 2 จริง
+} else {
+    ทำเมื่อไม่มีเงื่อนไขใดจริงเลย
+}</pre>
+ <div class="box warn"><b>ข้อควรจำ:</b> โปรแกรมตรวจเงื่อนไข <b>จากบนลงล่าง</b> และทำเฉพาะทางแรกที่เป็นจริง แล้ว <b>ข้ามส่วนที่เหลือทั้งหมด</b> ดังนั้น <b>ลำดับของเงื่อนไขสำคัญมาก</b> (ลองกดปุ่ม 😈 ด้านล่างดู)</div>
+ <p>ใช้ <code>&amp;&amp;</code> (และ) กับ <code>||</code> (หรือ) เพื่อรวมเงื่อนไข เช่น <code>year % 4 == 0 &amp;&amp; year % 100 != 0</code></p>`,
+ labs:[{tip:'ลองใส่คะแนนหลายค่า เช่น 85, 72, 55, 30 แล้วดูว่าบรรทัดไหนทำงาน',trace:true,input:'72',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int score;
+
+    printf("Enter your score: ");
+    scanf("%d", &score);
+
+    if (score >= 80) {
+        printf("Grade A\n");
+    } else if (score >= 70) {
+        printf("Grade B\n");
+    } else if (score >= 60) {
+        printf("Grade C\n");
+    } else if (score >= 50) {
+        printf("Grade D\n");
+    } else {
+        printf("Grade F\n");
+    }
+    return 0;
+}`,tries:[{label:'😈 เปลี่ยนเงื่อนไขแรกเป็น >= 50',fn:c=>c.replace('score >= 80','score >= 50')}]}],
+ mission:{title:'ปีอธิกสุรทิน (ปีที่มี 29 กุมภาพันธ์)',task:'<p>รับปี ค.ศ. แล้วตรวจว่าเป็นปีอธิกสุรทินหรือไม่ ปีอธิกสุรทินคือปีที่ <b>หารด้วย 4 ลงตัว แต่หารด้วย 100 ไม่ลงตัว</b> หรือ <b>หารด้วย 400 ลงตัว</b> แสดง <code>Leap year</code> หรือ <code>Not leap year</code></p>',hint:'if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) { ... } else { ... }',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int year;
+
+    /* รับค่า year */
+
+    /* ตรวจเงื่อนไขด้วย if-else */
+
+    return 0;
+}`,tests:[{input:'2024',expected:'Leap year\n'},{input:'1900',expected:'Not leap year\n'},{input:'2000',expected:'Leap year\n'},{input:'2023',expected:'Not leap year\n'}],requires:[{re:/if\s*\(/,msg:'ใช้ if'},{re:/else/,msg:'ใช้ else'}],
+  solution:C`#include <stdio.h>
+
+int main(void)
+{
+    int year;
+    scanf("%d", &year);
+    if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) {
+        printf("Leap year\n");
+    } else {
+        printf("Not leap year\n");
+    }
+    return 0;
+}`},
+ quiz:[
+  {q:'<code>int x = 7; if (x &gt; 10) printf("A"); else if (x &gt; 5) printf("B"); else printf("C");</code> แสดงผลอะไร',c:['A','B','C','BC'],a:1,e:'x &gt; 10 เป็นเท็จ จึงตรวจ x &gt; 5 ซึ่งจริง แสดง B แล้วข้ามส่วนที่เหลือ'},
+  {q:'a = -1, b = 2 นิพจน์ <code>(a &gt; 0 &amp;&amp; b &gt; 0)</code> มีค่าเป็นเท่าใด',c:['1','0','-1','2'],a:1,e:'a &gt; 0 เป็นเท็จ และ &amp;&amp; ต้องจริงทั้งสองข้าง ผลจึงเป็นเท็จ คือ 0'}]},
+
+/* ---------------- ขั้นที่ 3 ---------------- */
+{name:'3 switch',title:'ขั้นที่ 3: switch-case เลือกทีละกรณี',
+ learn:C`<p>เมื่อต้องเลือกจาก <b>ค่าที่แน่นอนหลายค่า</b> (เช่น เมนู 1-5, ตัวอักษร a-z) ใช้ <code>switch</code> จะอ่านง่ายกว่า <code>else if</code> หลายชั้น</p>
+ <pre class="show">switch (ตัวแปร) {
+    case 1:
+        คำสั่ง;
+        break;
+    case 2:
+        คำสั่ง;
+        break;
+    default:
+        คำสั่งเมื่อไม่ตรงกับ case ใดเลย;
+}</pre>
+ <ul><li><code>break</code> ใช้ออกจาก switch ถ้า <b>ลืม break</b> โปรแกรมจะทำ case ถัดไปต่อเนื่อง (เรียกว่า fall-through)</li><li><code>default</code> คือทางเลือกสุดท้าย (เหมือน else)</li><li>ใช้กับจำนวนเต็มและตัวอักษร (<code>case 'a':</code>) เท่านั้น ใช้กับทศนิยมไม่ได้</li><li>หลาย case ที่ทำสิ่งเดียวกัน เขียนเรียงกันโดยไม่ต้องมี break คั่น</li></ul>`,
+ labs:[{tip:'ลองใส่ 1, 6, 7, 9 แล้วกด 😈 ลบ break ของ case 1 ใส่ 1 อีกครั้ง',trace:true,input:'1',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int day;
+
+    printf("Enter day number (1-7): ");
+    scanf("%d", &day);
+
+    switch (day) {
+        case 1:
+            printf("Monday\n");
+            break;
+        case 2:
+            printf("Tuesday\n");
+            break;
+        case 3:
+            printf("Wednesday\n");
+            break;
+        case 4:
+            printf("Thursday\n");
+            break;
+        case 5:
+            printf("Friday\n");
+            break;
+        case 6:
+        case 7:
+            printf("Weekend\n");
+            break;
+        default:
+            printf("Invalid day\n");
+    }
+    return 0;
+}`,tries:[{label:'😈 ลบ break ของ case 1',fn:c=>c.replace('break;','')}]}],
+ mission:{title:'เครื่องคิดเลขจิ๋ว',task:'<p>รับ <code>a op b</code> เช่น <code>8 + 2</code> (ตัวเลข ตัวดำเนินการ ตัวเลข) แล้วใช้ <code>switch</code> เลือกตามตัวดำเนินการ แสดงผล <code>Result=…</code> สำหรับ <code>+ - * /</code> ถ้าเป็นเครื่องหมายอื่นให้แสดง <code>Unknown operator</code></p>',hint:'scanf("%d %c %d", &a, &op, &b); แล้ว switch (op) { case \'+\': ... break; ... default: ... } (การหารเป็นการหารจำนวนเต็ม)',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int a, b;
+    char op;
+
+    /* รับค่า a op b */
+
+    /* switch (op) ... */
+
+    return 0;
+}`,tests:[{input:'8 + 2',expected:'Result=10\n'},{input:'8 - 2',expected:'Result=6\n'},{input:'8 * 2',expected:'Result=16\n'},{input:'9 / 2',expected:'Result=4\n'},{input:'5 ^ 2',expected:'Unknown operator\n'}],requires:[{re:/switch\s*\(/,msg:'ใช้ switch'}],
+  solution:C`#include <stdio.h>
+
+int main(void)
+{
+    int a, b;
+    char op;
+    scanf("%d %c %d", &a, &op, &b);
+    switch (op) {
+        case '+': printf("Result=%d\n", a + b); break;
+        case '-': printf("Result=%d\n", a - b); break;
+        case '*': printf("Result=%d\n", a * b); break;
+        case '/': printf("Result=%d\n", a / b); break;
+        default: printf("Unknown operator\n");
+    }
+    return 0;
+}`},
+ quiz:[
+  {q:'ถ้าไม่เขียน <code>break;</code> ท้าย case จะเกิดอะไรขึ้น',c:['เกิด compile error','โปรแกรมทำ case ถัดไปต่อเนื่อง (fall-through)','โปรแกรมหยุดทันที','ไม่มีอะไรเปลี่ยน'],a:1,e:'ไม่มี break โปรแกรมจะไหลลงไปทำคำสั่งของ case ถัดไปด้วย'},
+  {q:'<code>default</code> ใน switch ทำงานเมื่อใด',c:['ทำงานก่อน case แรกเสมอ','เมื่อไม่มี case ใดตรงกับค่า','เมื่อทุก case ตรงกัน','เมื่อมี break'],a:1,e:'default เหมือน else ของ switch ใช้รับกรณีที่ไม่ตรงกับ case ใดเลย'}]},
+
+/* ---------------- ขั้นที่ 4 ---------------- */
+{name:'4 while',title:'ขั้นที่ 4: while และ do-while ทำซ้ำ',
+ learn:C`<p><b>Loop (ลูป)</b> คือการสั่งให้ทำคำสั่งซ้ำๆ แทนที่จะเขียนซ้ำเอง 100 บรรทัด</p>
+ <pre class="show">int i = 1;              // 1) ค่าเริ่มต้น
+while (i &lt;= 5) {        // 2) เงื่อนไข: จริงก็วนต่อ
+    printf("%d\n", i);  //    คำสั่งที่ทำซ้ำ
+    i++;                // 3) เปลี่ยนค่า ไม่งั้นจะวนไม่จบ!
+}</pre>
+ <p>loop ที่ดีต้องมี 3 อย่างนี้ครบ ถ้าลืมข้อ 3 จะเกิด <b>infinite loop</b> (วนไม่รู้จบ)</p>
+ <h3>do-while: ทำก่อน แล้วค่อยตรวจ</h3>
+ <pre class="show">do {
+    คำสั่ง;
+} while (เงื่อนไข);     // ต้องมี ; ปิดท้าย</pre>
+ <table><tr><th></th><th><code>while</code></th><th><code>do-while</code></th></tr><tr><td>ตรวจเงื่อนไข</td><td>ก่อนทำ</td><td>หลังทำ</td></tr><tr><td>ทำงานอย่างน้อย</td><td>0 รอบ</td><td><b>1 รอบ</b> เสมอ</td></tr><tr><td>เหมาะกับ</td><td>ไม่รู้ว่าต้องวนกี่รอบ</td><td>ต้องทำครั้งแรกเสมอ เช่น ถามรหัสผ่าน</td></tr></table>`,
+ labs:[
+  {tip:'ตัวอย่าง while นับ 1 ถึง 5 ดูแถบ ×5 ใน "🔍 บรรทัดที่ทำงาน" แล้วลองกด 😈 ลบ i++',trace:true,
+   code:C`#include <stdio.h>
+
+int main(void)
+{
+    int i = 1;
+
+    while (i <= 5) {
+        printf("Round %d\n", i);
+        i++;
+    }
+    printf("Done, i = %d\n", i);
+    return 0;
+}`,tries:[{label:'😈 ลบ i++ (infinite loop)',fn:c=>c.replace('i++;','')}]},
+  {tip:'ตัวอย่าง do-while ถามรหัสจนกว่าจะถูก (ลองพิมพ์ 1234 ตัวเดียว หรือหลายค่าคั่นด้วยเว้นวรรค)',trace:true,input:'1111 2222 1234',
+   code:C`#include <stdio.h>
+
+int main(void)
+{
+    int pin;
+
+    do {
+        printf("Enter PIN: ");
+        scanf("%d", &pin);
+    } while (pin != 1234);
+
+    printf("Welcome!\n");
+    return 0;
+}`}],
+ mission:{title:'ผลบวก 1 ถึง n',task:'<p>รับจำนวนเต็ม <code>n</code> แล้วใช้ <code>while</code> หาผลรวม 1 + 2 + … + n แสดงผลเป็น <code>Sum=…</code></p>',hint:'ตั้ง i = 1 และ sum = 0 แล้ว while (i <= n) { sum += i; i++; }',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int n, i = 1, sum = 0;
+
+    scanf("%d", &n);
+
+    /* เขียน while ตรงนี้ */
+
+    printf("Sum=%d\n", sum);
+    return 0;
+}`,tests:[{input:'5',expected:'Sum=15\n'},{input:'10',expected:'Sum=55\n'},{input:'100',expected:'Sum=5050\n'}],requires:[{re:/while\s*\(/,msg:'ใช้ while'}],
+  solution:C`#include <stdio.h>
+
+int main(void)
+{
+    int n, i = 1, sum = 0;
+    scanf("%d", &n);
+    while (i <= n) {
+        sum += i;
+        i++;
+    }
+    printf("Sum=%d\n", sum);
+    return 0;
+}`},
+ quiz:[
+  {q:'<code>int i = 0; while (i &lt; 3) { i++; }</code> เมื่อจบ loop ค่า i เท่ากับเท่าใด',c:['2','3','4','0'],a:1,e:'i เพิ่มเป็น 1, 2, 3 พอ i = 3 เงื่อนไข i &lt; 3 เป็นเท็จจึงหยุด'},
+  {q:'<code>int x = 10; do { printf("A"); } while (x &lt; 5);</code> แสดง A กี่ตัว',c:['0 ตัว','1 ตัว','5 ตัว','วนไม่จบ'],a:1,e:'do-while ทำก่อนแล้วค่อยตรวจเงื่อนไข จึงทำอย่างน้อย 1 รอบเสมอ'}]},
+
+/* ---------------- ขั้นที่ 5 ---------------- */
+{name:'5 for',title:'ขั้นที่ 5: for วนซ้ำตามจำนวนรอบ',widget:'loop',
+ learn:C`<p><code>for</code> รวม 3 ส่วนของ loop (เริ่มต้น เงื่อนไข ปรับค่า) ไว้ในบรรทัดเดียว เหมาะเมื่อรู้จำนวนรอบ</p>
+ <pre class="show">for (i = 1; i &lt;= 5; i++) {
+//   ^ เริ่มต้น  ^ เงื่อนไข  ^ ปรับค่าหลังจบแต่ละรอบ
+    printf("%d\n", i);
+}</pre>
+ <p>ลำดับการทำงาน: ① ตั้งค่าเริ่มต้น (ครั้งเดียว) → ② ตรวจเงื่อนไข → ③ ทำคำสั่งในบล็อก → ④ ปรับค่า → กลับไป ②</p>
+ <table><tr><th>ต้องการ</th><th>เขียนว่า</th></tr>
+ <tr><td>นับขึ้น 1 ถึง 10</td><td><code>for (i = 1; i &lt;= 10; i++)</code></td></tr>
+ <tr><td>นับลง 10 ถึง 1</td><td><code>for (i = 10; i &gt;= 1; i--)</code></td></tr>
+ <tr><td>เลขคู่ 2 ถึง 20</td><td><code>for (i = 2; i &lt;= 20; i += 2)</code></td></tr>
+ <tr><td>วน n รอบ</td><td><code>for (i = 0; i &lt; n; i++)</code></td></tr></table>
+ <p>มาตรฐานใหม่ของภาษาซีอนุญาตให้ประกาศตัวแปรในวงเล็บ for ได้ เช่น <code>for (int i = 0; i &lt; 5; i++)</code></p>`,
+ labs:[{tip:'ตารางสูตรคูณ ลองเปลี่ยนเลขแม่ (ช่องข้อมูล) หรือเปลี่ยน 12 เป็นค่าอื่น',trace:true,input:'7',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int n, i;
+
+    printf("Multiplication table of: ");
+    scanf("%d", &n);
+
+    for (i = 1; i <= 12; i++) {
+        printf("%d x %d = %d\n", n, i, n * i);
+    }
+    return 0;
+}`,tries:[{label:'😈 ใส่ ; หลัง for (...)',fn:c=>c.replace('i++) {','i++); {')}]}],
+ mission:{title:'แฟกทอเรียล',task:'<p>รับจำนวนเต็ม <code>n</code> (0 ถึง 12) แล้วหา n! = 1 × 2 × 3 × … × n ด้วย <code>for</code> (กำหนดให้ 0! = 1) แสดงผลเป็น <code>Factorial=…</code></p>',hint:'ตั้ง f = 1 ก่อน แล้ว for (i = 1; i <= n; i++) { f *= i; } ถ้า n เป็น 0 loop จะไม่ทำงานและ f ยังเป็น 1 พอดี',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int n, i, f = 1;
+
+    scanf("%d", &n);
+
+    /* เขียน for ตรงนี้ */
+
+    printf("Factorial=%d\n", f);
+    return 0;
+}`,tests:[{input:'5',expected:'Factorial=120\n'},{input:'1',expected:'Factorial=1\n'},{input:'10',expected:'Factorial=3628800\n'},{input:'0',expected:'Factorial=1\n'}],requires:[{re:/for\s*\(/,msg:'ใช้ for'}],
+  solution:C`#include <stdio.h>
+
+int main(void)
+{
+    int n, i, f = 1;
+    scanf("%d", &n);
+    for (i = 1; i <= n; i++) {
+        f *= i;
+    }
+    printf("Factorial=%d\n", f);
+    return 0;
+}`},
+ quiz:[
+  {q:'<code>for (i = 0; i &lt; 5; i++)</code> วนกี่รอบ',c:['4 รอบ','5 รอบ','6 รอบ','วนไม่จบ'],a:1,e:'i เป็น 0, 1, 2, 3, 4 รวม 5 รอบ พอ i = 5 เงื่อนไขเป็นเท็จ'},
+  {q:'<code>for (i = 10; i &gt; 0; i -= 3) printf("%d ", i);</code> แสดงผลอะไร',c:['10 7 4 1','10 7 4 1 -2','10 8 6 4 2','7 4 1'],a:0,e:'i = 10, 7, 4, 1 แล้ว i = -2 ซึ่งไม่มากกว่า 0 จึงหยุด'}]},
+
+/* ---------------- ขั้นที่ 6 ---------------- */
+{name:'6 break/ซ้อน',title:'ขั้นที่ 6: break, continue และ loop ซ้อน loop',
+ learn:C`<h3>ควบคุมการวนด้วย break และ continue</h3>
+ <table><tr><th>คำสั่ง</th><th>ผล</th></tr><tr><td><code>break;</code></td><td>ออกจาก loop ทันที</td></tr><tr><td><code>continue;</code></td><td>ข้ามคำสั่งที่เหลือของรอบนี้ แล้วไปรอบถัดไป</td></tr></table>
+ <h3>loop ซ้อน loop (Nested loop)</h3>
+ <p>เหมือนเข็มนาฬิกา: เข็มชั่วโมง (loop นอก) ขยับ 1 ครั้ง เข็มนาที (loop ใน) วนครบ 1 รอบ ถ้า loop นอกวน 3 รอบ และ loop ในวน 4 รอบ ข้อความใน loop ในจะทำงานทั้งหมด 3 × 4 = <b>12</b> ครั้ง ใช้บ่อยกับการวาดรูปแบบและตาราง</p>`,
+ labs:[
+  {tip:'วาดสามเหลี่ยมดอกจัน ดูใน "🔍 บรรทัดที่ทำงาน" ว่า printf("*") ทำงานรวมกี่ครั้ง (ลองเปลี่ยนเลขช่องข้อมูล)',trace:true,input:'5',
+   code:C`#include <stdio.h>
+
+int main(void)
+{
+    int n, row, col;
+
+    scanf("%d", &n);
+
+    for (row = 1; row <= n; row++) {
+        for (col = 1; col <= row; col++) {
+            printf("*");
+        }
+        printf("\n");
+    }
+    return 0;
+}`},
+  {tip:'ข้ามผลคูณของ 3 (continue) และหยุดเมื่อถึง 8 (break) ผลลัพธ์คือ 1 2 4 5 7',trace:true,
+   code:C`#include <stdio.h>
+
+int main(void)
+{
+    int i;
+
+    for (i = 1; i <= 10; i++) {
+        if (i % 3 == 0) {
+            continue;
+        }
+        if (i == 8) {
+            break;
+        }
+        printf("%d ", i);
+    }
+    printf("\n");
+    return 0;
+}`}],
+ mission:{title:'สามเหลี่ยมตัวเลข',task:'<p>รับจำนวนเต็ม <code>n</code> แล้วแสดงสามเหลี่ยมตัวเลข โดยบรรทัดที่ k แสดงเลข 1 ถึง k ติดกัน (ตัวอย่างเมื่อ n = 4)</p>',hint:'loop นอกวน row จาก 1 ถึง n, loop ในวน col จาก 1 ถึง row แล้ว printf("%d", col); พอจบ loop ในค่อย printf("\\n");',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int n, row, col;
+
+    scanf("%d", &n);
+
+    /* เขียน loop ซ้อน loop ตรงนี้ */
+
+    return 0;
+}`,tests:[{input:'4',expected:'1\n12\n123\n1234\n'},{input:'2',expected:'1\n12\n'},{input:'1',expected:'1\n'}],requires:[{re:/for\s*\([^]*for\s*\(|while\s*\([^]*while\s*\(|for\s*\([^]*while\s*\(|while\s*\([^]*for\s*\(/,msg:'ใช้ loop ซ้อน loop (2 ชั้น)'}],
+  solution:C`#include <stdio.h>
+
+int main(void)
+{
+    int n, row, col;
+    scanf("%d", &n);
+    for (row = 1; row <= n; row++) {
+        for (col = 1; col <= row; col++) {
+            printf("%d", col);
+        }
+        printf("\n");
+    }
+    return 0;
+}`},
+ quiz:[
+  {q:'<code>continue;</code> ใน loop ทำอะไร',c:['ออกจาก loop ทันที','ข้ามส่วนที่เหลือของรอบนี้ แล้วไปรอบถัดไป','จบโปรแกรม','เริ่ม loop ใหม่ตั้งแต่ต้น'],a:1,e:'continue ข้ามไปรอบถัดไป ส่วน break ออกจาก loop เลย'},
+  {q:'<code>for (i=0;i&lt;3;i++) for (j=0;j&lt;4;j++) printf("*");</code> แสดง * ทั้งหมดกี่ตัว',c:['7','12','3','4'],a:1,e:'loop ในวน 4 รอบ ต่อ loop นอก 1 รอบ รวม 3 × 4 = 12'}]},
+
+/* ---------------- ขั้นที่ 7 ---------------- */
+{name:'7 ฟังก์ชัน',title:'ขั้นที่ 7: ฟังก์ชัน แยกงานเป็นชิ้นเล็กๆ',
+ annot:[
+  {c:'int add(int a, int b)',e:'<b>ส่วนหัวฟังก์ชัน</b><br><code>int</code> = ชนิดของค่าที่ส่งกลับ, <code>add</code> = ชื่อฟังก์ชัน, <code>(int a, int b)</code> = <b>พารามิเตอร์</b> (ช่องรับค่า) 2 ช่อง'},
+  {c:'{',e:'เริ่มเนื้อหาของฟังก์ชัน'},
+  {c:'    int sum = a + b;',e:'<b>ตัวแปรภายในฟังก์ชัน (local variable)</b> ใช้ได้เฉพาะในฟังก์ชันนี้เท่านั้น ฟังก์ชันอื่นมองไม่เห็น'},
+  {c:'    return sum;',e:'<b>ส่งค่ากลับ</b> ไปให้ผู้เรียก และจบการทำงานของฟังก์ชันทันที'},
+  {c:'}',e:'จบฟังก์ชัน'},
+  {c:'',e:'บรรทัดว่างเพื่อให้อ่านง่าย'},
+  {c:'int main(void)',e:'<code>main</code> ก็คือฟังก์ชันหนึ่ง เป็นฟังก์ชันที่โปรแกรมเริ่มทำงาน'},
+  {c:'{',e:'เริ่มเนื้อหาของ main'},
+  {c:'    int r = add(3, 4);',e:'<b>เรียกใช้ฟังก์ชัน</b> ค่า <code>3</code> และ <code>4</code> คือ <b>อาร์กิวเมนต์</b> (ค่าที่ส่งเข้าไป) จะถูกคัดลอกไปเป็น a และ b ค่า 7 ที่ส่งกลับมาจะถูกเก็บใน r'},
+  {c:'    printf("%d\\n", r);',e:'แสดงค่า r คือ 7'},
+  {c:'    return 0;',e:'จบ main'},
+  {c:'}',e:'จบโปรแกรม'}],
+ learn:C`<p><b>ฟังก์ชัน (function)</b> คือชุดคำสั่งที่ตั้งชื่อไว้ แล้วเรียกใช้ซ้ำได้ ช่วยให้โปรแกรม <b>อ่านง่าย แก้ง่าย และไม่ต้องเขียนซ้ำ</b> คุณใช้ฟังก์ชันมาตลอดแล้ว เช่น <code>printf</code>, <code>scanf</code> และ <code>main</code> ตอนนี้จะสร้างเองบ้าง คลิกแต่ละบรรทัดเพื่อดูคำอธิบาย</p>`,
+ learn2:C`<table><tr><th>ชนิดฟังก์ชัน</th><th>ตัวอย่าง</th><th>ลักษณะ</th></tr>
+ <tr><td>ส่งค่ากลับ</td><td><code>int square(int x)</code></td><td>ใช้ <code>return</code> ส่งค่า เรียกใช้ในนิพจน์ได้</td></tr>
+ <tr><td>ไม่ส่งค่ากลับ</td><td><code>void greet(void)</code></td><td>ใช้ชนิด <code>void</code> ทำงานแล้วจบ</td></tr></table>
+ <ul><li><b>ต้องเขียนฟังก์ชันไว้ก่อนจุดที่เรียกใช้</b> (มักไว้เหนือ main) หรือประกาศ <b>prototype</b> ไว้ก่อน เช่น <code>int add(int a, int b);</code></li>
+ <li><b>การส่งค่าแบบ pass by value:</b> ฟังก์ชันได้ "สำเนา" ของค่า ถ้าแก้ค่าในฟังก์ชัน ตัวแปรเดิมข้างนอกไม่เปลี่ยน (ดูตัวอย่างที่ 2)</li>
+ <li>จำนวนและชนิดของอาร์กิวเมนต์ต้องตรงกับพารามิเตอร์</li></ul>`,
+ labs:[
+  {tip:'ลองรัน แล้วกดปุ่ม 😈 เพื่อดูข้อผิดพลาดที่พบบ่อยเมื่อเรียกฟังก์ชัน',trace:true,input:'6',
+   code:C`#include <stdio.h>
+
+int square(int x)
+{
+    return x * x;
+}
+
+void greet(void)
+{
+    printf("Hello from a function!\n");
+}
+
+int main(void)
+{
+    int n;
+
+    greet();
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("%d squared = %d\n", n, square(n));
+    return 0;
+}`,tries:[
+    {label:'😈 เปลี่ยน square เป็น Square',fn:c=>c.replace('square(n)','Square(n)')},
+    {label:'😈 ส่งอาร์กิวเมนต์ไม่ครบ',fn:c=>c.replace('square(n)','square()')}]},
+  {tip:'ตัวอย่าง pass by value: a ข้างนอกจะเปลี่ยนเป็น 15 หรือไม่ ลองเดาก่อนกดรัน',
+   code:C`#include <stdio.h>
+
+void addTen(int x)
+{
+    x = x + 10;
+    printf("Inside function:  x = %d\n", x);
+}
+
+int main(void)
+{
+    int a = 5;
+
+    addTen(a);
+    printf("Outside function: a = %d\n", a);
+    return 0;
+}`}],
+ mission:{title:'หาค่ามากสุดของสองจำนวน',task:'<p>เขียนฟังก์ชัน <code>int maxOf(int a, int b)</code> ที่ส่งกลับค่าที่มากกว่าของ a และ b โดย main ถูกเขียนไว้ให้แล้ว (ต้องเขียนฟังก์ชันไว้ <b>เหนือ</b> main)</p>',hint:'int maxOf(int a, int b) { if (a > b) { return a; } return b; }',
+  code:C`#include <stdio.h>
+
+/* เขียนฟังก์ชัน maxOf ที่นี่ */
+
+int main(void)
+{
+    int a, b;
+    scanf("%d %d", &a, &b);
+    printf("Max=%d\n", maxOf(a, b));
+    return 0;
+}`,tests:[{input:'3 9',expected:'Max=9\n'},{input:'10 4',expected:'Max=10\n'},{input:'-5 -2',expected:'Max=-2\n'},{input:'7 7',expected:'Max=7\n'}],requires:[{re:/int\s+maxOf\s*\(\s*int\s+\w+\s*,\s*int\s+\w+\s*\)/,msg:'เขียนส่วนหัว int maxOf(int a, int b)'},{re:/return\s+[^;]+;/,msg:'ใช้ return ส่งค่ากลับ'}],
+  solution:C`#include <stdio.h>
+
+int maxOf(int a, int b)
+{
+    if (a > b) {
+        return a;
+    }
+    return b;
+}
+
+int main(void)
+{
+    int a, b;
+    scanf("%d %d", &a, &b);
+    printf("Max=%d\n", maxOf(a, b));
+    return 0;
+}`},
+ quiz:[
+  {q:'ฟังก์ชันที่ทำงานแล้วไม่ส่งค่ากลับ ใช้ชนิดข้อมูลใดนำหน้าชื่อ',c:['int','void','char','null'],a:1,e:'<code>void</code> แปลว่า "ว่างเปล่า" คือไม่มีค่าส่งกลับ'},
+  {q:'<code>void f(int x) { x = 99; }</code> ใน main: <code>int a = 1; f(a); printf("%d", a);</code> แสดงผลอะไร',c:['99','1','0','เกิดข้อผิดพลาด'],a:1,e:'ภาษาซีส่งค่าแบบสำเนา (pass by value) การแก้ x ในฟังก์ชันไม่กระทบ a'}]},
+
+/* ---------------- ขั้นที่ 8 ---------------- */
+{name:'8 โจทย์รวม',title:'ขั้นที่ 8: รวมพลังทุกอย่าง',last:true,
+ learn:C`<p>ตอนนี้คุณมีเครื่องมือครบ ลองเลือกใช้ให้เหมาะกับงาน</p>
+ <table><tr><th>ต้องการ</th><th>ใช้</th></tr>
+ <tr><td>ตัดสินใจ 1-2 ทาง</td><td><code>if</code> / <code>if-else</code></td></tr>
+ <tr><td>เลือกหลายทางจากค่าที่แน่นอน</td><td><code>switch</code></td></tr>
+ <tr><td>รู้จำนวนรอบ</td><td><code>for</code></td></tr>
+ <tr><td>ไม่รู้จำนวนรอบ วนตามเงื่อนไข</td><td><code>while</code></td></tr>
+ <tr><td>ต้องทำอย่างน้อย 1 ครั้งก่อนตรวจเงื่อนไข</td><td><code>do-while</code></td></tr>
+ <tr><td>งานที่ต้องทำซ้ำหลายจุด หรืออยากแยกให้อ่านง่าย</td><td>ฟังก์ชัน</td></tr></table>
+ <div class="box good"><b>เคล็ดลับการเขียนโปรแกรมที่ดี:</b> ① ใส่ <code>{ }</code> ทุกครั้งแม้มีคำสั่งเดียว ② เยื้องบรรทัดให้เป็นระเบียบ ③ ตั้งชื่อตัวแปรและฟังก์ชันให้สื่อความหมาย ④ ลองทดสอบกับค่าขอบ เช่น 0, 1, ค่าติดลบ</div>`,
+ labs:[{tip:'เกมทายเลข (เลขลับคือ 42) ลองพิมพ์หลายค่าติดกัน เช่น 50 30 42 แล้วลองแก้เป็นเลขอื่น หรือเพิ่มจำกัดจำนวนครั้ง',trace:true,input:'50 30 42',
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int secret = 42;
+    int guess, tries = 0;
+
+    do {
+        printf("Guess: ");
+        scanf("%d", &guess);
+        tries++;
+
+        if (guess > secret) {
+            printf("Too high\n");
+        } else if (guess < secret) {
+            printf("Too low\n");
+        } else {
+            printf("Correct! Tries = %d\n", tries);
+        }
+    } while (guess != secret);
+
+    return 0;
+}`}],
+ mission:{title:'จำนวนเฉพาะ',task:'<p>จำนวนเฉพาะ คือ จำนวนเต็มที่มากกว่า 1 และหารลงตัวด้วย 1 กับตัวเองเท่านั้น ให้เขียนฟังก์ชัน <code>int isPrime(int n)</code> ที่ส่งกลับ 1 ถ้าเป็นจำนวนเฉพาะ และ 0 ถ้าไม่ใช่ จากนั้นใน main ให้รับ n แล้วแสดงจำนวนเฉพาะทั้งหมดตั้งแต่ 2 ถึง n คั่นด้วยช่องว่าง</p>',hint:'ใน isPrime: ถ้า n < 2 ให้ return 0 แล้ว for (i = 2; i < n; i++) ถ้า n % i == 0 ให้ return 0 ถ้าวนจบโดยไม่เจอตัวหาร ให้ return 1 ส่วน main ใช้ for (k = 2; k <= n; k++) แล้ว if (isPrime(k)) printf("%d ", k);',
+  code:C`#include <stdio.h>
+
+/* 1. เขียนฟังก์ชัน isPrime ที่นี่ */
+
+int main(void)
+{
+    int n, k;
+
+    scanf("%d", &n);
+
+    /* 2. วน k ตั้งแต่ 2 ถึง n ถ้า isPrime(k) เป็นจริง ให้แสดง k ตามด้วยช่องว่าง */
+
+    printf("\n");
+    return 0;
+}`,tests:[{input:'10',expected:'2 3 5 7\n'},{input:'20',expected:'2 3 5 7 11 13 17 19\n'},{input:'2',expected:'2\n'},{input:'1',expected:''}],requires:[{re:/int\s+isPrime\s*\(\s*int\s+\w+\s*\)/,msg:'เขียนฟังก์ชัน int isPrime(int n)'},{re:/(for|while)\s*\(/,msg:'ใช้ loop'}],
+  solution:C`#include <stdio.h>
+
+int isPrime(int n)
+{
+    int i;
+    if (n < 2) {
+        return 0;
+    }
+    for (i = 2; i < n; i++) {
+        if (n % i == 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main(void)
+{
+    int n, k;
+    scanf("%d", &n);
+    for (k = 2; k <= n; k++) {
+        if (isPrime(k)) {
+            printf("%d ", k);
+        }
+    }
+    printf("\n");
+    return 0;
+}`},
+ quiz:[
+  {q:'ประโยชน์หลักของการแยกโค้ดเป็นฟังก์ชันคืออะไร',c:['ทำให้โปรแกรมทำงานเร็วขึ้นเสมอ','อ่านง่าย และนำกลับมาใช้ซ้ำได้โดยไม่ต้องเขียนใหม่','ทำให้ไม่ต้องใช้ตัวแปร','ทำให้ไม่ต้องมี main'],a:1,e:'ฟังก์ชันช่วยแบ่งงานใหญ่เป็นงานย่อย อ่านง่าย แก้ไขง่าย และเรียกใช้ซ้ำได้'},
+  {q:'ถ้าลืมเปลี่ยนค่าตัวแปรที่ใช้ในเงื่อนไข while (เช่น ลืม i++) จะเกิดอะไรขึ้น',c:['โปรแกรมคอมไพล์ไม่ผ่านเสมอ','เกิด infinite loop คือวนไม่รู้จบ','loop ไม่ทำงานเลย','โปรแกรมจบเองโดยอัตโนมัติ'],a:1,e:'เงื่อนไขไม่เคยเปลี่ยนเป็นเท็จ loop จึงวนต่อไปเรื่อยๆ'}]}
+];
+
+/* =====================================================================
+   ส่วนที่ 4: ระบบแสดงหน้า
+   ===================================================================== */
+let cur=0;
+function renderDots(){
+  $('#steps').innerHTML=STEPS.map((s,i)=>`<button class="dot ${i===cur?'cur':''} ${progress['a'+i]?'done':''}" data-i="${i}">${progress['a'+i]?'✅ ':''}${s.name}</button>`).join('');
+  document.querySelectorAll('.dot').forEach(b=>b.onclick=()=>go(+b.dataset.i));
+}
+function go(i){
+  cur=i;const S=STEPS[i];
+  let h=`<div class="card learn"><h2>${S.title}</h2>${S.learn}${S.annot?'<div id="an"></div>':''}${S.learn2||''}</div>`;
+  if(S.widget)h+='<div class="card"><div id="wd"></div></div>';
+  S.labs.forEach((l,k)=>{h+=`<div class="card"><h3 style="margin-top:0">🧪 ลองรันดู${S.labs.length>1?' ตัวอย่างที่ '+(k+1):''}</h3><p>${l.tip}</p><div id="lab${k}"></div></div>`;});
+  h+=`<div class="card mission" id="ms"></div><div class="card quiz" id="qz"></div>`;
+  if(S.last)h+=`<div class="card fin"><h2>🎉 จบบทเรียนแล้ว!</h2><p>คุณเขียนโปรแกรมที่ <b>ตัดสินใจ</b> (<code>if</code>, <code>switch</code>), <b>ทำซ้ำ</b> (<code>for</code>, <code>while</code>, <code>do-while</code>) และ <b>แยกเป็นฟังก์ชัน</b> ได้แล้ว ขั้นต่อไปที่น่าเรียนคือ อาร์เรย์ (array) สตริง (string) และพอยน์เตอร์ (pointer)</p></div>`;
+  h+=`<div class="nav"><button class="btn" id="pv" ${i===0?'disabled':''}>◀ ขั้นก่อนหน้า</button><button class="btn go" id="nx" ${i===STEPS.length-1?'disabled':''}>ขั้นต่อไป ▶</button></div>`;
+  $('#page').innerHTML=h;
+  if(S.annot)mkAnnot($('#an'),S.annot);
+  if(S.widget==='compare')mkCompare($('#wd'));
+  if(S.widget==='loop')mkLoopSim($('#wd'));
+  S.labs.forEach((l,k)=>mkEditor($('#lab'+k),l));
+  mkMission($('#ms'),S.mission,'a'+i,renderDots);
+  mkQuiz($('#qz'),S.quiz);
+  $('#pv').onclick=()=>go(i-1);
+  $('#nx').onclick=()=>go(i+1);
+  renderDots();
+  window.scrollTo(0,0);
+}
+$('#rstp').onclick=()=>{if(confirm('ต้องการล้างความก้าวหน้าทั้งหมดหรือไม่')){progress={};saveP();go(cur);}};
+go(0);
+</script>
+</body>
+</html>
