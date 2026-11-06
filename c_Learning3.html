@@ -1,0 +1,2516 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>เรียนภาษาซี: อาร์เรย์ สตริง และพอยน์เตอร์</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5f9;color:#1e293b;font-family:'Sarabun','Noto Sans Thai',Tahoma,sans-serif;font-size:18px;line-height:1.7}
+.wrap{max-width:900px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:8px 0 2px}
+h2{font-size:1.4rem;margin:0 0 8px;color:#1d4ed8}
+h3{margin:14px 0 6px}
+.sub{color:#64748b;margin:0 0 12px}
+code,pre,textarea,.mono{font-family:Consolas,'Courier New',monospace}
+code{background:#e0e7ff;color:#3730a3;padding:1px 6px;border-radius:5px;font-size:.92em}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 16px}
+.dot{flex:1;min-width:96px;border:2px solid #cbd5e1;background:#fff;border-radius:12px;padding:6px 4px;cursor:pointer;font:inherit;font-size:.85rem;text-align:center}
+.dot.cur{border-color:#2563eb;background:#dbeafe;font-weight:700}
+.dot.done{border-color:#22c55e}
+.card{background:#fff;border-radius:16px;padding:18px 22px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.learn{background:#eff6ff;border-left:6px solid #2563eb}
+.mission{background:#faf5ff;border-left:6px solid #9333ea}
+.quiz{background:#fffbeb;border-left:6px solid #f59e0b}
+.fin{background:#ecfdf5;border:2px solid #22c55e}
+pre.show{background:#0f172a;color:#e2e8f0;padding:10px 14px;border-radius:10px;overflow-x:auto;font-size:.95rem;margin:8px 0}
+textarea.code{width:100%;background:#0f172a;color:#e2e8f0;border:0;border-radius:10px;padding:12px;font-size:1rem;line-height:1.55;resize:vertical;white-space:pre;tab-size:4}
+.inp,.txt,select{border:2px solid #cbd5e1;border-radius:8px;padding:6px 10px;font-size:1rem;font-family:Consolas,monospace;background:#fff}
+.inp{width:100%}
+.lab{display:block;font-size:.9rem;color:#475569;margin-top:8px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.btn{border:2px solid #cbd5e1;background:#fff;border-radius:10px;padding:8px 16px;font:inherit;font-size:1rem;cursor:pointer}
+.btn:hover{background:#f1f5f9}
+.btn.go{background:#2563eb;border-color:#2563eb;color:#fff;font-weight:700}
+.btn.ok{background:#16a34a;border-color:#16a34a;color:#fff;font-weight:700}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.mono{font-size:.92rem;padding:6px 12px}
+.term{background:#020617;color:#4ade80;border-radius:10px;padding:10px 14px;min-height:44px;white-space:pre-wrap;font-size:1rem;margin-top:6px}
+.term i{color:#fde68a;font-style:normal}
+.tlabel{font-size:.82rem;color:#64748b;margin-top:8px}
+.box{padding:10px 14px;border-radius:10px;margin-top:8px;font-size:.98rem}
+.err{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+.good{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+.warn{background:#fffbeb;border:1px solid #fcd34d;color:#92400e}
+.box ul{margin:4px 0 0 20px;padding:0}
+table{border-collapse:collapse;margin:8px 0;font-size:.95rem}
+td,th{border:1px solid #cbd5e1;padding:5px 12px;text-align:left;vertical-align:top}
+th{background:#f1f5f9}
+.tw{overflow-x:auto}
+.aline{display:flex;gap:12px;width:100%;border:0;background:transparent;color:#e2e8f0;text-align:left;padding:3px 12px;cursor:pointer;font-family:Consolas,monospace;font-size:1rem;white-space:pre}
+.aline:hover{background:#1e293b}.aline.sel{background:#1d4ed8}
+.aline .n{color:#64748b;min-width:18px;text-align:right}
+.acode{background:#0f172a;border-radius:10px;padding:8px 0;overflow-x:auto}
+.aexp{background:#fff;border:2px dashed #93c5fd;border-radius:10px;padding:10px 14px;margin-top:8px;min-height:70px}
+.choice{display:block;width:100%;text-align:left;margin:6px 0;padding:9px 14px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font:inherit;font-size:1rem;cursor:pointer}
+.choice:hover{border-color:#2563eb}
+.choice.right{background:#dcfce7;border-color:#22c55e}.choice.wrong{background:#fee2e2;border-color:#ef4444}
+.q{border:1px solid #fde68a;border-radius:12px;padding:8px 14px;margin:10px 0;background:#fff}
+.nav{display:flex;justify-content:space-between;margin:8px 0 12px}
+.reset{background:none;border:0;color:#64748b;text-decoration:underline;cursor:pointer;font:inherit;font-size:.85rem;margin-bottom:40px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:8px}
+.row label{font-size:.9rem;display:flex;flex-direction:column;gap:2px}
+.row .txt{width:90px}
+.trace{margin-top:10px}
+.trace summary{cursor:pointer;color:#1d4ed8;font-weight:600}
+.tr{background:#0f172a;border-radius:10px;padding:6px 0;margin-top:6px;overflow-x:auto}
+.trl{display:flex;gap:10px;padding:1px 12px;font-family:Consolas,monospace;font-size:.9rem;color:#e2e8f0;white-space:pre}
+.trl.off{opacity:.4}.trl.on{background:#14532d}
+.tn{color:#94a3b8;min-width:22px;text-align:right}
+.tc{min-width:46px;color:#fde68a;font-weight:700}
+.trl code{background:none;color:inherit;padding:0}
+.memv{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.mv{background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:8px 12px;overflow-x:auto}
+.mvh{font-size:.92rem;margin-bottom:6px}
+.mva{color:#64748b;font-size:.8rem}
+.mrow{display:flex;gap:4px;margin-bottom:4px}
+.mc{min-width:56px;text-align:center;border:2px solid #3b82f6;border-radius:8px;background:#eff6ff;padding:0 5px;flex:0 0 auto}
+.mc.nul{border-color:#ef4444;background:#fef2f2}
+.mc.un{border-style:dashed;border-color:#94a3b8;background:#f1f5f9;color:#64748b}
+.mc.hl{background:#fde68a;border-color:#f59e0b}
+.mi{font-size:.72rem;color:#64748b}
+.mb{font-family:Consolas,monospace;font-weight:700;font-size:1.05rem}
+.ma{font-size:.68rem;color:#94a3b8;font-family:Consolas,monospace}
+.ms{font-size:.72rem;color:#7c3aed;font-weight:700}
+.mcap{font-size:.85rem;color:#166534}
+.mk{min-width:56px;text-align:center;color:#dc2626;font-weight:700;font-size:.9rem;flex:0 0 auto}
+.gb{width:62px;height:46px;border:2px solid #3b82f6;border-radius:8px;background:#eff6ff;cursor:pointer;font:inherit;font-size:.95rem}
+.gb.hl{background:#fde68a;border-color:#f59e0b}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🧠 เรียนภาษาซี: อาร์เรย์ สตริง และพอยน์เตอร์</h1>
+  <p class="sub">ทำทีละขั้น: อ่าน → ลองเล่น → ลองรัน → ทำภารกิจ → ตอบคำถาม (ควรเรียน printf, ตัวแปร, if, loop และฟังก์ชันมาก่อน)</p>
+  <div class="steps" id="steps"></div>
+  <div id="page"></div>
+  <button class="reset" id="rstp">ล้างความก้าวหน้าทั้งหมด</button>
+</div>
+
+<script>
+/* =====================================================================
+   ส่วนที่ 1: ตัวจำลองภาษาซี (lexer -> parser -> interpreter พร้อมหน่วยความจำ)
+   ===================================================================== */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hex=n=>'0x'+n.toString(16);
+class CErr extends Error{constructor(m,line,kind){super(m);this.line=line||0;this.kind=kind||'compile';}}
+const KWS=new Set(['auto','break','case','char','const','continue','default','do','double','else','enum','extern','float','for','goto','if','int','long','register','return','short','signed','sizeof','static','struct','switch','typedef','union','unsigned','void','volatile','while']);
+const BT=['int','float','double','char','long'];
+const ESC={n:'\n',t:'\t','\\':'\\','"':'"',"'":"'",'0':'\0',r:'\r',a:'\x07'};
+const OPS2=['==','!=','<=','>=','&&','||','++','--','+=','-=','*=','/=','%='];
+const OPS1='+-*/%=<>!(){};,:?&[]';
+const RX_NUM=/(\d+\.\d*|\.\d+|\d+)([eE][+-]?\d+)?[fFlL]*/y;
+const RX_ID=/[A-Za-z_]\w*/y;
+const RX_CHR=/'(\\.|[^\\'\n])'/y;
+const FMT_RE=/%([-+0 ]*)(\d*)(?:\.(\d+))?(ll|l|z)?([dicfsuxXp%])/g;
+const HEADERS=['stdio.h','math.h','stdlib.h','string.h','ctype.h'];
+const BUILTINS={
+  printf:{h:'stdio.h'},scanf:{h:'stdio.h'},puts:{h:'stdio.h',n:1},putchar:{h:'stdio.h',n:1},
+  sqrt:{h:'math.h',n:1},pow:{h:'math.h',n:2},fabs:{h:'math.h',n:1},abs:{h:'stdlib.h',n:1},
+  strlen:{h:'string.h',n:1},strcpy:{h:'string.h',n:2},strncpy:{h:'string.h',n:3},strcat:{h:'string.h',n:2},strcmp:{h:'string.h',n:2},
+  toupper:{h:'ctype.h',n:1},tolower:{h:'ctype.h',n:1},isalpha:{h:'ctype.h',n:1},isdigit:{h:'ctype.h',n:1},
+  isupper:{h:'ctype.h',n:1},islower:{h:'ctype.h',n:1},isspace:{h:'ctype.h',n:1},isalnum:{h:'ctype.h',n:1}
+};
+
+/* ---------- ระบบชนิดข้อมูล ---------- */
+const mkT=(b,p,d)=>({b,p:p||0,d:d||null});
+const TI=mkT('int'),TD=mkT('double'),TL=mkT('long');
+const BSIZE={int:4,float:4,double:8,char:1,long:8,void:1};
+function sizeOf(T){
+  if(T.d){let n=1;for(const x of T.d)n*=x;return n*sizeOf({b:T.b,p:T.p,d:null});}
+  if(T.p>0)return 8;
+  return BSIZE[T.b];
+}
+const elemT=T=>T.d?mkT(T.b,T.p,T.d.length>1?T.d.slice(1):null):mkT(T.b,T.p-1,null);
+const catOf=T=>(T.d||T.p>0)?'p':(T.b==='float'||T.b==='double')?'d':T.b==='long'?'l':'i';
+const tName=T=>T.b+(T.p?' '+'*'.repeat(T.p):'')+(T.d?T.d.map(x=>'['+x+']').join(''):'');
+function decay(x,line){
+  if(!x.t.d)return x;
+  if(x.t.d.length>1)throw new CErr('อาร์เรย์หลายมิติทั้งก้อนใช้คำนวณหรือส่งต่อโดยตรงยังไม่ได้ในบทนี้ (ให้ใช้ m[i][j])',line,'run');
+  return{v:x.v,t:mkT(x.t.b,x.t.p+1,null)};
+}
+function convNum(b,v){
+  switch(b){
+    case 'int':return Math.trunc(v)|0;
+    case 'char':return(Math.trunc(v)<<24)>>24;
+    case 'long':return Math.trunc(v);
+    case 'float':return Math.fround(v);
+    default:return v;
+  }
+}
+
+/* ---------- Lexer ---------- */
+function lex(src,nested){
+  const toks=[],inc=new Set(),defs=new Map();let i=0,line=1;const n=src.length;
+  const add=(t,v,x)=>toks.push(Object.assign({t,v,line},x||{}));
+  while(i<n){
+    const c=src[i];
+    if(c==='\n'){line++;i++;continue;}
+    if(/\s/.test(c)){i++;continue;}
+    if(c==='/'&&src[i+1]==='/'){while(i<n&&src[i]!=='\n')i++;continue;}
+    if(c==='/'&&src[i+1]==='*'){
+      const j=src.indexOf('*/',i+2);
+      if(j<0)throw new CErr('คอมเมนต์ /* ไม่ได้ปิดด้วย */',line);
+      for(let k=i;k<j;k++)if(src[k]==='\n')line++;
+      i=j+2;continue;
+    }
+    if(c==='#'){
+      let j=i;while(j<n&&src[j]!=='\n')j++;
+      const ln=src.slice(i,j).replace(/\/\/.*$/,'').replace(/\/\*.*?\*\//g,'').trim();
+      let m=/^#\s*include\s*<([a-z]+\.h)>$/.exec(ln);
+      if(m&&HEADERS.includes(m[1])){inc.add(m[1]);i=j;continue;}
+      m=/^#\s*define\s+([A-Za-z_]\w*)\s+(\S[\s\S]*)$/.exec(ln);
+      if(m&&!nested){
+        const sub=lex(m[2],true);
+        if(sub.toks.length!==2)throw new CErr('#define ในบทนี้ใช้ได้กับค่าเดียว เช่น #define N 5',line);
+        defs.set(m[1],sub.toks[0]);i=j;continue;
+      }
+      throw new CErr(`บรรทัด "${ln}" ไม่ถูกต้องหรือยังไม่รองรับ (ใช้ได้: #include <stdio.h> <string.h> <ctype.h> <math.h> <stdlib.h> และ #define ชื่อ ค่า)`,line);
+    }
+    if(c==='"'){
+      let j=i+1,s='',closed=false;
+      while(j<n){
+        const d=src[j];
+        if(d==='\n')break;
+        if(d==='"'){closed=true;break;}
+        if(d==='\\'&&j+1<n){const e=src[j+1];s+=(e in ESC)?ESC[e]:e;j+=2;continue;}
+        s+=d;j++;
+      }
+      if(!closed)throw new CErr('ข้อความที่เปิดด้วยเครื่องหมาย " ไม่ได้ปิดด้วย " ในบรรทัดเดียวกัน',line);
+      add('str',s);i=j+1;continue;
+    }
+    if(c==="'"){
+      RX_CHR.lastIndex=i;const m=RX_CHR.exec(src);
+      if(!m)throw new CErr("ค่าอักขระ (char) ต้องมี 1 ตัวอักษรในเครื่องหมาย ' ' เช่น 'A' (ถ้าเป็นข้อความหลายตัวอักษรให้ใช้ \" \")",line);
+      const ch=m[1].length===2?((m[1][1] in ESC)?ESC[m[1][1]]:m[1][1]):m[1];
+      add('chr',ch.charCodeAt(0));i+=m[0].length;continue;
+    }
+    if(/[0-9]/.test(c)||(c==='.'&&/[0-9]/.test(src[i+1]||''))){
+      RX_NUM.lastIndex=i;const m=RX_NUM.exec(src);
+      const body=m[0].replace(/[fFlL]+$/,'');
+      const isD=/[.eE]/.test(body);const v=parseFloat(body);
+      add('num',v,{ty:isD?'d':(v>2147483647?'l':'i'),raw:m[0]});i+=m[0].length;continue;
+    }
+    if(/[A-Za-z_]/.test(c)){
+      RX_ID.lastIndex=i;const m=RX_ID.exec(src);
+      if(defs.has(m[0]))toks.push(Object.assign({},defs.get(m[0]),{line}));
+      else add('id',m[0]);
+      i+=m[0].length;continue;
+    }
+    const two=src.substr(i,2);
+    if(OPS2.includes(two)){add('op',two);i+=2;continue;}
+    if(OPS1.includes(c)){add('op',c);i++;continue;}
+    if(c==='|')throw new CErr("ต้องเขียน || (สองตัวติดกัน) สำหรับ 'หรือ'",line);
+    throw new CErr(`ใช้อักขระ '${c}' ในตำแหน่งนี้ไม่ได้ (ข้อความภาษาไทยเขียนได้เฉพาะในคอมเมนต์ หรือในเครื่องหมาย " ")`,line);
+  }
+  toks.push({t:'eof',v:'',line});
+  return{toks,inc};
+}
+
+/* ---------- Parser ---------- */
+class Parser{
+  constructor(toks,inc){
+    this.toks=toks;this.p=0;this.inc=inc;this.funcs=new Map();
+    this.scopes=[new Map()];this.warns=[];this.loopDepth=0;this.switchDepth=0;
+  }
+  get tk(){return this.toks[this.p];}
+  peek(k){return this.toks[Math.min(this.p+k,this.toks.length-1)];}
+  prevLine(){return this.p>0?this.toks[this.p-1].line:1;}
+  isOp(v){const t=this.tk;return t.t==='op'&&t.v===v;}
+  isId(v){const t=this.tk;return t.t==='id'&&t.v===v;}
+  eatOp(v){if(this.isOp(v)){this.p++;return true;}return false;}
+  desc(t){
+    if(t.t==='eof')return 'จบไฟล์';
+    if(t.t==='str')return '"'+t.v+'"';
+    if(t.t==='chr')return "'"+String.fromCharCode(t.v)+"'";
+    if(t.t==='num')return t.raw;
+    return t.v;
+  }
+  expectOp(v,why,force){
+    if(this.isOp(v))return this.toks[this.p++];
+    const t=this.tk;
+    if(force)throw new CErr(why,this.prevLine());
+    if(v===';')throw new CErr(`ขาดเครื่องหมาย ; ท้ายคำสั่ง (ตรวจท้ายบรรทัดที่ ${this.prevLine()}) เพราะถัดมาพบ '${this.desc(t)}'`,this.prevLine());
+    throw new CErr(`ต้องมีเครื่องหมาย ${v} ${why||''} (แต่พบ '${this.desc(t)}')`,t.line);
+  }
+  pushS(){this.scopes.push(new Map());}
+  popS(){this.scopes.pop();}
+  declare(name,T,line){
+    if(KWS.has(name))throw new CErr(`'${name}' เป็นคำสงวนของภาษาซี ใช้เป็นชื่อไม่ได้`,line);
+    const s=this.scopes[this.scopes.length-1];
+    if(s.has(name))throw new CErr(`ประกาศตัวแปร '${name}' ซ้ำในขอบเขตเดียวกัน`,line);
+    s.set(name,T);
+  }
+  lookup(name){for(let i=this.scopes.length-1;i>=0;i--)if(this.scopes[i].has(name))return this.scopes[i].get(name);return null;}
+  unknown(name,line,isCall){
+    const low=name.toLowerCase();
+    if(low!==name&&(KWS.has(low)||BUILTINS[low]))return new CErr(`ไม่รู้จัก '${name}' ภาษาซีแยกตัวพิมพ์เล็ก-ใหญ่ ต้องเขียนเป็น '${low}'`,line);
+    for(const f of this.funcs.keys())if(f!==name&&f.toLowerCase()===low)return new CErr(`ไม่รู้จัก '${name}' คุณหมายถึง '${f}' หรือเปล่า (ตัวพิมพ์เล็ก-ใหญ่ต้องตรงกัน)`,line);
+    if(isCall)return new CErr(`ไม่รู้จักฟังก์ชัน '${name}' ต้องเขียนฟังก์ชันไว้ก่อนจุดที่เรียกใช้ (เหนือ main) และตรวจการสะกดชื่อ`,line);
+    const names=[];this.scopes.forEach(s=>s.forEach((_,k)=>names.push(k)));
+    const m=names.find(k=>k.toLowerCase()===low);
+    if(m)return new CErr(`ไม่รู้จักตัวแปร '${name}' คุณหมายถึง '${m}' หรือเปล่า`,line);
+    return new CErr(`ยังไม่ได้ประกาศตัวแปร '${name}' ต้องประกาศก่อนใช้ และตรวจการสะกด`,line);
+  }
+  parseBase(){
+    while(this.isId('const'))this.p++;
+    const t=this.tk;
+    if(!(t.t==='id'&&(BT.includes(t.v)||t.v==='void')))throw new CErr(`ต้องมีชนิดข้อมูล เช่น int หรือ char (พบ '${this.desc(t)}')`,t.line);
+    this.p++;
+    if(t.v==='long'){if(this.isId('long'))this.p++;if(this.isId('int'))this.p++;}
+    while(this.isId('const'))this.p++;
+    return t.v;
+  }
+  isLvKind(e){return e.k==='id'||e.k==='index'||e.k==='deref';}
+  checkLv(e,line){
+    if(!this.isLvKind(e))throw new CErr('ด้านซ้ายของการกำหนดค่าต้องเป็นตัวแปร ช่องของอาร์เรย์ (เช่น a[0]) หรือ *p',line);
+    if(e.k==='id'){
+      const T=this.lookup(e.name);
+      if(T&&T.d)throw new CErr(`'${e.name}' เป็นอาร์เรย์ จึงกำหนดค่าทั้งอาร์เรย์ด้วย = ไม่ได้ ถ้าเป็นข้อความให้ใช้ strcpy(${e.name}, "...") ถ้าเป็นตัวเลขให้กำหนดทีละช่อง เช่น ${e.name}[0] = 5;`,line);
+    }
+  }
+  constInt(e,line){
+    const f=x=>{
+      if(x.k==='num'&&Number.isInteger(x.v)&&x.t!==TD)return x.v;
+      if(x.k==='un'&&x.op==='-')return -f(x.e);
+      if(x.k==='un'&&x.op==='+')return f(x.e);
+      if(x.k==='bin'){
+        const a=f(x.l),b=f(x.r);
+        if(x.op==='+')return a+b;
+        if(x.op==='-')return a-b;
+        if(x.op==='*')return a*b;
+        if(x.op==='/'&&b!==0)return Math.trunc(a/b);
+      }
+      throw new CErr('ขนาดอาร์เรย์ต้องเป็นค่าคงที่จำนวนเต็ม เช่น 5 หรือ N (เมื่อ N ถูก #define ไว้) ใช้ตัวแปรกำหนดขนาดไม่ได้ในบทนี้',line);
+    };
+    const v=f(e);
+    if(v<=0)throw new CErr('ขนาดอาร์เรย์ต้องมากกว่า 0',line);
+    if(v>1000)throw new CErr('ขนาดอาร์เรย์ใหญ่เกินกว่าที่ตัวจำลองรองรับ (ไม่เกิน 1000 ช่อง)',line);
+    return v;
+  }
+  parseProgram(){
+    const globals=[];
+    while(this.tk.t!=='eof'){
+      const t=this.tk;
+      if(t.t==='id'&&(BT.includes(t.v)||t.v==='void'||t.v==='const')){
+        const start=this.p;
+        const base=this.parseBase();
+        let stars=0;while(this.isOp('*')){this.p++;stars++;}
+        const nt=this.tk;
+        if(nt.t!=='id'||KWS.has(nt.v))throw new CErr('หลังชนิดข้อมูลต้องมีชื่อฟังก์ชันหรือชื่อตัวแปร',nt.line);
+        const nx=this.peek(1);
+        if(nx.t==='op'&&nx.v==='('){this.p++;this.parseFunction(mkT(base,stars),nt);}
+        else{this.p=start;globals.push(this.parseDecl());}
+      }else if(t.t==='op'&&t.v==='}'){
+        throw new CErr('มีเครื่องหมาย } เกินมา ตรวจจำนวน { และ }',t.line);
+      }else{
+        throw new CErr(`พบ '${this.desc(t)}' นอกฟังก์ชัน คำสั่งต้องอยู่ภายในฟังก์ชัน เช่น main`,t.line);
+      }
+    }
+    const m=this.funcs.get('main');
+    if(!m||!m.body)throw new CErr('ไม่พบฟังก์ชัน main โปรแกรมภาษาซีต้องมี int main(void) { ... }',1);
+    if(m.params.length)throw new CErr('ฟังก์ชัน main ในบทนี้ไม่รับพารามิเตอร์ ให้เขียนเป็น int main(void)',m.line);
+    return globals;
+  }
+  parseFunction(ret,nt){
+    const name=nt.v;
+    this.expectOp('(','หลังชื่อฟังก์ชัน');
+    const params=[];
+    if(this.isId('void')&&this.peek(1).t==='op'&&this.peek(1).v===')')this.p++;
+    else if(!this.isOp(')')){
+      do{
+        const pt=this.tk;
+        if(!(pt.t==='id'&&(BT.includes(pt.v)||pt.v==='const'||pt.v==='void')))throw new CErr(`พารามิเตอร์ต้องขึ้นต้นด้วยชนิดข้อมูล เช่น int x (พบ '${this.desc(pt)}')`,pt.line);
+        const base=this.parseBase();
+        let stars=0;while(this.eatOp('*'))stars++;
+        let pn=null;
+        if(this.tk.t==='id'&&!KWS.has(this.tk.v)){pn=this.tk.v;this.p++;}
+        if(this.isOp('[')){
+          this.p++;
+          if(!this.isOp(']'))this.parseTernary();
+          this.expectOp(']','เพื่อปิด [ ] ของพารามิเตอร์');
+          if(this.isOp('['))throw new CErr('พารามิเตอร์อาร์เรย์หลายมิติยังไม่รองรับในบทนี้',nt.line);
+          stars++;
+        }
+        params.push({type:mkT(base,stars),name:pn});
+      }while(this.eatOp(','));
+    }
+    this.expectOp(')','ปิดรายการพารามิเตอร์');
+    let fn=this.funcs.get(name);
+    if(fn){
+      if(tName(fn.ret)!==tName(ret)||fn.params.length!==params.length)throw new CErr(`ฟังก์ชัน '${name}' ถูกประกาศซ้ำด้วยรูปแบบที่ไม่ตรงกับครั้งแรก`,nt.line);
+    }else{fn={name,ret,params,body:null,line:nt.line};this.funcs.set(name,fn);}
+    if(this.eatOp(';'))return;
+    if(!this.isOp('{'))throw new CErr(`หลังส่วนหัวฟังก์ชัน '${name}' ต้องมี { เพื่อเริ่มเนื้อหา`,this.tk.line);
+    if(fn.body)throw new CErr(`ฟังก์ชัน '${name}' ถูกเขียนเนื้อหาซ้ำ`,nt.line);
+    if(params.some(p=>!p.name))throw new CErr(`พารามิเตอร์ของฟังก์ชัน '${name}' ต้องมีชื่อ`,nt.line);
+    fn.params=params;
+    this.pushS();params.forEach(p=>this.declare(p.name,p.type,nt.line));
+    fn.body=this.parseBlock(true);fn.body.fnBody=true;
+    this.popS();
+  }
+  parseBlock(noScope){
+    const open=this.expectOp('{','เพื่อเริ่มบล็อก');
+    if(!noScope)this.pushS();
+    const body=[];
+    while(!this.isOp('}')){
+      if(this.tk.t==='eof')throw new CErr(`ขาดเครื่องหมาย } เพื่อปิดบล็อกที่เปิดไว้ที่บรรทัด ${open.line}`,open.line);
+      body.push(this.parseStmt());
+    }
+    this.p++;
+    if(!noScope)this.popS();
+    return{k:'block',body,line:open.line};
+  }
+  parseBody(kind){
+    this.pushS();if(kind==='loop')this.loopDepth++;
+    const s=this.parseStmt();
+    if(kind==='loop')this.loopDepth--;
+    this.popS();return s;
+  }
+  parseStmt(){
+    const t=this.tk;
+    if(t.t==='op'){
+      if(t.v==='{')return this.parseBlock();
+      if(t.v===';'){this.p++;return{k:'empty',line:t.line};}
+    }
+    if(t.t==='id'){
+      const v=t.v;
+      if(BT.includes(v)||v==='const')return this.parseDecl();
+      if(v==='if')return this.parseIf();
+      if(v==='while')return this.parseWhile();
+      if(v==='do')return this.parseDo();
+      if(v==='for')return this.parseFor();
+      if(v==='switch')return this.parseSwitch();
+      if(v==='break'){
+        if(!this.loopDepth&&!this.switchDepth)throw new CErr('break ใช้ได้เฉพาะภายใน loop หรือ switch',t.line);
+        this.p++;this.expectOp(';');return{k:'break',line:t.line};
+      }
+      if(v==='continue'){
+        if(!this.loopDepth)throw new CErr('continue ใช้ได้เฉพาะภายใน loop',t.line);
+        this.p++;this.expectOp(';');return{k:'continue',line:t.line};
+      }
+      if(v==='return'){
+        this.p++;let e=null;
+        if(!this.isOp(';'))e=this.parseExpr();
+        this.expectOp(';');return{k:'return',e,line:t.line};
+      }
+      if(v==='else')throw new CErr('พบ else ที่ไม่มี if คู่กัน',t.line);
+      if(v==='case'||v==='default')throw new CErr(`'${v}' ใช้ได้เฉพาะภายใน switch`,t.line);
+      if(v==='void')throw new CErr('ประกาศตัวแปรชนิด void ไม่ได้',t.line);
+      if(KWS.has(v)&&v!=='sizeof')throw new CErr(`'${v}' ยังไม่อยู่ในเนื้อหาของบทเรียนนี้`,t.line);
+    }
+    const e=this.parseExpr();
+    this.expectOp(';');
+    return{k:'expr',e,line:t.line};
+  }
+  parseDecl(){
+    const first=this.tk;
+    const base=this.parseBase();
+    const decls=[];
+    do{
+      let stars=0;while(this.eatOp('*'))stars++;
+      const nt=this.tk;
+      if(nt.t==='num')throw new CErr(`ชื่อตัวแปรห้ามขึ้นต้นด้วยตัวเลข (พบ '${nt.raw}')`,nt.line);
+      if(nt.t!=='id')throw new CErr(`หลังชนิดข้อมูลต้องมีชื่อตัวแปร (พบ '${this.desc(nt)}')`,nt.line);
+      if(KWS.has(nt.v))throw new CErr(`'${nt.v}' เป็นคำสงวนของภาษาซี ใช้เป็นชื่อตัวแปรไม่ได้`,nt.line);
+      this.p++;
+      if(this.isOp('('))throw new CErr(`ภาษาซีไม่ให้เขียนฟังก์ชันซ้อนในฟังก์ชันอื่น ให้ย้าย '${nt.v}' ไปไว้นอก main`,nt.line);
+      const dims=[];
+      while(this.isOp('[')){
+        this.p++;
+        if(this.isOp(']')){dims.push(null);this.p++;}
+        else{const e=this.parseTernary();this.expectOp(']','เพื่อปิดขนาดอาร์เรย์');dims.push(this.constInt(e,nt.line));}
+      }
+      if(dims.slice(1).includes(null))throw new CErr('มิติที่ 2 ต้องระบุขนาด เช่น int m[][3]',nt.line);
+      if(dims.length>2)throw new CErr('บทนี้รองรับอาร์เรย์ไม่เกิน 2 มิติ',nt.line);
+      const n2=this.tk;
+      if(n2.line===nt.line&&n2.t!=='eof'&&!(n2.t==='op'&&['=',';',','].includes(n2.v)))
+        throw new CErr(`รูปแบบการประกาศตัวแปรไม่ถูกต้อง หลังชื่อ '${nt.v}' พบ '${this.desc(n2)}' (ตรวจ ; หรือชื่อที่มีเว้นวรรค)`,nt.line);
+      if(base==='void'&&stars===0)throw new CErr('ตัวแปรชนิด void ประกาศไม่ได้',nt.line);
+      let init=null;
+      if(this.eatOp('='))init=this.isOp('{')?this.parseInitList():this.parseAssign();
+      const T=this.finishType(base,stars,dims,init,nt);
+      this.declare(nt.v,T,nt.line);
+      decls.push({name:nt.v,T,init,line:nt.line});
+    }while(this.eatOp(','));
+    this.expectOp(';');
+    return{k:'decl',decls,line:first.line};
+  }
+  finishType(base,stars,dims,init,nt){
+    const line=nt.line;
+    if(!dims.length){
+      if(init&&init.k==='initlist')throw new CErr(`'${nt.v}' ไม่ใช่อาร์เรย์ จึงใช้ { } กำหนดค่าไม่ได้`,line);
+      return mkT(base,stars);
+    }
+    const isStr=base==='char'&&stars===0&&dims.length===1&&init&&init.k==='str';
+    if(dims[0]===null){
+      if(!init)throw new CErr(`อาร์เรย์ '${nt.v}' ต้องระบุขนาดใน [ ] หรือกำหนดค่าเริ่มต้น เช่น int a[] = {1, 2, 3};`,line);
+      if(init.k==='initlist'){
+        if(!init.items.length)throw new CErr(`อาร์เรย์ '${nt.v}' ว่างเปล่า ต้องมีอย่างน้อย 1 ค่า`,line);
+        dims[0]=init.items.length;
+      }else if(isStr)dims[0]=init.v.length+1;
+      else throw new CErr(`อาร์เรย์ '${nt.v}' ต้องกำหนดค่าเริ่มต้นด้วย { ... }`,line);
+    }
+    if(init){
+      if(init.k==='initlist'){
+        if(init.items.length>dims[0])throw new CErr(`ใส่ค่าเริ่มต้นของ '${nt.v}' ${init.items.length} ค่า แต่อาร์เรย์มีแค่ ${dims[0]} ช่อง`,line);
+      }else if(isStr){
+        if(init.v.length>dims[0])throw new CErr(`ข้อความ "${init.v}" ยาว ${init.v.length} ตัวอักษร (ต้องใช้ ${init.v.length+1} ช่องรวม '\\0') แต่ '${nt.v}' มีแค่ ${dims[0]} ช่อง`,line);
+        if(init.v.length===dims[0])this.warns.push({line,msg:`'${nt.v}' มี ${dims[0]} ช่องพอดีกับจำนวนตัวอักษร ไม่เหลือที่ให้ '\\0' ปิดท้าย ถ้าใช้ %s หรือฟังก์ชันสตริงจะอ่านเลยขอบเขต ควรเพิ่มขนาดอีกอย่างน้อย 1 ช่อง`});
+      }else throw new CErr(`อาร์เรย์ '${nt.v}' ต้องกำหนดค่าเริ่มต้นด้วย { ... } (หรือข้อความใน " " ถ้าเป็น char array)`,line);
+    }
+    return mkT(base,stars,dims);
+  }
+  parseInitList(){
+    const open=this.expectOp('{');
+    const items=[];
+    while(!this.isOp('}')){
+      if(this.isOp('{'))items.push(this.parseInitList());else items.push(this.parseAssign());
+      if(!this.eatOp(','))break;
+    }
+    this.expectOp('}','เพื่อปิดรายการค่าเริ่มต้น');
+    return{k:'initlist',items,line:open.line};
+  }
+  checkCond(c,line,kw){
+    if(c.k==='assign'&&c.op==='=')this.warns.push({line,msg:`ใน ${kw} ใช้ = ซึ่งเป็นการกำหนดค่า ถ้าต้องการเปรียบเทียบให้ใช้ ==`});
+  }
+  parseIf(){
+    const t=this.tk;this.p++;
+    this.expectOp('(','หลัง if ต้องมีวงเล็บเงื่อนไข');
+    const cond=this.parseExpr();
+    this.expectOp(')','เพื่อปิดเงื่อนไขของ if');
+    this.checkCond(cond,t.line,'if');
+    const then=this.parseBody('if');
+    if(then.k==='empty')this.warns.push({line:t.line,msg:'มีเครื่องหมาย ; ต่อท้าย if (...) ทันที ทำให้คำสั่งที่ตามมาทำงานเสมอ ให้ลบ ; ออก'});
+    let els=null;
+    if(this.isId('else')){this.p++;els=this.parseBody('if');}
+    return{k:'if',cond,then,els,line:t.line};
+  }
+  parseWhile(){
+    const t=this.tk;this.p++;
+    this.expectOp('(','หลัง while ต้องมีวงเล็บเงื่อนไข');
+    const cond=this.parseExpr();
+    this.expectOp(')','เพื่อปิดเงื่อนไขของ while');
+    this.checkCond(cond,t.line,'while');
+    const body=this.parseBody('loop');
+    if(body.k==='empty')this.warns.push({line:t.line,msg:'มีเครื่องหมาย ; ต่อท้าย while (...) ทันที ทำให้ loop วนคำสั่งว่าง ให้ลบ ; ออก'});
+    return{k:'while',cond,body,line:t.line};
+  }
+  parseDo(){
+    const t=this.tk;this.p++;
+    const body=this.parseBody('loop');
+    if(!this.isId('while'))throw new CErr('do ต้องจบด้วย while (เงื่อนไข);',this.tk.line);
+    const w=this.tk;this.p++;
+    this.expectOp('(','หลัง while ต้องมีวงเล็บเงื่อนไข');
+    const cond=this.parseExpr();
+    this.expectOp(')','เพื่อปิดเงื่อนไขของ while');
+    this.expectOp(';');
+    return{k:'do',cond,body,line:t.line,cline:w.line};
+  }
+  parseFor(){
+    const t=this.tk;this.p++;
+    this.expectOp('(','หลัง for ต้องมีวงเล็บ');
+    const msg='ภายในวงเล็บของ for ต้องมี 3 ส่วนคั่นด้วย ; สองตัว เช่น for (i = 0; i < 5; i++)';
+    this.pushS();
+    let init=null,cond=null,step=null;
+    if(this.isOp(';'))this.p++;
+    else if(this.tk.t==='id'&&BT.includes(this.tk.v))init=this.parseDecl();
+    else{init={k:'exprs',list:this.parseExprList(),line:t.line};this.expectOp(';',msg,true);}
+    if(!this.isOp(';'))cond=this.parseExpr();
+    this.expectOp(';',msg,true);
+    if(!this.isOp(')'))step=this.parseExprList();
+    this.expectOp(')','เพื่อปิดวงเล็บของ for');
+    if(cond)this.checkCond(cond,t.line,'for');
+    const body=this.parseBody('loop');
+    this.popS();
+    if(body.k==='empty')this.warns.push({line:t.line,msg:'มีเครื่องหมาย ; ต่อท้าย for (...) ทันที ทำให้ loop วนคำสั่งว่าง ให้ลบ ; ออก'});
+    return{k:'for',init,cond,step,body,line:t.line};
+  }
+  parseSwitch(){
+    const t=this.tk;this.p++;
+    this.expectOp('(','หลัง switch ต้องมีวงเล็บ');
+    const e=this.parseExpr();
+    this.expectOp(')','เพื่อปิดวงเล็บของ switch');
+    const open=this.expectOp('{','เพื่อเริ่มบล็อกของ switch');
+    const cases=[];let cur=null;
+    this.switchDepth++;this.pushS();
+    while(!this.isOp('}')){
+      if(this.tk.t==='eof')throw new CErr(`ขาด } ปิด switch ที่บรรทัด ${open.line}`,open.line);
+      if(this.isId('case')){
+        this.p++;const test=this.parseTernary();
+        this.expectOp(':','หลัง case');
+        cur={test,body:[]};cases.push(cur);
+      }else if(this.isId('default')){
+        this.p++;this.expectOp(':','หลัง default');
+        cur={test:null,body:[]};cases.push(cur);
+      }else{
+        if(!cur)throw new CErr('ภายใน switch ต้องขึ้นต้นด้วย case หรือ default',this.tk.line);
+        cur.body.push(this.parseStmt());
+      }
+    }
+    this.p++;this.popS();this.switchDepth--;
+    return{k:'switch',e,cases,line:t.line};
+  }
+  parseExpr(){return this.parseAssign();}
+  parseExprList(){const l=[this.parseAssign()];while(this.eatOp(','))l.push(this.parseAssign());return l;}
+  parseAssign(){
+    const left=this.parseTernary();
+    const t=this.tk;
+    if(t.t==='op'&&['=','+=','-=','*=','/=','%='].includes(t.v)){
+      this.checkLv(left,t.line);
+      this.p++;
+      const right=this.parseAssign();
+      return{k:'assign',op:t.v,l:left,e:right,line:t.line};
+    }
+    return left;
+  }
+  parseTernary(){
+    const c=this.parseBin(0);
+    if(this.isOp('?')){
+      const t=this.tk;this.p++;
+      const a=this.parseAssign();
+      this.expectOp(':','ในนิพจน์ ? :');
+      const b=this.parseTernary();
+      return{k:'cond',c,a,b,line:t.line};
+    }
+    return c;
+  }
+  parseBin(level){
+    const LV=[['||'],['&&'],['==','!='],['<','>','<=','>='],['+','-'],['*','/','%']];
+    if(level>=LV.length)return this.parseUnary();
+    let l=this.parseBin(level+1);
+    while(this.tk.t==='op'&&LV[level].includes(this.tk.v)){
+      const o=this.tk;this.p++;
+      const r=this.parseBin(level+1);
+      l={k:'bin',op:o.v,l,r,line:o.line};
+    }
+    return l;
+  }
+  parseUnary(){
+    const t=this.tk;
+    if(t.t==='op'){
+      if(t.v==='-'||t.v==='+'||t.v==='!'){this.p++;return{k:'un',op:t.v,e:this.parseUnary(),line:t.line};}
+      if(t.v==='*'){this.p++;return{k:'deref',e:this.parseUnary(),line:t.line};}
+      if(t.v==='&'){
+        this.p++;const e=this.parseUnary();
+        if(!this.isLvKind(e))throw new CErr('หลังเครื่องหมาย & ต้องเป็นตัวแปรหรือช่องของอาร์เรย์ เช่น &x หรือ &a[2]',t.line);
+        return{k:'addr',e,line:t.line};
+      }
+      if(t.v==='++'||t.v==='--'){
+        this.p++;const e=this.parseUnary();
+        this.checkLv(e,t.line);
+        return{k:'incdec',op:t.v,pre:true,l:e,line:t.line};
+      }
+      if(t.v==='('){
+        const a=this.peek(1),b=this.peek(2);
+        if(a.t==='id'&&BT.includes(a.v)&&b.t==='op'&&b.v===')'){
+          this.p+=3;return{k:'cast',type:mkT(a.v),e:this.parseUnary(),line:t.line};
+        }
+      }
+    }
+    if(t.t==='id'&&t.v==='sizeof'){
+      this.p++;
+      const a=this.peek(1);
+      if(this.isOp('(')&&a.t==='id'&&(BT.includes(a.v)||a.v==='void'||a.v==='const')){
+        this.p++;const b=this.parseBase();let s=0;while(this.eatOp('*'))s++;
+        this.expectOp(')','หลังชนิดข้อมูลใน sizeof');
+        return{k:'sizeof',ty:mkT(b,s),line:t.line};
+      }
+      return{k:'sizeof',e:this.parseUnary(),line:t.line};
+    }
+    return this.parsePostfix();
+  }
+  parsePostfix(){
+    let e=this.parsePrimary();
+    while(true){
+      if(this.isOp('[')){
+        const o=this.tk;this.p++;
+        const idx=this.parseExpr();
+        this.expectOp(']','เพื่อปิด [ ]');
+        e={k:'index',base:e,idx,line:o.line};continue;
+      }
+      if(this.tk.t==='op'&&(this.tk.v==='++'||this.tk.v==='--')){
+        const o=this.tk;this.p++;
+        this.checkLv(e,o.line);
+        e={k:'incdec',op:o.v,pre:false,l:e,line:o.line};continue;
+      }
+      break;
+    }
+    return e;
+  }
+  parsePrimary(){
+    const t=this.tk;
+    if(t.t==='num'){this.p++;return{k:'num',v:t.v,t:t.ty==='d'?TD:t.ty==='l'?TL:TI,line:t.line};}
+    if(t.t==='chr'){this.p++;return{k:'num',v:t.v,t:TI,line:t.line};}
+    if(t.t==='str'){this.p++;return{k:'str',v:t.v,line:t.line};}
+    if(t.t==='id'){
+      if(t.v==='NULL'){this.p++;return{k:'num',v:0,t:mkT('void',1),line:t.line};}
+      if(KWS.has(t.v))throw new CErr(`คำสงวน '${t.v}' อยู่ผิดตำแหน่ง ตรวจประโยคก่อนหน้า (มักลืม ; หรือ ) )`,t.line);
+      this.p++;
+      if(this.isOp('('))return this.parseCall(t);
+      if(this.lookup(t.v)===null)throw this.unknown(t.v,t.line,false);
+      return{k:'id',name:t.v,line:t.line};
+    }
+    if(t.t==='op'&&t.v==='('){
+      this.p++;const e=this.parseExpr();
+      this.expectOp(')','เพื่อปิดวงเล็บ');
+      return e;
+    }
+    throw new CErr(`นิพจน์ไม่สมบูรณ์ พบ '${this.desc(t)}' ในตำแหน่งที่ควรเป็นตัวเลขหรือตัวแปร (ตรวจ ; ท้ายบรรทัดก่อนหน้า)`,t.line);
+  }
+  parseCall(t){
+    const name=t.v,line=t.line;
+    this.expectOp('(','หลังชื่อฟังก์ชัน');
+    const args=[];
+    if(!this.isOp(')')){do{args.push(this.parseAssign());}while(this.eatOp(','));}
+    this.expectOp(')',`เพื่อปิดวงเล็บของ ${name}`);
+    const user=this.funcs.get(name);
+    if(user){
+      if(args.length!==user.params.length)throw new CErr(`ฟังก์ชัน '${name}' ต้องการอาร์กิวเมนต์ ${user.params.length} ค่า แต่ส่งมา ${args.length} ค่า`,line);
+      return{k:'call',name,args,line,builtin:false};
+    }
+    const b=BUILTINS[name];
+    if(!b)throw this.unknown(name,line,true);
+    if(!this.inc.has(b.h))throw new CErr(`ใช้ ${name} ต้องเขียน #include <${b.h}> ไว้บรรทัดบนสุดก่อน`,line);
+    if(b.n!==undefined&&args.length!==b.n)throw new CErr(`${name} ต้องการอาร์กิวเมนต์ ${b.n} ค่า แต่ส่งมา ${args.length} ค่า`,line);
+    if(name==='printf'){
+      if(!args.length||args[0].k!=='str')throw new CErr('อาร์กิวเมนต์แรกของ printf ต้องเป็นข้อความใน " "',line);
+      const specs=[...args[0].v.matchAll(FMT_RE)].filter(m=>m[5]!=='%');
+      if(args.length-1<specs.length)throw new CErr(`printf มีตัวแทนค่า (เช่น %d %s) ${specs.length} ตัว แต่ส่งค่ามาแค่ ${args.length-1} ค่า`,line);
+      if(args.length-1>specs.length)this.warns.push({line,msg:'ส่งค่าให้ printf เกินจำนวนตัวแทนค่า ค่าที่เกินจะไม่แสดง'});
+    }
+    if(name==='scanf'){
+      if(!args.length||args[0].k!=='str')throw new CErr('อาร์กิวเมนต์แรกของ scanf ต้องเป็นข้อความรูปแบบใน " " เช่น "%d"',line);
+      const specs=[...args[0].v.matchAll(/%(ld|lf|[dfcs])/g)].map(m=>m[1]);
+      const tg=args.slice(1);
+      if(specs.length!==tg.length)throw new CErr(`scanf มีตัวแทนค่า ${specs.length} ตัว แต่ระบุตัวแปร ${tg.length} ตัว ต้องเท่ากัน`,line);
+      const SPEC={int:'d',long:'ld',float:'f',double:'lf',char:'c'};
+      tg.forEach((a,i)=>{
+        const sp=specs[i];
+        if(a.k==='id'){
+          const T=this.lookup(a.name);
+          if(sp==='s'){
+            const okArr=T.d&&T.b==='char'&&T.d.length===1&&!T.p,okPtr=!T.d&&T.p===1&&T.b==='char';
+            if(!okArr&&!okPtr)throw new CErr(`%s ต้องใช้กับ char array (เช่น char name[20];) แต่ '${a.name}' เป็น ${tName(T)}`,line);
+          }else if(!T.d&&T.p===0)throw new CErr(`ตัวแปร '${a.name}' ใน scanf ต้องมี & นำหน้า เขียนเป็น &${a.name}`,line);
+        }else if(a.k==='addr'&&a.e.k==='id'){
+          const T=this.lookup(a.e.name);
+          if(!T.d&&T.p===0){
+            if(sp==='s')throw new CErr(`%s ใช้อ่านข้อความเข้า char array เท่านั้น แต่ '${a.e.name}' เป็น ${T.b} ธรรมดา`,line);
+            if(SPEC[T.b]!==sp)throw new CErr(`ตัวแปร '${a.e.name}' เป็นชนิด ${T.b} ต้องใช้ %${SPEC[T.b]} ใน scanf (ไม่ใช่ %${sp})`,line);
+          }
+        }
+      });
+    }
+    return{k:'call',name,args,line,builtin:true};
+  }
+}
+
+/* ---------- Interpreter พร้อมหน่วยความจำ ---------- */
+const fmtF=(v,p)=>isFinite(v)?v.toFixed(Math.min(p,20)):(isNaN(v)?'nan':(v<0?'-inf':'inf'));
+
+function interpret(ps,globalDecls,stdin,res){
+  const funcs=ps.funcs;
+  const mem=new Map();
+  const blocks=[],sblocks=[];
+  let sp=0x1000,gp=0x6000,lp=0x8000;
+  const globals=new Map();const gf={scopes:[globals],isMain:false};
+  const toks=stdin.trim().split(/\s+/).filter(Boolean);let tp=0;
+  let steps=0,depth=0,outLen=0,curLine=0;
+  const seen=new Set();
+  const warn=(m,line)=>{const k=line+'|'+m;if(!seen.has(k)){seen.add(k);res.warns.push({line,msg:m});}};
+  const hit=l=>res.hits.set(l,(res.hits.get(l)||0)+1);
+  const tick=l=>{if(++steps>400000)throw new CErr('โปรแกรมทำงานนานผิดปกติ (เกิน 400,000 ขั้นตอน) น่าจะเกิด infinite loop ให้ตรวจเงื่อนไขของ loop',l,'run');};
+  const emit=s=>{outLen+=s.length;if(outLen>20000)throw new CErr('แสดงผลมากเกินไป น่าจะเกิด infinite loop',curLine,'run');res.raw+=s;res.shown.push(esc(s));};
+  const lookupVar=(fr,name)=>{
+    for(let i=fr.scopes.length-1;i>=0;i--){const v=fr.scopes[i].get(name);if(v)return v;}
+    return globals.get(name)||null;
+  };
+  const descOf=n=>n.k==='id'?n.name:n.k==='index'?descOf(n.base)+'[…]':'อาร์เรย์';
+
+  function alloc(size,name,region,extra){
+    const al=size>=8?8:size>=4?4:size>=2?2:1;
+    let base;
+    if(region==='stack'){
+      sp=Math.ceil(sp/al)*al;base=sp;sp+=size;
+      if(sp>0x5ff0)throw new CErr('ใช้หน่วยความจำสแตกเกินกำหนด (อาจเรียกฟังก์ชันซ้อนลึกเกินไป)',curLine,'run');
+    }else if(region==='global'){gp=Math.ceil(gp/al)*al;base=gp;gp+=size;}
+    else{lp=Math.ceil(lp/al)*al;base=lp;lp+=size;}
+    const b=Object.assign({base,size,name,ro:region==='lit'},extra||{});
+    (region==='stack'?blocks:sblocks).push(b);
+    return b;
+  }
+  function freeTo(sp0,bl0){
+    while(blocks.length>bl0){const b=blocks.pop();for(let a=b.base;a<b.base+b.size;a++)mem.delete(a);}
+    sp=sp0;
+  }
+  function findBlock(addr){
+    for(let i=blocks.length-1;i>=0;i--){const b=blocks[i];if(addr>=b.base&&addr<b.base+b.size)return b;}
+    for(const b of sblocks)if(addr>=b.base&&addr<b.base+b.size)return b;
+    return null;
+  }
+  function chk(addr,size,line,write){
+    if(addr===0)throw new CErr('ใช้พอยน์เตอร์ที่ยังไม่ได้ชี้ไปที่ตัวแปรใด (NULL หรือยังไม่ได้กำหนดค่า) โปรแกรมจริงจะ crash ด้วย Segmentation fault ให้กำหนด เช่น p = &x; ก่อนใช้ *p',line,'run');
+    const b=findBlock(addr);
+    if(!b||addr+size>b.base+b.size)throw new CErr(`เข้าถึงหน่วยความจำตำแหน่ง ${hex(addr)} ซึ่งไม่ใช่ของตัวแปรใด (พอยน์เตอร์ชี้ผิดที่ หรืออ่านเลยปลายอาร์เรย์/สตริง เช่น ลืม \\0) โปรแกรมจริงอาจ crash หรือได้ผลแปลกๆ`,line,'run');
+    if(write&&b.ro)throw new CErr('แก้ไขข้อความคงที่ (string literal) ไม่ได้ เช่น char *s = "Hi"; แล้ว s[0] = ... ถ้าต้องการแก้ให้ใช้ char array เช่น char s[] = "Hi";',line,'run');
+    return b;
+  }
+  function readVal(addr,T,line,nm){
+    chk(addr,sizeOf(T),line,false);
+    if(!mem.has(addr)){
+      warn(`อ่านค่า${nm?" '"+nm+"'":''} ก่อนใส่ค่า จึงได้ค่าขยะที่ไม่แน่นอน`,line);
+      return{v:0,t:T};
+    }
+    return{v:mem.get(addr),t:T};
+  }
+  function writeVal(addr,T,val,line){chk(addr,sizeOf(T),line,true);mem.set(addr,val);}
+  function coerceTo(T,x,line){
+    x=decay(x,line);
+    const xp=x.t.p>0;
+    if(T.p>0){
+      if(xp){
+        if(x.t.b!=='void'&&T.b!=='void'&&(x.t.b!==T.b||x.t.p!==T.p))warn(`ชนิดพอยน์เตอร์ไม่ตรงกัน: ต้องการ ${tName(T)} แต่ได้ ${tName(x.t)}`,line);
+        return x.v;
+      }
+      if(x.v===0)return 0;
+      throw new CErr('ส่งหรือเก็บตัวเลขธรรมดาให้พอยน์เตอร์ไม่ได้ ต้องใช้แอดเดรส เช่น &x (ลืมเครื่องหมาย & หรือเปล่า)',line,'run');
+    }
+    if(xp)throw new CErr(`เก็บหรือส่งแอดเดรสให้ตัวแปรชนิด ${T.b} ไม่ได้ ถ้าต้องการค่าที่พอยน์เตอร์ชี้อยู่ให้ใช้ * นำหน้า เช่น *p`,line,'run');
+    if((T.b==='int'||T.b==='char'||T.b==='long')&&catOf(x.t)==='d'&&!Number.isInteger(x.v))
+      warn(`เก็บค่าทศนิยม ${Number(x.v.toPrecision(8))} ลงชนิด ${T.b} ส่วนทศนิยมจะถูกตัดทิ้ง`,line);
+    return convNum(T.b,x.v);
+  }
+  function strAddr(n){
+    if(n.addr===undefined){
+      const b=alloc(n.v.length+1,'"'+n.v+'"','lit',{text:n.v});
+      for(let k=0;k<n.v.length;k++)mem.set(b.base+k,n.v.charCodeAt(k));
+      mem.set(b.base+n.v.length,0);
+      n.addr=b.base;
+    }
+    return n.addr;
+  }
+  function readStr(x,line,fname){
+    x=decay(x,line);
+    if(x.t.p!==1||x.t.b!=='char'){
+      if(x.t.p===1&&x.t.b==='void'&&x.v===0)throw new CErr(`ส่งพอยน์เตอร์ NULL ให้ ${fname}`,line,'run');
+      throw new CErr(`${fname} ต้องการข้อความ (char array หรือ char *) แต่ได้ ${tName(x.t)}`,line,'run');
+    }
+    let s='',a=x.v;
+    for(let k=0;;k++){
+      if(k>100000)throw new CErr('ข้อความยาวผิดปกติ',line,'run');
+      if(a===0)throw new CErr(`ส่งพอยน์เตอร์ NULL ให้ ${fname}`,line,'run');
+      const b=findBlock(a);
+      if(!b)throw new CErr('อ่านข้อความเลยขอบเขตของหน่วยความจำ สตริงต้องมี \\0 ปิดท้ายเสมอ ตรวจว่า char array มีช่องเหลือสำหรับ \\0 หรือไม่',line,'run');
+      if(!mem.has(a)){warn('ข้อความยังไม่ได้ใส่ค่าครบ (ไม่พบ \\0 ปิดท้าย) โปรแกรมจริงจะอ่านค่าขยะต่อไป',line);break;}
+      const c=mem.get(a);
+      if(c===0)break;
+      s+=String.fromCharCode(c<0?c+256:c);a++;
+    }
+    return s;
+  }
+  function writeStr(addr,s,line){
+    const b=chk(addr,1,line,true);
+    const room=b.base+b.size-addr;
+    if(s.length+1>room)throw new CErr(`ข้อความยาว ${s.length} ตัวอักษร ต้องใช้ ${s.length+1} ช่อง (รวม \\0) แต่ปลายทางเหลือแค่ ${room} ช่อง เกิด buffer overflow ซึ่งในโปรแกรมจริงจะเขียนทับหน่วยความจำส่วนอื่นและอันตรายมาก ให้ขยายขนาด char array`,line,'run');
+    for(let k=0;k<s.length;k++)mem.set(addr+k,s.charCodeAt(k));
+    mem.set(addr+s.length,0);
+  }
+  function zero(addr,T){
+    if(T.d){
+      const et=mkT(T.b,T.p),es=sizeOf(et);let n=1;for(const x of T.d)n*=x;
+      for(let k=0;k<n;k++)mem.set(addr+k*es,0);
+    }else mem.set(addr,0);
+  }
+  function fillList(addr,T,list,fr){
+    zero(addr,T);
+    const et=elemT(T),es=sizeOf(et);
+    const hasSub=list.items.some(i=>i.k==='initlist'||(i.k==='str'&&et.d));
+    if(T.d.length>1&&!hasSub){
+      const sc=mkT(T.b,T.p),ss=sizeOf(sc);let total=1;for(const x of T.d)total*=x;
+      if(list.items.length>total)throw new CErr('ใส่ค่าเริ่มต้นเกินจำนวนช่อง',list.line,'run');
+      list.items.forEach((it,k)=>mem.set(addr+k*ss,coerceTo(sc,evd(it,fr),it.line)));
+      return;
+    }
+    if(list.items.length>T.d[0])throw new CErr(`ใส่ค่าเริ่มต้น ${list.items.length} ค่า แต่มีแค่ ${T.d[0]} ช่อง`,list.line,'run');
+    list.items.forEach((it,k)=>{
+      const a=addr+k*es;
+      if(it.k==='initlist'){
+        if(!et.d)throw new CErr('ใช้ { } ซ้อนในอาร์เรย์ 1 มิติไม่ได้',it.line,'run');
+        fillList(a,et,it,fr);
+      }else if(et.d){
+        if(et.d.length===1&&et.b==='char'&&it.k==='str'){
+          if(it.v.length>et.d[0])throw new CErr(`ข้อความ "${it.v}" ยาวเกินแถวละ ${et.d[0]} ช่อง`,it.line,'run');
+          for(let c=0;c<it.v.length;c++)mem.set(a+c,it.v.charCodeAt(c));
+        }else throw new CErr('ค่าของแต่ละแถวต้องใช้ { } ครอบ',it.line,'run');
+      }else mem.set(a,coerceTo(et,evd(it,fr),it.line));
+    });
+  }
+  function execDecl(d,fr,isGlobal){
+    const T=d.T;
+    const b=alloc(sizeOf(T),d.name,isGlobal?'global':'stack');
+    if(d.init){
+      if(d.init.k==='initlist')fillList(b.base,T,d.init,fr);
+      else if(T.d){
+        zero(b.base,T);
+        for(let c=0;c<d.init.v.length;c++)mem.set(b.base+c,d.init.v.charCodeAt(c));
+      }else mem.set(b.base,coerceTo(T,evd(d.init,fr),d.line));
+    }else if(isGlobal)zero(b.base,T);
+    const va={name:d.name,type:T,addr:b.base};
+    if(isGlobal)globals.set(d.name,va);else fr.scopes[fr.scopes.length-1].set(d.name,va);
+  }
+
+  function arith(o,a,b,line){
+    const ca=catOf(a.t),cb=catOf(b.t);
+    if(ca==='p'||cb==='p'){
+      if(o==='+'&&ca==='p'&&cb!=='p')return{v:a.v+Math.trunc(b.v)*sizeOf(elemT(a.t)),t:a.t};
+      if(o==='+'&&cb==='p'&&ca!=='p')return{v:b.v+Math.trunc(a.v)*sizeOf(elemT(b.t)),t:b.t};
+      if(o==='-'&&ca==='p'&&cb!=='p')return{v:a.v-Math.trunc(b.v)*sizeOf(elemT(a.t)),t:a.t};
+      if(o==='-'&&ca==='p'&&cb==='p')return{v:Math.trunc((a.v-b.v)/sizeOf(elemT(a.t))),t:TL};
+      throw new CErr('พอยน์เตอร์ใช้ได้เฉพาะ + - กับจำนวนเต็ม (และลบกับพอยน์เตอร์ด้วยกัน)',line,'run');
+    }
+    const d=ca==='d'||cb==='d';
+    const T=d?TD:(ca==='l'||cb==='l')?TL:TI;
+    let v;
+    switch(o){
+      case '+':v=a.v+b.v;break;
+      case '-':v=a.v-b.v;break;
+      case '*':v=T===TI?Math.imul(a.v,b.v):a.v*b.v;break;
+      case '/':
+        if(d){v=a.v/b.v;break;}
+        if(b.v===0)throw new CErr('หารจำนวนเต็มด้วยศูนย์ไม่ได้',line,'run');
+        v=Math.trunc(a.v/b.v);break;
+      default:
+        if(d)throw new CErr('เครื่องหมาย % ใช้ได้กับจำนวนเต็มเท่านั้น',line,'run');
+        if(b.v===0)throw new CErr('หาเศษด้วยศูนย์ไม่ได้',line,'run');
+        v=a.v%b.v;
+    }
+    if(T===TI)v=v|0;
+    return{v,t:T};
+  }
+  function typeOfExpr(n,fr){
+    switch(n.k){
+      case 'id':return lookupVar(fr,n.name).type;
+      case 'index':case 'deref':{
+        const T=typeOfExpr(n.k==='index'?n.base:n.e,fr);
+        if(!T.d&&T.p===0)throw new CErr('ใช้ [ ] หรือ * กับสิ่งที่ไม่ใช่อาร์เรย์หรือพอยน์เตอร์',n.line,'run');
+        return elemT(T);
+      }
+      case 'str':return mkT('char',0,[n.v.length+1]);
+      default:return ev(n,fr).t;
+    }
+  }
+  function lval(n,fr){
+    switch(n.k){
+      case 'id':{const va=lookupVar(fr,n.name);return{addr:va.addr,t:va.type,desc:n.name};}
+      case 'index':{
+        const b=ev(n.base,fr);
+        const ix=decay(ev(n.idx,fr),n.line);
+        if(catOf(ix.t)==='d')throw new CErr('index ของอาร์เรย์ต้องเป็นจำนวนเต็ม (ใช้ทศนิยมไม่ได้)',n.line,'run');
+        if(catOf(ix.t)==='p')throw new CErr('index ของอาร์เรย์ต้องเป็นจำนวนเต็ม ไม่ใช่แอดเดรส',n.line,'run');
+        const i=ix.v,T=b.t;
+        if(!T.d&&T.p===0)throw new CErr(`ใช้ [ ] ได้เฉพาะกับอาร์เรย์หรือพอยน์เตอร์ แต่ค่านี้เป็น ${T.b} ธรรมดา`,n.line,'run');
+        const et=elemT(T),es=sizeOf(et);
+        if(T.d&&(i<0||i>=T.d[0]))throw new CErr(`index ${i} เกินขอบเขตของอาร์เรย์ ${descOf(n.base)} ซึ่งมี ${T.d[0]} ช่อง (ใช้ได้เฉพาะ 0 ถึง ${T.d[0]-1}) ภาษาซีจริงไม่ตรวจให้ จึงอาจเขียนทับตัวแปรอื่นหรือ crash ได้`,n.line,'run');
+        return{addr:b.v+i*es,t:et,desc:descOf(n.base).replace('…',String(i))};
+      }
+      case 'deref':{
+        const p=decay(ev(n.e,fr),n.line);
+        if(p.t.p===0)throw new CErr(`ใช้ * กับสิ่งที่ไม่ใช่พอยน์เตอร์ไม่ได้ (ค่านี้เป็น ${tName(p.t)})`,n.line,'run');
+        if(p.t.b==='void'&&p.t.p===1)throw new CErr('ใช้ * กับ void * หรือ NULL ไม่ได้',n.line,'run');
+        return{addr:p.v,t:elemT(p.t),desc:null};
+      }
+      default:throw new CErr('ต้องเป็นตัวแปร ช่องของอาร์เรย์ หรือ *p',n.line,'run');
+    }
+  }
+  const evd=(n,fr)=>decay(ev(n,fr),n.line);
+  function ev(n,fr){
+    switch(n.k){
+      case 'num':return{v:n.v,t:n.t};
+      case 'str':return{v:strAddr(n),t:mkT('char',1)};
+      case 'id':case 'index':case 'deref':{
+        const lv=lval(n,fr);
+        if(lv.t.d)return{v:lv.addr,t:lv.t};
+        return readVal(lv.addr,lv.t,n.line,lv.desc);
+      }
+      case 'un':{
+        const x=evd(n.e,fr);
+        if(n.op==='!')return{v:x.v?0:1,t:TI};
+        if(n.op==='-')return catOf(x.t)==='i'?{v:(-x.v)|0,t:TI}:{v:-x.v,t:x.t};
+        return x;
+      }
+      case 'cast':{const x=evd(n.e,fr);return{v:convNum(n.type.b,x.v),t:n.type};}
+      case 'sizeof':{const T=n.ty?n.ty:typeOfExpr(n.e,fr);return{v:sizeOf(T),t:TL};}
+      case 'addr':{
+        const lv=lval(n.e,fr);
+        if(lv.t.d){
+          if(lv.t.d.length>1)throw new CErr('& กับอาร์เรย์หลายมิติทั้งก้อนยังไม่รองรับ',n.line,'run');
+          warn('&ชื่ออาร์เรย์ ให้แอดเดรสเดียวกับชื่ออาร์เรย์เฉยๆ (เช่น scanf("%s", name) ไม่ต้องใส่ &)',n.line);
+        }
+        return{v:lv.addr,t:mkT(lv.t.b,lv.t.p+1)};
+      }
+      case 'bin':{
+        if(n.op==='&&'){const a=evd(n.l,fr);if(!a.v)return{v:0,t:TI};return{v:evd(n.r,fr).v?1:0,t:TI};}
+        if(n.op==='||'){const a=evd(n.l,fr);if(a.v)return{v:1,t:TI};return{v:evd(n.r,fr).v?1:0,t:TI};}
+        const a=evd(n.l,fr),b=evd(n.r,fr);
+        switch(n.op){
+          case '==':case '!=':{
+            if(catOf(a.t)==='p'&&catOf(b.t)==='p'&&a.t.b==='char'&&b.t.b==='char')
+              warn('== หรือ != กับข้อความเป็นการเปรียบเทียบ "แอดเดรส" ไม่ใช่เนื้อหา ถ้าต้องการเทียบข้อความให้ใช้ strcmp (ได้ 0 เมื่อเหมือนกัน)',n.line);
+            const eq=a.v===b.v;
+            return{v:(n.op==='=='?eq:!eq)?1:0,t:TI};
+          }
+          case '<':return{v:a.v<b.v?1:0,t:TI};
+          case '>':return{v:a.v>b.v?1:0,t:TI};
+          case '<=':return{v:a.v<=b.v?1:0,t:TI};
+          case '>=':return{v:a.v>=b.v?1:0,t:TI};
+          default:return arith(n.op,a,b,n.line);
+        }
+      }
+      case 'assign':{
+        const lv=lval(n.l,fr);
+        if(lv.t.d)throw new CErr('กำหนดค่าให้อาร์เรย์ทั้งแถวด้วย = ไม่ได้',n.line,'run');
+        let x=evd(n.e,fr);
+        if(n.op!=='='){
+          const cur=readVal(lv.addr,lv.t,n.line,lv.desc);
+          x=arith(n.op[0],cur,x,n.line);
+        }
+        const val=coerceTo(lv.t,x,n.line);
+        writeVal(lv.addr,lv.t,val,n.line);
+        return{v:val,t:lv.t};
+      }
+      case 'incdec':{
+        const lv=lval(n.l,fr);
+        if(lv.t.d)throw new CErr('++ และ -- ใช้กับอาร์เรย์ทั้งก้อนไม่ได้',n.line,'run');
+        const cur=readVal(lv.addr,lv.t,n.line,lv.desc);
+        const nw=arith(n.op==='++'?'+':'-',cur,{v:1,t:TI},n.line);
+        const val=coerceTo(lv.t,nw,n.line);
+        writeVal(lv.addr,lv.t,val,n.line);
+        return n.pre?{v:val,t:lv.t}:cur;
+      }
+      case 'cond':return evd(n.c,fr).v?evd(n.a,fr):evd(n.b,fr);
+      case 'call':return callFn(n,fr);
+    }
+    throw new CErr('นิพจน์ที่ตัวจำลองยังไม่รองรับ',n.line,'run');
+  }
+  function callFn(n,fr){
+    if(n.builtin)return builtin(n,fr);
+    const fn=funcs.get(n.name);
+    if(!fn.body)throw new CErr(`ฟังก์ชัน '${n.name}' ประกาศไว้แต่ยังไม่ได้เขียนเนื้อหา`,n.line,'run');
+    if(++depth>250){depth--;throw new CErr('เรียกฟังก์ชันซ้อนกันลึกเกินไป (recursion ไม่มีเงื่อนไขหยุด)',n.line,'run');}
+    const sp0=sp,bl0=blocks.length;
+    try{
+      const args=n.args.map(a=>evd(a,fr));
+      const nf={scopes:[new Map()],isMain:!!n.isMain};
+      fn.params.forEach((p,i)=>{
+        const val=coerceTo(p.type,args[i],n.line);
+        const b=alloc(sizeOf(p.type),p.name,'stack');
+        mem.set(b.base,val);
+        nf.scopes[0].set(p.name,{name:p.name,type:p.type,addr:b.base});
+      });
+      const r=exec(fn.body,nf);
+      const rt=fn.ret;
+      if(rt.b==='void'&&rt.p===0)return{v:0,t:TI};
+      if(r&&r.k==='return'&&r.v)return{v:coerceTo(rt,r.v,n.line),t:rt};
+      return{v:0,t:rt.p>0?rt:TI};
+    }finally{freeTo(sp0,bl0);depth--;}
+  }
+  function builtin(n,fr){
+    const name=n.name,line=n.line;
+    if(name==='printf'){
+      const vals=n.args.slice(1);let ai=0;
+      const out=n.args[0].v.replace(FMT_RE,(all,fl,w,pr,lg,cv)=>{
+        if(cv==='%')return'%';
+        const a=vals[ai++];let s;
+        const x=evd(a,fr);
+        const c=catOf(x.t);
+        if(cv==='s'){
+          s=readStr(x,line,'printf (%s)');
+          if(pr!==undefined)s=s.slice(0,+pr);
+        }else if(cv==='d'||cv==='i'||cv==='u'){
+          if(c==='d'){warn(`${all} ใช้กับจำนวนเต็ม แต่ค่าที่ส่งมาเป็นทศนิยม ควรใช้ %f`,line);s='0';}
+          else{
+            if(c==='p')warn(`${all} ใช้กับจำนวนเต็ม แต่ค่านี้เป็นแอดเดรส ควรใช้ %p`,line);
+            s=String(x.v);if(fl.includes('+')&&x.v>=0)s='+'+s;
+          }
+        }else if(cv==='f'){
+          const P=pr===undefined?6:+pr;
+          if(c!=='d'){warn(`${all} ใช้กับทศนิยม แต่ค่าที่ส่งมาเป็นจำนวนเต็มหรือแอดเดรส ควรใช้ %d`,line);s=fmtF(0,P);}
+          else{s=fmtF(x.v,P);if(fl.includes('+')&&x.v>=0)s='+'+s;}
+        }else if(cv==='x'||cv==='X'){
+          s=(x.v>>>0).toString(16);if(cv==='X')s=s.toUpperCase();
+        }else if(cv==='p'){
+          s=x.v===0?'(nil)':hex(x.v);
+        }else{
+          if(c==='d')warn('%c ใช้กับตัวอักษรหรือจำนวนเต็ม ไม่ใช่ทศนิยม',line);
+          s=String.fromCharCode(x.v&255);
+        }
+        if(w&&s.length<+w){
+          const W=+w;
+          if(fl.includes('-'))s=s.padEnd(W);
+          else if(fl.includes('0')&&cv!=='s'&&cv!=='c'&&cv!=='p'){const sg=/^[+-]/.test(s)?s[0]:'';s=sg+s.slice(sg.length).padStart(W-sg.length,'0');}
+          else s=s.padStart(W);
+        }
+        return s;
+      });
+      emit(out);
+      return{v:out.length,t:TI};
+    }
+    if(name==='scanf'){
+      const specs=[...n.args[0].v.matchAll(/%(ld|lf|[dfcs])/g)].map(m=>m[1]);
+      const WANT={d:'int',ld:'long',f:'float',lf:'double',c:'char',s:'char'};
+      let cnt=0;
+      for(let i=0;i<specs.length;i++){
+        const spc=specs[i];
+        const p=evd(n.args[i+1],fr);
+        if(!(p.t.p===1&&p.t.b===WANT[spc]))throw new CErr(spc==='s'?`%s ต้องใช้กับ char array หรือ char * แต่ได้ ${tName(p.t)}`:`%${spc} ต้องการแอดเดรสของตัวแปรชนิด ${WANT[spc]} (เช่น &x) แต่ได้ ${tName(p.t)}`,line,'run');
+        if(tp>=toks.length)throw new CErr('ไม่มีข้อมูลให้ scanf อ่าน ให้พิมพ์ค่าในช่อง "ข้อมูลที่ต้องพิมพ์ให้โปรแกรม" ให้ครบก่อนกดรัน',line,'run');
+        const tok=toks[tp++];
+        res.shown.push('<i>'+esc(tok)+(i===specs.length-1?'\n':' ')+'</i>');
+        if(spc==='s')writeStr(p.v,tok,line);
+        else if(spc==='c')writeVal(p.v,mkT('char'),(tok.charCodeAt(0)<<24)>>24,line);
+        else if(spc==='d'||spc==='ld'){
+          if(!/^[+-]?\d+$/.test(tok))throw new CErr(`ข้อมูล '${tok}' ไม่ใช่จำนวนเต็ม แต่ %${spc} ต้องการจำนวนเต็ม`,line,'run');
+          writeVal(p.v,mkT(WANT[spc]),convNum(WANT[spc],parseInt(tok,10)),line);
+        }else{
+          if(!isFinite(Number(tok)))throw new CErr(`ข้อมูล '${tok}' ไม่ใช่ตัวเลข`,line,'run');
+          writeVal(p.v,mkT(WANT[spc]),convNum(WANT[spc],Number(tok)),line);
+        }
+        cnt++;
+      }
+      return{v:cnt,t:TI};
+    }
+    const a=n.args.map(x=>evd(x,fr));
+    const num=x=>{if(catOf(x.t)==='p')throw new CErr(`${name} ต้องการตัวเลขหรือตัวอักษร แต่ได้ข้อความ/แอดเดรส`,line,'run');return x.v;};
+    switch(name){
+      case 'strlen':return{v:readStr(a[0],line,name).length,t:TI};
+      case 'strcpy':{const s=readStr(a[1],line,name);if(a[0].t.p===0)throw new CErr('ปลายทางของ strcpy ต้องเป็น char array',line,'run');writeStr(a[0].v,s,line);return a[0];}
+      case 'strcat':{const d=readStr(a[0],line,name),s=readStr(a[1],line,name);writeStr(a[0].v,d+s,line);return a[0];}
+      case 'strncpy':{
+        const s=readStr(a[1],line,name),m=num(a[2]);
+        const b=chk(a[0].v,1,line,true);
+        if(m>b.base+b.size-a[0].v)throw new CErr('strncpy เขียนเกินขนาดปลายทาง (buffer overflow)',line,'run');
+        for(let k=0;k<m;k++)mem.set(a[0].v+k,k<s.length?s.charCodeAt(k):0);
+        return a[0];
+      }
+      case 'strcmp':{
+        const s1=readStr(a[0],line,name),s2=readStr(a[1],line,name);
+        const L=Math.max(s1.length,s2.length);
+        for(let k=0;k<=L;k++){
+          const c1=k<s1.length?s1.charCodeAt(k):0,c2=k<s2.length?s2.charCodeAt(k):0;
+          if(c1!==c2)return{v:c1-c2,t:TI};
+        }
+        return{v:0,t:TI};
+      }
+      case 'puts':emit(readStr(a[0],line,name)+'\n');return{v:1,t:TI};
+      case 'putchar':emit(String.fromCharCode(num(a[0])&255));return{v:num(a[0]),t:TI};
+      case 'toupper':{const c=num(a[0]);return{v:(c>=97&&c<=122)?c-32:c,t:TI};}
+      case 'tolower':{const c=num(a[0]);return{v:(c>=65&&c<=90)?c+32:c,t:TI};}
+      case 'isalpha':{const c=num(a[0]);return{v:((c>=65&&c<=90)||(c>=97&&c<=122))?1:0,t:TI};}
+      case 'isdigit':{const c=num(a[0]);return{v:(c>=48&&c<=57)?1:0,t:TI};}
+      case 'isupper':{const c=num(a[0]);return{v:(c>=65&&c<=90)?1:0,t:TI};}
+      case 'islower':{const c=num(a[0]);return{v:(c>=97&&c<=122)?1:0,t:TI};}
+      case 'isspace':{const c=num(a[0]);return{v:(c===32||(c>=9&&c<=13))?1:0,t:TI};}
+      case 'isalnum':{const c=num(a[0]);return{v:((c>=48&&c<=57)||(c>=65&&c<=90)||(c>=97&&c<=122))?1:0,t:TI};}
+      case 'sqrt':return{v:Math.sqrt(num(a[0])),t:TD};
+      case 'pow':return{v:Math.pow(num(a[0]),num(a[1])),t:TD};
+      case 'fabs':return{v:Math.abs(num(a[0])),t:TD};
+      case 'abs':return{v:Math.abs(num(a[0]))|0,t:TI};
+    }
+    throw new CErr(`ไม่รู้จักฟังก์ชัน ${name}`,line,'run');
+  }
+
+  function target(all,addr){
+    if(addr===0)return 'NULL';
+    for(const v of all){
+      const sz=sizeOf(v.type);
+      if(addr>=v.addr&&addr<v.addr+sz){
+        if(!v.type.d)return v.name;
+        const es=sizeOf(mkT(v.type.b,v.type.p));
+        const idx=Math.floor((addr-v.addr)/es);
+        if(v.type.d.length===1)return `${v.name}[${idx}]`;
+        const cols=v.type.d[1];
+        return `${v.name}[${Math.floor(idx/cols)}][${idx%cols}]`;
+      }
+    }
+    for(const b of sblocks)if(b.ro&&addr>=b.base&&addr<b.base+b.size)return `ข้อความ "${b.text}"`;
+    return 'ที่ไม่ใช่ตัวแปรใดๆ';
+  }
+  function takeSnap(map){
+    const loc=[...map.values()],glob=[...globals.values()];
+    const all=loc.concat(glob);
+    const mk=(v,g)=>{
+      const T=v.type,et=mkT(T.b,T.p),es=sizeOf(et),dims=T.d||[];
+      const cols=dims.length===2?dims[1]:(dims.length===1?dims[0]:1);
+      const nr=dims.length===2?dims[0]:1;
+      const rows=[];
+      if(cols*nr<=300){
+        for(let r=0;r<nr;r++){
+          const row=[];
+          for(let c=0;c<cols;c++){
+            const a=v.addr+(r*cols+c)*es,init=mem.has(a),val=init?mem.get(a):0;
+            row.push({i:init,v:val,a,l:dims.length===2?`[${r}][${c}]`:dims.length===1?`[${c}]`:'',t:(et.p>0&&init)?target(all,val):''});
+          }
+          rows.push(row);
+        }
+      }
+      const o={name:v.name,type:tName(T),addr:v.addr,size:sizeOf(T),base:T.b,ptr:T.p>0,rows,g};
+      if(dims.length===1&&T.b==='char'&&T.p===0&&rows.length){
+        let s='',ended=false;
+        for(const c of rows[0]){if(!c.i)break;if(c.v===0){ended=true;break;}s+=String.fromCharCode(c.v<0?c.v+256:c.v);}
+        if(ended)o.str=s;else if(s!=='')o.nonul=true;
+        if(rows[0].length>12){
+          const k=rows[0].findIndex(c=>c.i&&c.v===0);
+          const keep=k>=0?Math.max(k+3,6):12;
+          if(keep<rows[0].length){o.more=rows[0].length-keep;rows[0]=rows[0].slice(0,keep);}
+        }
+      }
+      return o;
+    };
+    return loc.map(v=>mk(v,false)).concat(glob.map(v=>mk(v,true)));
+  }
+
+  function exec(s,fr){
+    tick(s.line);curLine=s.line;
+    if(s.k!=='block'&&s.k!=='empty'&&s.k!=='while'&&s.k!=='for'&&s.k!=='do')hit(s.line);
+    switch(s.k){
+      case 'block':{
+        fr.scopes.push(new Map());
+        const sp0=sp,bl0=blocks.length;
+        try{for(const st of s.body){const r=exec(st,fr);if(r)return r;}}
+        finally{
+          if(s.fnBody&&fr.isMain&&!res.snap){try{res.snap=takeSnap(fr.scopes[fr.scopes.length-1]);}catch(e){}}
+          freeTo(sp0,bl0);fr.scopes.pop();
+        }
+        return;
+      }
+      case 'empty':return;
+      case 'decl':for(const d of s.decls)execDecl(d,fr,false);return;
+      case 'expr':ev(s.e,fr);return;
+      case 'if':{
+        if(evd(s.cond,fr).v)return exec(s.then,fr);
+        if(s.els)return exec(s.els,fr);
+        return;
+      }
+      case 'while':{
+        while(true){
+          tick(s.line);hit(s.line);
+          if(!evd(s.cond,fr).v)break;
+          const r=exec(s.body,fr);
+          if(r){if(r.k==='break')break;if(r.k!=='continue')return r;}
+        }
+        return;
+      }
+      case 'do':{
+        while(true){
+          tick(s.line);hit(s.line);
+          const r=exec(s.body,fr);
+          if(r){if(r.k==='break')break;if(r.k!=='continue')return r;}
+          hit(s.cline);
+          if(!evd(s.cond,fr).v)break;
+        }
+        return;
+      }
+      case 'for':{
+        fr.scopes.push(new Map());
+        const sp0=sp,bl0=blocks.length;
+        try{
+          if(s.init){if(s.init.k==='decl')s.init.decls.forEach(d=>execDecl(d,fr,false));else s.init.list.forEach(e=>ev(e,fr));}
+          while(true){
+            tick(s.line);hit(s.line);
+            if(s.cond&&!evd(s.cond,fr).v)break;
+            const r=exec(s.body,fr);
+            if(r){if(r.k==='break')break;if(r.k!=='continue')return r;}
+            if(s.step)s.step.forEach(e=>ev(e,fr));
+          }
+        }finally{freeTo(sp0,bl0);fr.scopes.pop();}
+        return;
+      }
+      case 'switch':{
+        const x=evd(s.e,fr);
+        fr.scopes.push(new Map());
+        try{
+          let start=-1;
+          for(let i=0;i<s.cases.length;i++){const c=s.cases[i];if(c.test&&evd(c.test,fr).v===x.v){start=i;break;}}
+          if(start<0)start=s.cases.findIndex(c=>!c.test);
+          if(start>=0){
+            for(let i=start;i<s.cases.length;i++){
+              for(const st of s.cases[i].body){
+                const r=exec(st,fr);
+                if(r){if(r.k==='break')return;return r;}
+              }
+            }
+          }
+        }finally{fr.scopes.pop();}
+        return;
+      }
+      case 'break':return{k:'break'};
+      case 'continue':return{k:'continue'};
+      case 'return':return{k:'return',v:s.e?evd(s.e,fr):null};
+    }
+  }
+  for(const d of globalDecls)for(const x of d.decls)execDecl(x,gf,true);
+  const main=funcs.get('main');
+  const r=callFn({name:'main',args:[],line:main.line,builtin:false,isMain:true},gf);
+  res.exit=r.v;
+}
+
+function runC(src,stdin){
+  const res={shown:[],raw:'',warns:[],error:null,exit:0,hits:new Map(),snap:null};
+  try{
+    const {toks,inc}=lex(src);
+    const ps=new Parser(toks,inc);
+    const g=ps.parseProgram();
+    ps.warns.forEach(w=>res.warns.push(w));
+    interpret(ps,g,stdin||'',res);
+  }catch(e){
+    if(e instanceof CErr){
+      res.error={msg:e.message,line:e.line,kind:e.kind};
+      if(e.kind==='compile'){res.shown=[];res.raw='';res.hits=new Map();res.snap=null;}
+    }else if(e instanceof RangeError){
+      res.error={msg:'เรียกฟังก์ชันซ้อนกันลึกเกินไป (recursion ไม่มีเงื่อนไขหยุด)',line:0,kind:'run'};
+    }else res.error={msg:'ข้อผิดพลาดภายในระบบ: '+e.message,line:0,kind:'compile'};
+  }
+  return res;
+}
+
+/* ---------- แสดงภาพหน่วยความจำ ---------- */
+function renderMem(snap){
+  const cell=(c,v)=>{
+    let big,small='',cls='';
+    if(!c.i){big='?';small='ขยะ';cls=' un';}
+    else if(v.ptr){big=c.v===0?'NULL':hex(c.v);small='→ '+esc(c.t);}
+    else if(v.base==='char'){
+      if(c.v===0){big="'\\0'";cls=' nul';}
+      else if(c.v>=32&&c.v<127)big="'"+esc(String.fromCharCode(c.v))+"'";
+      else big=String(c.v);
+      small='รหัส '+c.v;
+    }else if(v.base==='float'||v.base==='double')big=String(Number(Number(c.v).toPrecision(7)));
+    else big=String(c.v);
+    return `<div class="mc${cls}">${c.l?`<div class="mi">${c.l}</div>`:''}<div class="mb">${big}</div>${small?`<div class="ms">${small}</div>`:''}<div class="ma">${hex(c.a)}</div></div>`;
+  };
+  return '<div class="memv">'+snap.map(v=>{
+    const head=`<div class="mvh"><b>${esc(v.name)}</b> <code>${esc(v.type)}</code> <span class="mva">ที่อยู่ ${hex(v.addr)} · ${v.size} ไบต์${v.g?' · ตัวแปรโกลบอล':''}</span></div>`;
+    const more=v.more?`<div class="mc un"><div class="mb">…</div><div class="ms">อีก ${v.more} ช่อง</div></div>`:'';
+    const rows=v.rows.length?v.rows.map((r,ri)=>`<div class="mrow">${r.map(c=>cell(c,v)).join('')}${ri===0?more:''}</div>`).join(''):'<div class="mva">(อาร์เรย์ใหญ่เกินจะแสดงภาพ)</div>';
+    let cap='';
+    if(v.str!==undefined)cap=`<div class="mcap">อ่านเป็นข้อความได้ว่า "${esc(v.str)}" (ยาว ${v.str.length} ตัวอักษร ใช้ ${v.str.length+1} ช่องรวม \\0)</div>`;
+    else if(v.nonul)cap='<div class="mcap" style="color:#b91c1c">ไม่มี \\0 ปิดท้าย จึงยังไม่ใช่สตริงที่สมบูรณ์</div>';
+    return `<div class="mv">${head}${rows}${cap}</div>`;
+  }).join('')+'</div>';
+}
+function showRes(r,src,openTrace){
+  let h='';
+  const compileErr=r.error&&r.error.kind==='compile';
+  if(compileErr){
+    h+=`<div class="box err"><b>❌ คอมไพล์ไม่ผ่าน</b><br>${r.error.line?'บรรทัดที่ '+r.error.line+': ':''}${esc(r.error.msg)}</div>`;
+  }else{
+    h+=`<div class="tlabel">ผลลัพธ์บนหน้าจอ (ตัวอักษรสีเหลืองคือสิ่งที่ผู้ใช้พิมพ์)</div><div class="term mono">${r.shown.join('')||'(ยังไม่มีข้อความแสดง)'}</div>`;
+    if(r.error)h+=`<div class="box err"><b>❌ โปรแกรมหยุดทำงาน</b><br>${r.error.line?'บรรทัดที่ '+r.error.line+': ':''}${esc(r.error.msg)}</div>`;
+    else h+=`<div class="box good">✅ โปรแกรมทำงานสำเร็จ</div>`;
+  }
+  if(r.warns.length)h+=`<div class="box warn"><b>⚠️ ข้อสังเกต</b><ul>${r.warns.map(w=>`<li>บรรทัดที่ ${w.line}: ${esc(w.msg)}</li>`).join('')}</ul></div>`;
+  if(!compileErr&&r.snap&&r.snap.length)h+=`<details class="trace" open><summary>🧠 ดูหน่วยความจำ (ตัวแปรใน main ${r.error?'ณ จุดที่โปรแกรมหยุด':'ตอนจบโปรแกรม'})</summary>${renderMem(r.snap)}</details>`;
+  if(!compileErr&&r.hits.size){
+    const lines=src.split('\n');
+    h+=`<details class="trace" ${openTrace?'open':''}><summary>🔍 ดูว่าแต่ละบรรทัดทำงานกี่ครั้ง</summary><div class="tlabel">แถบสีเขียว = บรรทัดที่ทำงาน (×จำนวนครั้ง)</div><div class="tr">${lines.map((l,i)=>{const c=r.hits.get(i+1)||0;return `<div class="trl ${c?'on':'off'}"><span class="tn">${i+1}</span><span class="tc">${c?'×'+c:''}</span><code>${esc(l)||' '}</code></div>`;}).join('')}</div></details>`;
+  }
+  return h;
+}
+
+/* =====================================================================
+   ส่วนที่ 2: ส่วนประกอบหน้าเว็บ
+   ===================================================================== */
+let progress={};
+try{progress=JSON.parse(localStorage.getItem('clab_ptr')||'{}');}catch(e){}
+const saveP=()=>{try{localStorage.setItem('clab_ptr',JSON.stringify(progress));}catch(e){}};
+
+function mkEditor(host,cfg){
+  host.innerHTML=`<textarea class="code" spellcheck="false" wrap="off"></textarea>${cfg.input!==undefined?'<label class="lab">ข้อมูลที่ต้องพิมพ์ให้โปรแกรม (สำหรับ scanf คั่นด้วยเว้นวรรค)<input class="inp"></label>':''}<div class="btns"><button class="btn go">▶ รันโปรแกรม</button><button class="btn rs">↺ เริ่มใหม่</button></div><div class="res"></div>`;
+  const ta=$('textarea',host),inp=$('.inp',host),res=$('.res',host);
+  ta.value=cfg.code;ta.rows=Math.min(28,cfg.code.split('\n').length+1);
+  if(inp)inp.value=cfg.input;
+  const run=()=>{const src=ta.value;res.innerHTML=showRes(runC(src,inp?inp.value:''),src,!!cfg.trace);};
+  $('.go',host).onclick=run;
+  $('.rs',host).onclick=()=>{ta.value=cfg.code;if(inp)inp.value=cfg.input;res.innerHTML='';};
+  ta.addEventListener('keydown',e=>{
+    if(e.key==='Tab'){e.preventDefault();ta.setRangeText('    ',ta.selectionStart,ta.selectionEnd,'end');}
+    if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();run();}
+  });
+  (cfg.tries||[]).forEach(t=>{
+    const b=document.createElement('button');b.className='btn';b.textContent=t.label;
+    b.onclick=()=>{ta.value=t.fn(ta.value);run();};
+    $('.btns',host).appendChild(b);
+  });
+  return{get:()=>ta.value};
+}
+const norm=s=>s.replace(/\r/g,'').replace(/[ \t]+\n/g,'\n').trim();
+function mkMission(host,cfg,stepId,onDone){
+  const hasIn=cfg.tests.some(t=>t.input!==undefined);
+  host.innerHTML=`<h3 style="margin-top:0">🎯 ภารกิจ: ${cfg.title}</h3>${cfg.task}
+  <div class="tw"><table><tr>${hasIn?'<th>พิมพ์ให้โปรแกรม</th>':''}<th>ต้องได้ผลลัพธ์</th></tr>${cfg.tests.map(t=>`<tr>${hasIn?`<td><code>${esc(t.input||'')}</code></td>`:''}<td><pre style="margin:0" class="mono">${t.expected===''?'(ไม่แสดงอะไรเลย)':esc(t.expected)}</pre></td></tr>`).join('')}</table></div>
+  <div class="ed"></div>
+  <div class="btns"><button class="btn ok chk">✔ ตรวจคำตอบ</button><button class="btn hint">💡 ขอคำใบ้</button><button class="btn sol">👀 ดูเฉลย</button></div>
+  <div class="hb"></div><div class="cr"></div>`;
+  const ed=mkEditor($('.ed',host),{code:cfg.code,input:hasIn?cfg.tests[0].input:undefined});
+  $('.hint',host).onclick=()=>{$('.hb',host).innerHTML=`<div class="box warn">💡 ${cfg.hint}</div>`;};
+  $('.sol',host).onclick=()=>{$('.hb',host).innerHTML='<div class="box warn">เฉลย (ลองทำเองก่อน แล้วค่อยเทียบนะ)<pre class="show"></pre></div>';$('.hb pre',host).textContent=cfg.solution;};
+  $('.chk',host).onclick=()=>{
+    const code=ed.get();let all=true,h='<ul>';
+    (cfg.requires||[]).forEach(q=>{const ok=q.re.test(code);if(!ok)all=false;h+=`<li>${ok?'✅':'❌'} ${q.msg}</li>`;});
+    cfg.tests.forEach((t,i)=>{
+      const r=runC(code,t.input||'');
+      if(r.error){all=false;h+=`<li>❌ ชุดทดสอบที่ ${i+1}: ${r.error.kind==='compile'?'คอมไพล์ไม่ผ่าน':'โปรแกรมหยุดทำงาน'} ${r.error.line?'(บรรทัด '+r.error.line+') ':''}${esc(r.error.msg)}</li>`;return;}
+      const ok=norm(r.raw)===norm(t.expected);if(!ok)all=false;
+      h+=`<li>${ok?'✅':'❌'} ชุดทดสอบที่ ${i+1}${t.input?` (พิมพ์ <code>${esc(t.input)}</code>)`:''}`;
+      if(!ok)h+=`<br>ต้องได้:<pre class="show">${esc(t.expected)||'(ไม่แสดงอะไรเลย)'}</pre>แต่ได้:<pre class="show">${esc(r.raw)||'(ว่างเปล่า)'}</pre>`;
+      h+='</li>';
+    });
+    h+='</ul>';
+    if(all){progress[stepId]=true;saveP();onDone();h='<div class="box good"><b>🎉 ผ่านแล้ว เก่งมาก!</b></div>'+h;}
+    else h='<div class="box err"><b>ยังไม่ผ่าน ไม่เป็นไร ลองดูผลเปรียบเทียบแล้วแก้อีกนิด</b></div>'+h;
+    $('.cr',host).innerHTML=h;
+  };
+  if(progress[stepId])$('.cr',host).innerHTML='<div class="box good">✅ คุณเคยทำภารกิจนี้ผ่านแล้ว</div>';
+}
+function mkQuiz(host,list){
+  host.innerHTML='<h3 style="margin-top:0">🤔 ถามเล็กๆ</h3>'+list.map((q,qi)=>`<div class="q" data-q="${qi}"><p><b>ข้อ ${qi+1}.</b> ${q.q}</p>${q.c.map((c,i)=>`<button class="choice" data-i="${i}">${esc(c)}</button>`).join('')}<div class="fb"></div></div>`).join('');
+  list.forEach((q,qi)=>{
+    const box=host.querySelector(`.q[data-q="${qi}"]`);
+    box.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i;const fb=$('.fb',box);
+      if(i===q.a){b.classList.remove('wrong');b.classList.add('right');fb.innerHTML=`<div class="box good">✅ ถูกต้อง! ${q.e}</div>`;}
+      else{b.classList.add('wrong');fb.innerHTML='<div class="box err">ยังไม่ใช่ ลองเลือกใหม่ได้เลย</div>';}
+    });
+  });
+}
+function mkAnnot(host,cfg){
+  host.innerHTML=`<div class="acode">${cfg.map((l,i)=>`<button class="aline" data-i="${i}"><span class="n">${i+1}</span><span>${esc(l.c)||' '}</span></button>`).join('')}</div><div class="aexp">👆 คลิกที่บรรทัดของโปรแกรม เพื่ออ่านว่าบรรทัดนั้นทำอะไร</div>`;
+  host.querySelectorAll('.aline').forEach(b=>b.onclick=()=>{
+    host.querySelectorAll('.aline').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
+    $('.aexp',host).innerHTML=cfg[+b.dataset.i].e;
+  });
+}
+
+/* ---------- ตัวทดลองเชิงโต้ตอบ ---------- */
+function mkArrBox(host){
+  host.innerHTML=`<h3 style="margin-top:0">🧪 ลองเล่น: ตู้ล็อกเกอร์ของอาร์เรย์</h3><p>พิมพ์ค่าในอาร์เรย์ (ไม่เกิน 8 ค่า) แล้วเลือก index ที่ต้องการอ่าน ลองใส่เลขที่เกินขอบเขต หรือเลขติดลบดู</p>
+  <div class="row"><label>ค่าในอาร์เรย์ (คั่นด้วยเว้นวรรค)<input class="txt vals" style="width:250px" value="10 20 30 40 50"></label><label>index<input class="txt idx" value="2"></label></div><div class="out"></div>`;
+  const upd=()=>{
+    const vals=$('.vals',host).value.trim().split(/\s+/).filter(x=>x!==''&&isFinite(Number(x))).map(x=>Math.trunc(Number(x))).slice(0,8);
+    const o=$('.out',host);
+    if(!vals.length){o.innerHTML='<div class="box warn">พิมพ์ตัวเลขอย่างน้อย 1 ค่า</div>';return;}
+    const is=$('.idx',host).value.trim(),ix=Number(is),ok=is!==''&&Number.isInteger(ix);
+    const n=vals.length,inR=ok&&ix>=0&&ix<n;
+    let h=`<pre class="show">${esc('int arr['+n+'] = {'+vals.join(', ')+'};')}</pre><div class="tw"><div class="mrow">${vals.map((v,i)=>`<div class="mc ${inR&&i===ix?'hl':''}"><div class="mi">[${i}]</div><div class="mb">${v}</div><div class="ma">${hex(0x1000+4*i)}</div></div>`).join('')}</div></div>`;
+    h+=`<p style="margin:6px 0">ขนาดรวม = ${n} × 4 = <b>${n*4}</b> ไบต์ · ช่องแรกคือ <code>arr[0]</code> ช่องสุดท้ายคือ <code>arr[${n-1}]</code></p>`;
+    if(!ok)h+='<div class="box warn">กรอก index เป็นจำนวนเต็ม</div>';
+    else if(inR)h+=`<div class="box good"><code>arr[${ix}]</code> = <b>${vals[ix]}</b> อยู่ที่แอดเดรส ${hex(0x1000)} + ${ix} × 4 = <b>${hex(0x1000+4*ix)}</b></div>`;
+    else h+=`<div class="box err">❌ <code>arr[${ix}]</code> <b>ไม่มีอยู่จริง</b> อาร์เรย์นี้ใช้ได้แค่ index 0 ถึง ${n-1} ภาษาซีจริงไม่แจ้งเตือน แต่จะไปอ่าน/เขียนหน่วยความจำของคนอื่น (แอดเดรส ${ix<0?'ก่อน 0x1000':hex(0x1000+4*ix)}) ซึ่งอันตรายมาก</div>`;
+    o.innerHTML=h;
+  };
+  host.querySelectorAll('input').forEach(e=>e.oninput=upd);upd();
+}
+function mkStrBox(host){
+  host.innerHTML=`<h3 style="margin-top:0">🧪 ลองเล่น: สตริงคืออาร์เรย์ของตัวอักษร + \\0</h3><p>พิมพ์ข้อความ (ภาษาอังกฤษ ไม่เกิน 14 ตัว) และเลือกขนาดของ <code>char</code> array แล้วดูว่าพอดีหรือไม่ ลองตั้งขนาดให้เท่ากับจำนวนตัวอักษรพอดีดู</p>
+  <div class="row"><label>ข้อความ<input class="txt tx" style="width:200px" value="Hello" maxlength="14"></label><label>ขนาดอาร์เรย์ [ ]<input class="txt sz" value="10"></label></div><div class="out"></div>`;
+  const upd=()=>{
+    const txt=$('.tx',host).value,N=parseInt($('.sz',host).value,10),chars=[...txt],L=chars.length;
+    const o=$('.out',host);
+    if(!(N>=1&&N<=20)){o.innerHTML='<div class="box warn">ขนาดอาร์เรย์ใส่ได้ 1 ถึง 20</div>';return;}
+    const total=Math.min(Math.max(N,L+1),20);
+    let cells='';
+    for(let i=0;i<total;i++){
+      if(i<L)cells+=`<div class="mc ${i>=N?'un':''}"><div class="mi">[${i}]</div><div class="mb">'${esc(chars[i])}'</div><div class="ma">รหัส ${chars[i].charCodeAt(0)}</div></div>`;
+      else if(i===L)cells+=`<div class="mc nul ${i>=N?'un':''}"><div class="mi">[${i}]</div><div class="mb">'\\0'</div><div class="ma">รหัส 0</div></div>`;
+      else cells+=`<div class="mc un"><div class="mi">[${i}]</div><div class="mb">?</div><div class="ma">ว่าง</div></div>`;
+    }
+    let h=`<pre class="show">${esc('char s['+N+'] = "'+txt+'";')}</pre><div class="tw"><div class="mrow">${cells}</div></div>`;
+    h+=`<p style="margin:6px 0"><code>strlen</code> = <b>${L}</b> (นับเฉพาะตัวอักษร) · ต้องใช้ <b>${L+1}</b> ช่อง (รวม <code>\\0</code>) · ประกาศไว้ <b>${N}</b> ช่อง</p>`;
+    if(N<L)h+=`<div class="box err">❌ ข้อความยาว ${L} ตัวอักษร แต่อาร์เรย์มีแค่ ${N} ช่อง คอมไพล์ไม่ผ่าน (ช่องที่ล้นขอบแสดงเป็นเส้นประ)</div>`;
+    else if(N===L)h+=`<div class="box warn">⚠️ ตัวอักษรเต็มพอดี ไม่เหลือที่ให้ <code>\\0</code> (ช่องสีแดงล้นขอบ) <code>printf("%s")</code> จะอ่านเลยไปเรื่อยๆ จนเจอเลข 0 ที่ไหนสักแห่ง ต้องเพิ่มอีก 1 ช่อง</div>`;
+    else h+=`<div class="box good">✅ พอดี เหลือช่องว่าง ${N-L-1} ช่อง สำหรับเก็บข้อความที่ยาวขึ้นได้</div>`;
+    o.innerHTML=h;
+  };
+  host.querySelectorAll('input').forEach(e=>e.oninput=upd);upd();
+}
+function mkGrid(host){
+  host.innerHTML=`<h3 style="margin-top:0">🧪 ลองเล่น: ตาราง 2 มิติ</h3><p>เลือกขนาดตาราง แล้ว <b>คลิกช่อง</b> เพื่อดูว่า <code>m[แถว][คอลัมน์]</code> ไปอยู่ตำแหน่งไหนในหน่วยความจำ</p>
+  <div class="row"><label>จำนวนแถว (rows)<select class="R"><option>2</option><option selected>3</option><option>4</option></select></label><label>จำนวนคอลัมน์ (cols)<select class="C"><option>2</option><option>3</option><option selected>4</option><option>5</option></select></label></div><div class="gw"></div><div class="gi"></div><div class="gf"></div>`;
+  let sel=null;
+  const draw=()=>{
+    const R=+$('.R',host).value,Cc=+$('.C',host).value;
+    if(sel&&(sel.r>=R||sel.c>=Cc))sel=null;
+    let t='<div class="tw"><table><tr><th></th>'+Array.from({length:Cc},(_,c)=>`<th>col ${c}</th>`).join('')+'</tr>';
+    for(let r=0;r<R;r++){t+=`<tr><th>row ${r}</th>`;for(let c=0;c<Cc;c++)t+=`<td style="padding:3px"><button class="gb ${sel&&sel.r===r&&sel.c===c?'hl':''}" data-r="${r}" data-c="${c}">${r*Cc+c+1}</button></td>`;t+='</tr>';}
+    $('.gw',host).innerHTML=t+'</table></div>';
+    host.querySelectorAll('.gb').forEach(b=>b.onclick=()=>{sel={r:+b.dataset.r,c:+b.dataset.c};draw();});
+    const gi=$('.gi',host),gf=$('.gf',host);
+    let flat='<div class="tlabel">ในหน่วยความจำจริง ข้อมูลถูกวางต่อกันเป็นเส้นเดียว (เรียงทีละแถว)</div><div class="tw"><div class="mrow">';
+    for(let k=0;k<R*Cc;k++){const on=sel&&sel.r*Cc+sel.c===k;flat+=`<div class="mc ${on?'hl':''}"><div class="mi">[${Math.floor(k/Cc)}][${k%Cc}]</div><div class="mb">${k+1}</div><div class="ma">${hex(0x1000+4*k)}</div></div>`;}
+    gf.innerHTML=flat+'</div></div>';
+    if(sel){const k=sel.r*Cc+sel.c;gi.innerHTML=`<div class="box good"><code>int m[${R}][${Cc}]</code> → <code>m[${sel.r}][${sel.c}]</code> = <b>${k+1}</b><br>ลำดับในหน่วยความจำ = ${sel.r} × ${Cc} + ${sel.c} = <b>${k}</b> → แอดเดรส ${hex(0x1000)} + ${k} × 4 = <b>${hex(0x1000+4*k)}</b></div>`;}
+    else gi.innerHTML='<div class="box warn">👆 คลิกช่องใดช่องหนึ่งในตาราง</div>';
+  };
+  host.querySelectorAll('select').forEach(e=>e.onchange=draw);draw();
+}
+function mkPtrSim(host){
+  const ADDR={x:0x1000,y:0x1004};
+  let st,log,msg,bad;
+  const reset=()=>{st={x:10,y:20,p:null};log=[];msg='เริ่มต้น: x = 10, y = 20 และ p ยังไม่ชี้ไปที่ใด (NULL)';bad=false;};
+  const acts=[
+    {code:'p = &x;',fn:s=>{s.p='x';return 'p เก็บแอดเดรสของ x (0x1000) เรียกว่า "p ชี้ไปที่ x"';}},
+    {code:'p = &y;',fn:s=>{s.p='y';return 'p เก็บแอดเดรสของ y (0x1004) ตอนนี้ p ชี้ไปที่ y แทน';}},
+    {code:'*p = 99;',needs:1,fn:s=>{s[s.p]=99;return `ไปที่บ้านที่ p ชี้ (${s.p}) แล้วเปลี่ยนค่าเป็น 99 ตัวแปร ${s.p} จึงเปลี่ยนตาม ทั้งที่เราไม่ได้เขียนชื่อ ${s.p} เลย`;}},
+    {code:'*p = *p + 5;',needs:1,fn:s=>{s[s.p]+=5;return `อ่านค่าจากบ้านที่ p ชี้ (${s.p}) บวก 5 แล้วเขียนกลับ ตอนนี้ ${s.p} = ${s[s.p]}`;}},
+    {code:'x = 7;',fn:s=>{s.x=7;return 'เปลี่ยน x ตรงๆ ถ้า p ชี้ที่ x อยู่ *p ก็จะเป็น 7 ด้วย';}},
+    {code:'p = NULL;',fn:s=>{s.p=null;return 'p ไม่ชี้ไปที่ใดแล้ว (NULL) ห้ามใช้ *p ตอนนี้';}}
+  ];
+  host.innerHTML=`<h3 style="margin-top:0">🧪 ลองเล่น: พอยน์เตอร์ชี้บ้าน</h3><p>มีบ้าน 2 หลังคือ <code>x</code> และ <code>y</code> กับกระดาษจดที่อยู่ <code>p</code> (<code>int *p</code>) กดปุ่มทีละคำสั่งแล้วดูว่าอะไรเปลี่ยน ลองกด <code>*p = 99;</code> ตอนที่ p ยังเป็น NULL ด้วย</p><div class="btns pb"></div><div class="pv"></div>`;
+  const draw=()=>{
+    const box=(nm,val,ad,hl,ex)=>`<div class="mc ${hl?'hl':''}" style="min-width:120px;margin:4px"><div class="mi">${nm}</div><div class="mb">${val}</div>${ex||''}<div class="ma">${ad}</div></div>`;
+    const tg=st.p;
+    let h=`<div class="tw"><div class="mrow">${box('x (int)',st.x,'0x1000',tg==='x')}${box('y (int)',st.y,'0x1004',tg==='y')}${box('p (int *)',tg?hex(ADDR[tg]):'NULL','0x1008',false,tg?`<div class="ms">→ ชี้ไปที่ ${tg}</div>`:'<div class="ms">ไม่ชี้ที่ใด</div>')}</div></div>`;
+    h+=`<div class="box ${bad?'err':'good'}">${bad?'❌ ':'💬 '}${msg}</div>`;
+    h+=`<table><tr><th>นิพจน์</th><th>ค่า</th><th>ความหมาย</th></tr><tr><td><code>&amp;x</code></td><td>0x1000</td><td>แอดเดรสของ x</td></tr><tr><td><code>p</code></td><td>${tg?hex(ADDR[tg]):'NULL'}</td><td>ค่าที่เก็บในพอยน์เตอร์ (คือแอดเดรส)</td></tr><tr><td><code>*p</code></td><td>${tg?st[tg]:'ใช้ไม่ได้ (NULL)'}</td><td>ค่าในบ้านที่ p ชี้อยู่</td></tr></table>`;
+    if(log.length)h+=`<div class="tlabel">คำสั่งที่กดไปล่าสุด</div><pre class="show">${esc(log.slice(-6).join('\n'))}</pre>`;
+    $('.pv',host).innerHTML=h;
+  };
+  const bar=$('.pb',host);
+  acts.forEach(a=>{
+    const b=document.createElement('button');b.className='btn mono';b.textContent=a.code;
+    b.onclick=()=>{
+      if(a.needs&&!st.p){bad=true;msg=`ใช้ ${a.code} ไม่ได้ เพราะ p เป็น NULL (ยังไม่ชี้ไปที่ตัวแปรใด) โปรแกรมจริงจะ crash ต้องกำหนด p = &x; หรือ p = &y; ก่อน`;log.push(a.code+'   // ผิดพลาด');}
+      else{bad=false;msg=a.fn(st);log.push(a.code);}
+      draw();
+    };
+    bar.appendChild(b);
+  });
+  const rb=document.createElement('button');rb.className='btn';rb.textContent='↺ เริ่มใหม่';rb.onclick=()=>{reset();draw();};bar.appendChild(rb);
+  reset();draw();
+}
+function mkPtrArith(host){
+  let st,msg,bad;
+  const reset=()=>{st={a:[10,20,30,40,50],pos:0};msg='เริ่มต้น: int *p = a; ชี้ที่ช่องแรก a[0]';bad=false;};
+  const inR=()=>st.pos>=0&&st.pos<5;
+  const acts=[
+    {code:'p++;',ok:()=>st.pos<5,fn:()=>{st.pos++;return 'p เลื่อนไป 1 ช่อง (แอดเดรสเพิ่ม 4 ไบต์ เพราะ int ใหญ่ 4 ไบต์ ไม่ใช่เพิ่มทีละ 1)';}},
+    {code:'p--;',ok:()=>st.pos>-1,fn:()=>{st.pos--;return 'p ถอยหลัง 1 ช่อง (แอดเดรสลด 4 ไบต์)';}},
+    {code:'p += 2;',ok:()=>st.pos+2<=5,fn:()=>{st.pos+=2;return 'p เลื่อนไป 2 ช่อง (แอดเดรสเพิ่ม 8 ไบต์)';}},
+    {code:'p = a;',ok:()=>true,fn:()=>{st.pos=0;return 'ชื่ออาร์เรย์ a คือแอดเดรสของช่องแรก จึงกำหนดให้ p ได้เลย (ไม่ต้องมี &)';}},
+    {code:'*p = 99;',need:1,fn:()=>{st.a[st.pos]=99;return `เขียน 99 ลงช่องที่ p ชี้ คือ a[${st.pos}]`;}},
+    {code:'*p = *p + 1;',need:1,fn:()=>{st.a[st.pos]+=1;return `อ่านค่าช่องที่ p ชี้ บวก 1 แล้วเขียนกลับ a[${st.pos}] = ${st.a[st.pos]}`;}}
+  ];
+  host.innerHTML=`<h3 style="margin-top:0">🧪 ลองเล่น: เดินไปตามอาร์เรย์ด้วยพอยน์เตอร์</h3><p>ตอนนี้ <code>int a[5] = {10, 20, 30, 40, 50};</code> และ <code>int *p = a;</code> กดปุ่มเพื่อเลื่อน p แล้วดูว่า <code>p</code> และ <code>*p</code> เปลี่ยนอย่างไร ลองเดินออกนอกอาร์เรย์แล้วกด <code>*p = 99;</code> ดู</p><div class="btns pb"></div><div class="pv"></div>`;
+  const bar=$('.pb',host);
+  const draw=()=>{
+    let cells='',marks='';
+    for(let s=-1;s<=5;s++){
+      const out=s<0||s>4;
+      cells+=out?`<div class="mc un"><div class="mi">[${s}]</div><div class="mb">นอก</div><div class="ma">${hex(0x2000+4*s)}</div></div>`:`<div class="mc ${st.pos===s?'hl':''}"><div class="mi">[${s}]</div><div class="mb">${st.a[s]}</div><div class="ma">${hex(0x2000+4*s)}</div></div>`;
+      marks+=`<div class="mk">${st.pos===s?'▲ p':''}</div>`;
+    }
+    const addr=0x2000+4*st.pos;
+    let h=`<div class="tw"><div class="mrow">${cells}</div><div class="mrow">${marks}</div></div><div class="box ${bad?'err':'good'}">${bad?'❌ ':'💬 '}${msg}</div>`;
+    h+=`<table><tr><th>นิพจน์</th><th>ค่า</th></tr><tr><td><code>p</code></td><td>${hex(addr)}</td></tr><tr><td><code>p - a</code> (ห่างจากช่องแรกกี่ช่อง)</td><td>${st.pos}</td></tr><tr><td><code>*p</code></td><td>${inR()?st.a[st.pos]:'อ่านไม่ได้ (p ชี้นอกอาร์เรย์)'}</td></tr><tr><td><code>*(a + ${st.pos})</code> เท่ากับ <code>a[${st.pos}]</code></td><td>${inR()?st.a[st.pos]:'นอกอาร์เรย์'}</td></tr></table>`;
+    $('.pv',host).innerHTML=h;
+    bar.querySelectorAll('button[data-ok]').forEach(b=>{b.disabled=!acts[+b.dataset.ok].ok();});
+  };
+  acts.forEach((a,i)=>{
+    const b=document.createElement('button');b.className='btn mono';b.textContent=a.code;
+    if(a.ok)b.dataset.ok=i;
+    b.onclick=()=>{
+      if(a.need&&!inR()){bad=true;msg=`ใช้ ${a.code} ไม่ได้ เพราะ p ชี้นอกอาร์เรย์ (แอดเดรสนี้ไม่ใช่ของ a) โปรแกรมจริงอาจ crash หรือเขียนทับตัวแปรอื่นโดยไม่รู้ตัว`;}
+      else{bad=false;msg=a.fn();}
+      draw();
+    };
+    bar.appendChild(b);
+  });
+  const rb=document.createElement('button');rb.className='btn';rb.textContent='↺ เริ่มใหม่';rb.onclick=()=>{reset();draw();};bar.appendChild(rb);
+  reset();draw();
+}
+
+/* =====================================================================
+   ส่วนที่ 3: เนื้อหา 8 ขั้น
+   ===================================================================== */
+const C=String.raw;
+const STEPS=[
+/* ---------------- ขั้นที่ 1 ---------------- */
+{name:'1 อาร์เรย์',title:'ขั้นที่ 1: อาร์เรย์ (Array) ตัวแปรที่มีหลายช่อง',widget:'arrbox',
+ learn:C`<p>สมมติต้องเก็บคะแนนสอบของเพื่อน 5 คน ถ้าใช้ตัวแปรธรรมดาต้องประกาศ <code>score1, score2, score3, score4, score5</code> แล้วถ้ามี 40 คนทั้งห้องล่ะ? 😵 เขียนไม่ไหวแน่นอน</p>
+ <p><b>อาร์เรย์ (array)</b> คือตัวแปร <b>ชื่อเดียว</b> ที่มี <b>หลายช่อง</b> เก็บข้อมูล <b>ชนิดเดียวกัน</b> วางเรียงติดกันในหน่วยความจำ เหมือน <b>ตู้ล็อกเกอร์เรียงแถว</b> 🗄️ ทุกตู้ใช้ชื่อเดียวกัน แต่แยกกันด้วย <b>หมายเลขช่อง (index)</b></p>
+ <pre class="show">score   [ 80 ][ 65 ][ 90 ][ 72 ][ 55 ]
+index      0     1     2     3     4</pre>
+ <div class="box warn"><b>กฎทองข้อที่ 1:</b> index <b>เริ่มนับจาก 0</b> อาร์เรย์ที่มี 5 ช่องจึงใช้ได้แค่ index 0 ถึง 4 (ช่องสุดท้าย = ขนาด − 1)</div>
+ <h3>วิธีประกาศอาร์เรย์</h3>
+ <div class="tw"><table><tr><th>เขียนแบบนี้</th><th>ความหมาย</th></tr>
+ <tr><td><code>int score[5];</code></td><td>จองไว้ 5 ช่อง ยังไม่ใส่ค่า (เป็นค่าขยะ)</td></tr>
+ <tr><td><code>int score[5] = {80, 65, 90, 72, 55};</code></td><td>จอง 5 ช่องพร้อมใส่ค่าครบ</td></tr>
+ <tr><td><code>int score[5] = {80, 65};</code></td><td>ใส่ 2 ช่องแรก ช่องที่เหลือเป็น 0 อัตโนมัติ</td></tr>
+ <tr><td><code>int score[5] = {0};</code></td><td>ทุกช่องเป็น 0 (นิยมใช้มาก)</td></tr>
+ <tr><td><code>int score[] = {80, 65, 90};</code></td><td>ไม่บอกขนาด ภาษาซีนับจากจำนวนค่าให้เอง (ได้ 3 ช่อง)</td></tr></table></div>
+ <h3>การใช้งานแต่ละช่อง</h3>
+ <pre class="show">x = score[2];        // อ่านค่าช่อง index 2 ได้ 90
+score[0] = 100;      // เขียนค่าใหม่ลงช่องแรก
+score[i] = 50;       // index เป็นตัวแปรก็ได้ (ใช้คู่กับ loop บ่อยมาก)</pre>
+ <p>คลิกแต่ละบรรทัดของโปรแกรมด้านล่าง เพื่ออ่านคำอธิบาย</p>`,
+ annot:[
+  {c:'#include <stdio.h>',e:`ขอใช้ชุดคำสั่งรับ-แสดงผล เช่น <code>printf</code>`},
+  {c:'',e:`บรรทัดว่างไว้ให้อ่านง่าย`},
+  {c:'int main(void)',e:`จุดเริ่มต้นของโปรแกรม`},
+  {c:'{',e:`เริ่มคำสั่งใน main`},
+  {c:'    int score[5] = {80, 65, 90, 72, 55};',e:`<b>สร้างอาร์เรย์ชื่อ score มี 5 ช่อง</b> พร้อมใส่ค่า<br><code>score[0]</code>=80, <code>score[1]</code>=65, <code>score[2]</code>=90, <code>score[3]</code>=72, <code>score[4]</code>=55<br>มี 5 ช่อง แต่ช่องสุดท้ายคือ index <b>4</b>`},
+  {c:'    printf("%d\\n", score[0]);',e:`อ่านค่า <b>ช่องแรก</b> (index 0) แสดงผล 80`},
+  {c:'    score[1] = 70;',e:`<b>เขียนค่าใหม่</b> ลงช่องที่สอง (index 1) ค่าเดิม 65 หายไป กลายเป็น 70`},
+  {c:'    score[4] = score[0] + score[1];',e:`อ่านค่า 2 ช่องมาบวกกัน (80 + 70 = 150) แล้วเก็บลงช่องสุดท้าย`},
+  {c:'    printf("%d\\n", score[4]);',e:`แสดงผล 150`},
+  {c:'    return 0;',e:`จบโปรแกรม`},
+  {c:'}',e:`ปิด main`}],
+ learn2:C`<div class="box err" style="margin-top:12px"><b>ระวัง!</b> ภาษาซี <b>ไม่ตรวจ</b> ว่า index เกินขอบหรือไม่ ถ้าเขียน <code>score[5]</code> ทั้งที่มีแค่ 5 ช่อง โปรแกรมจริงจะไปอ่าน/เขียนหน่วยความจำของตัวแปรอื่น ทำให้ผลแปลกๆ หรือ crash ได้ (ในเว็บนี้ตัวจำลองจะช่วยจับให้)</div>
+ <p>💡 <code>sizeof(score)</code> บอกขนาดอาร์เรย์เป็นไบต์ (5 × 4 = 20) และ <code>sizeof(score) / sizeof(score[0])</code> บอกจำนวนช่อง (20 / 4 = 5)</p>`,
+ labs:[
+  {tip:'รันแล้วดู "🧠 ดูหน่วยความจำ" จะเห็นอาร์เรย์เป็นช่องเรียงกัน แต่ละช่องห่างกัน 4 ไบต์ จากนั้นลองกดปุ่ม 😈',trace:true,
+   code:C`#include <stdio.h>
+
+int main(void)
+{
+    int score[5] = {80, 65, 90, 72, 55};
+
+    printf("First score: %d\n", score[0]);
+    printf("Last score:  %d\n", score[4]);
+
+    score[1] = 70;
+    printf("New score[1] = %d\n", score[1]);
+
+    printf("Array size = %d bytes\n", (int)sizeof(score));
+    printf("Number of elements = %d\n", (int)(sizeof(score) / sizeof(score[0])));
+    return 0;
+}`,tries:[
+    {label:'😈 อ่าน score[5] (เกินขอบ)',fn:c=>c.replace('score[4]);','score[5]);')},
+    {label:'😈 ใส่ค่าเกินจำนวนช่อง',fn:c=>c.replace('{80, 65, 90, 72, 55}','{80, 65, 90, 72, 55, 99}')}]},
+  {tip:'รับคะแนน 5 คนด้วย loop สังเกตว่า scanf ใช้ &score[i] (มี & เพราะแต่ละช่องคือ int ธรรมดา)',trace:true,input:'80 65 90 72 55',
+   code:C`#include <stdio.h>
+
+int main(void)
+{
+    int score[5];
+    int i, sum = 0;
+
+    for (i = 0; i < 5; i++) {
+        printf("Score %d: ", i + 1);
+        scanf("%d", &score[i]);
+        sum += score[i];
+    }
+    printf("Total = %d\n", sum);
+    printf("Average = %.2f\n", sum / 5.0);
+    return 0;
+}`}],
+ mission:{title:'พิมพ์ย้อนกลับ',task:C`<p>รับจำนวนเต็ม 5 ค่าเก็บลงอาร์เรย์ <code>a</code> แล้วพิมพ์ <b>ย้อนจากหลังมาหน้า</b> คั่นด้วยช่องว่าง (ใช้ loop ทั้งตอนรับและตอนพิมพ์)</p>`,
+  hint:C`ตอนรับ: for (i = 0; i &lt; 5; i++) scanf("%d", &a[i]); ตอนพิมพ์ให้ i เริ่มที่ 4 แล้วลดลง: for (i = 4; i &gt;= 0; i--) printf("%d ", a[i]);`,
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int a[5];
+    int i;
+
+    /* 1. ใช้ for รับค่า 5 ตัวเก็บลง a[0] ถึง a[4] */
+
+    /* 2. ใช้ for พิมพ์ย้อนจาก a[4] ลงมาถึง a[0] คั่นด้วยช่องว่าง */
+
+    printf("\n");
+    return 0;
+}`,tests:[{input:'1 2 3 4 5',expected:'5 4 3 2 1\n'},{input:'10 20 30 40 50',expected:'50 40 30 20 10\n'},{input:'7 -3 0 8 2',expected:'2 8 0 -3 7\n'}],
+  requires:[{re:/int\s+a\s*\[\s*5\s*\]/,msg:'ใช้อาร์เรย์ int a[5]'},{re:/for\s*\(/,msg:'ใช้ loop'}],
+  solution:C`#include <stdio.h>
+
+int main(void)
+{
+    int a[5];
+    int i;
+
+    for (i = 0; i < 5; i++) {
+        scanf("%d", &a[i]);
+    }
+    for (i = 4; i >= 0; i--) {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+    return 0;
+}`},
+ quiz:[
+  {q:C`อาร์เรย์ <code>int a[10];</code> ช่องสุดท้ายคือช่องใด`,c:['a[10]','a[9]','a[1]','a[11]'],a:1,e:'index เริ่มที่ 0 อาร์เรย์ 10 ช่องจึงเป็น a[0] ถึง a[9]'},
+  {q:C`<code>int a[5] = {3, 6};</code> ค่าของ <code>a[3]</code> คือเท่าใด`,c:['3','6','0','ค่าขยะ'],a:2,e:'ถ้าใส่ค่าไม่ครบ ช่องที่เหลือจะเป็น 0 อัตโนมัติ'},
+  {q:C`ถ้า <code>int a[4];</code> เริ่มที่แอดเดรส 0x1000 แล้ว <code>&amp;a[2]</code> คือแอดเดรสใด`,c:['0x1002','0x1004','0x1008','0x1010'],a:2,e:'int มีขนาด 4 ไบต์ จึงได้ 0x1000 + 2 × 4 = 0x1008'}]},
+
+/* ---------------- ขั้นที่ 2 ---------------- */
+{name:'2 อาร์เรย์+loop',title:'ขั้นที่ 2: อาร์เรย์คู่กับ loop',
+ learn:C`<p>พลังที่แท้จริงของอาร์เรย์จะออกมาเมื่อใช้คู่กับ <code>for</code> loop เพราะ index เป็นตัวแปรได้ ให้ <code>i</code> วิ่งจาก 0 ถึง ขนาด−1 ก็เข้าถึงได้ครบทุกช่อง ไม่ว่าจะมี 5 หรือ 500 ช่อง ✨</p>
+ <pre class="show">#define N 5                  // ตั้งชื่อให้ค่าคงที่ แก้ที่เดียวเปลี่ยนทั้งโปรแกรม
+int a[N];
+for (i = 0; i &lt; N; i++) {    // i = 0, 1, 2, 3, 4
+    ... a[i] ...
+}</pre>
+ <h3>สูตรสำเร็จที่ใช้บ่อย</h3>
+ <div class="tw"><table><tr><th>งาน</th><th>แนวคิด</th></tr>
+ <tr><td>รับค่าทุกช่อง</td><td><code>scanf("%d", &amp;a[i]);</code> ใน loop</td></tr>
+ <tr><td>หาผลรวม</td><td>เริ่ม <code>sum = 0</code> แล้ว <code>sum += a[i];</code></td></tr>
+ <tr><td>หาค่ามากสุด</td><td>ให้ <code>max = a[0]</code> ก่อน แล้วเทียบกับช่องที่เหลือ เจอค่าที่มากกว่าก็แทนที่</td></tr>
+ <tr><td>ค้นหาค่า</td><td>เทียบ <code>a[i] == key</code> เจอแล้ว <code>break;</code></td></tr>
+ <tr><td>นับตามเงื่อนไข</td><td><code>if (a[i] &gt;= 50) count++;</code></td></tr>
+ <tr><td>กลับลำดับ</td><td>สลับช่อง <code>i</code> กับ <code>N-1-i</code> แค่ครึ่งอาร์เรย์</td></tr></table></div>
+ <div class="box warn"><b>ข้อผิดพลาดยอดฮิต:</b> เขียน <code>i &lt;= N</code> แทน <code>i &lt; N</code> ทำให้วนเกินไป 1 รอบ (off-by-one) และเข้าถึง <code>a[N]</code> ที่ไม่มีอยู่จริง</div>
+ <h3>ทำไมหาค่ามากสุดต้องเริ่มที่ a[0]?</h3>
+ <p>ถ้าเริ่ม <code>max = 0</code> แล้วข้อมูลเป็นเลขติดลบทั้งหมด เช่น -5, -2, -9 จะได้คำตอบเป็น 0 ซึ่งผิด เพราะ 0 ไม่ได้อยู่ในอาร์เรย์เลย การเริ่มจากช่องแรกจึงปลอดภัยที่สุด</p>`,
+ labs:[
+  {tip:'หาค่ามากสุด/น้อยสุด แล้วค้นหาตัวเลข ลองเปลี่ยนเลขที่ค้นหาเป็นเลขที่ไม่มีในอาร์เรย์ แล้วกด 😈',trace:true,input:'56',
+   code:C`#include <stdio.h>
+#define N 6
+
+int main(void)
+{
+    int a[N] = {34, 7, 89, 12, 56, 23};
+    int i, max, min, key, found = -1;
+
+    max = a[0];
+    min = a[0];
+    for (i = 1; i < N; i++) {
+        if (a[i] > max) {
+            max = a[i];
+        }
+        if (a[i] < min) {
+            min = a[i];
+        }
+    }
+    printf("Max = %d, Min = %d\n", max, min);
+
+    printf("Search for: ");
+    scanf("%d", &key);
+    for (i = 0; i < N; i++) {
+        if (a[i] == key) {
+            found = i;
+            break;
+        }
+    }
+    if (found >= 0) {
+        printf("Found %d at index %d\n", key, found);
+    } else {
+        printf("%d not found\n", key);
+    }
+    return 0;
+}`,tries:[{label:'😈 เปลี่ยน i < N เป็น i <= N',fn:c=>c.replace('i < N','i <= N')}]},
+  {tip:'กลับลำดับอาร์เรย์โดยสลับช่องหน้า-หลัง ดูใน 🔍 ว่า loop สลับทำงานแค่ 3 รอบ (ครึ่งหนึ่งของ 6)',trace:true,
+   code:C`#include <stdio.h>
+#define N 6
+
+int main(void)
+{
+    int a[N] = {1, 2, 3, 4, 5, 6};
+    int i, temp;
+
+    printf("Before: ");
+    for (i = 0; i < N; i++) {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+
+    for (i = 0; i < N / 2; i++) {
+        temp = a[i];
+        a[i] = a[N - 1 - i];
+        a[N - 1 - i] = temp;
+    }
+
+    printf("After:  ");
+    for (i = 0; i < N; i++) {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+    return 0;
+}`}],
+ mission:{title:'ค่ามากสุดอยู่ช่องไหน',task:C`<p>รับจำนวนเต็ม 6 ค่าเก็บในอาร์เรย์ แล้วหา <b>ค่ามากสุด</b> และ <b>index ของมัน</b> (ถ้ามีค่ามากสุดซ้ำกัน ให้ตอบ index แรกที่เจอ) แสดงผลเป็น <code>Max=… at index …</code></p>`,
+  hint:C`ให้ max = a[0]; pos = 0; แล้ววน i ตั้งแต่ 1 ถึง N-1 ถ้า a[i] &gt; max (ใช้ &gt; ไม่ใช่ &gt;= เพื่อให้ได้ตำแหน่งแรก) ให้ max = a[i]; pos = i;`,
+  code:C`#include <stdio.h>
+#define N 6
+
+int main(void)
+{
+    int a[N];
+    int i, max, pos;
+
+    /* 1. รับค่า N ตัว */
+
+    /* 2. หาค่ามากสุดและตำแหน่ง */
+
+    printf("Max=%d at index %d\n", max, pos);
+    return 0;
+}`,tests:[{input:'4 9 2 9 1 7',expected:'Max=9 at index 1\n'},{input:'-3 -8 -1 -5 -2 -9',expected:'Max=-1 at index 2\n'},{input:'5 4 3 2 1 0',expected:'Max=5 at index 0\n'}],
+  requires:[{re:/for\s*\(/,msg:'ใช้ loop'}],
+  solution:C`#include <stdio.h>
+#define N 6
+
+int main(void)
+{
+    int a[N];
+    int i, max, pos;
+
+    for (i = 0; i < N; i++) {
+        scanf("%d", &a[i]);
+    }
+    max = a[0];
+    pos = 0;
+    for (i = 1; i < N; i++) {
+        if (a[i] > max) {
+            max = a[i];
+            pos = i;
+        }
+    }
+    printf("Max=%d at index %d\n", max, pos);
+    return 0;
+}`},
+ quiz:[
+  {q:C`<code>int a[5]; for (i = 0; i &lt;= 5; i++) a[i] = 0;</code> มีปัญหาอะไร`,c:['ไม่มีปัญหา','วนเกิน 1 รอบ ทำให้เขียนลง a[5] ที่ไม่มีอยู่จริง','loop ไม่ทำงานเลย','ต้องเริ่มที่ i = 1'],a:1,e:'i &lt;= 5 ทำให้ i มีค่าถึง 5 ซึ่งเกินขอบ (off-by-one error)'},
+  {q:C`<code>int a[4] = {2, 4, 6, 8}; int s = 0; for (i = 0; i &lt; 4; i += 2) s += a[i];</code> s มีค่าเท่าใด`,c:['20','8','12','6'],a:1,e:'i เป็น 0 และ 2 จึงบวก a[0] + a[2] = 2 + 6 = 8'}]},
+
+/* ---------------- ขั้นที่ 3 ---------------- */
+{name:'3 อาร์เรย์ 2 มิติ',title:'ขั้นที่ 3: อาร์เรย์ 2 มิติ (ตาราง)',widget:'grid',
+ learn:C`<p>ถ้าอาร์เรย์ 1 มิติคือ <b>แถวของตู้</b> อาร์เรย์ 2 มิติก็คือ <b>ตาราง</b> 📊 ที่มีทั้ง <b>แถว (row)</b> และ <b>คอลัมน์ (column)</b> เช่น ตารางคะแนนที่แต่ละแถวเป็นนักเรียน แต่ละคอลัมน์เป็นวิชา หรือที่นั่งในโรงหนัง</p>
+ <pre class="show">int m[2][3] = {
+    {1, 2, 3},     // แถว 0
+    {4, 5, 6}      // แถว 1
+};
+// m[0][2] คือ แถว 0 คอลัมน์ 2 = 3
+// m[1][0] คือ แถว 1 คอลัมน์ 0 = 4</pre>
+ <ul><li>ตัวเลขแรกคือ <b>จำนวนแถว</b> ตัวที่สองคือ <b>จำนวนคอลัมน์</b> <code>int m[2][3]</code> จึงมี 2 × 3 = 6 ช่อง</li>
+ <li>เข้าถึงช่องด้วย <code>m[แถว][คอลัมน์]</code> ทั้งสองตัวเริ่มนับจาก 0</li>
+ <li>ใช้ <b>loop ซ้อน loop</b>: loop นอกวนแถว loop ในวนคอลัมน์</li>
+ <li>ในหน่วยความจำจริง ข้อมูลถูกวาง <b>ต่อกันเป็นเส้นเดียว ทีละแถว</b> ช่อง <code>m[r][c]</code> อยู่ลำดับที่ <code>r × จำนวนคอลัมน์ + c</code></li></ul>
+ <pre class="show">for (r = 0; r &lt; 2; r++) {        // วนแถว
+    for (c = 0; c &lt; 3; c++) {    // วนคอลัมน์ในแถวนั้น
+        printf("%d ", m[r][c]);
+    }
+    printf("\n");                 // จบแถวแล้วขึ้นบรรทัดใหม่
+}</pre>`,
+ labs:[{tip:'ตารางคะแนนนักเรียน 3 คน 4 วิชา พร้อมคะแนนรวม ดูภาพหน่วยความจำจะเห็นเป็น 3 แถว แล้วลองกด 😈',trace:true,
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int score[3][4] = {
+        {80, 75, 90, 85},
+        {60, 70, 65, 72},
+        {95, 88, 92, 99}
+    };
+    int r, c, total;
+
+    printf("Student  S1  S2  S3  S4  Total\n");
+    for (r = 0; r < 3; r++) {
+        total = 0;
+        printf("%7d", r + 1);
+        for (c = 0; c < 4; c++) {
+            printf("%4d", score[r][c]);
+            total += score[r][c];
+        }
+        printf("%7d\n", total);
+    }
+    return 0;
+}`,tries:[{label:'😈 เปลี่ยน r < 3 เป็น r <= 3',fn:c=>c.replace('r < 3','r <= 3')}]}],
+ mission:{title:'ผลรวมของแต่ละแถว',task:C`<p>รับจำนวนเต็ม 6 ค่าเก็บลงอาร์เรย์ <code>int m[2][3]</code> ทีละแถว (3 ค่าแรกเป็นแถว 0, 3 ค่าหลังเป็นแถว 1) แล้วแสดงผลรวมของแต่ละแถวในรูปแบบ <code>Row r: ผลรวม</code></p>`,
+  hint:C`รับค่า: loop ซ้อน loop แล้ว scanf("%d", &m[r][c]); หาผลรวม: ในแต่ละแถวให้ sum = 0 ก่อนเริ่ม loop ใน แล้วพิมพ์หลังจบ loop ใน`,
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    int m[2][3];
+    int r, c, sum;
+
+    /* 1. รับค่า 6 ตัวเก็บลง m ทีละแถว (loop ซ้อน loop) */
+
+    /* 2. หาผลรวมของแต่ละแถว แล้วแสดง Row r: ผลรวม */
+
+    return 0;
+}`,tests:[{input:'1 2 3 4 5 6',expected:'Row 0: 6\nRow 1: 15\n'},{input:'10 20 30 0 0 1',expected:'Row 0: 60\nRow 1: 1\n'},{input:'-1 -2 -3 5 5 5',expected:'Row 0: -6\nRow 1: 15\n'}],
+  requires:[{re:/for\s*\([\s\S]*for\s*\(/,msg:'ใช้ loop ซ้อน loop'}],
+  solution:C`#include <stdio.h>
+
+int main(void)
+{
+    int m[2][3];
+    int r, c, sum;
+
+    for (r = 0; r < 2; r++) {
+        for (c = 0; c < 3; c++) {
+            scanf("%d", &m[r][c]);
+        }
+    }
+    for (r = 0; r < 2; r++) {
+        sum = 0;
+        for (c = 0; c < 3; c++) {
+            sum += m[r][c];
+        }
+        printf("Row %d: %d\n", r, sum);
+    }
+    return 0;
+}`},
+ quiz:[
+  {q:C`<code>int t[3][4];</code> มีทั้งหมดกี่ช่อง`,c:['7','12','3','4'],a:1,e:'3 แถว × 4 คอลัมน์ = 12 ช่อง'},
+  {q:C`<code>int m[2][3] = {{1,2,3},{4,5,6}};</code> ค่าของ <code>m[1][2]</code> คือเท่าใด`,c:['2','3','5','6'],a:3,e:'แถว 1 คือ {4,5,6} คอลัมน์ 2 คือ 6'},
+  {q:C`ใน <code>int m[3][4];</code> ช่อง <code>m[1][2]</code> อยู่ลำดับที่เท่าใดในหน่วยความจำ (นับจาก 0)`,c:['3','5','6','12'],a:2,e:'1 × 4 + 2 = 6'}]},
+
+/* ---------------- ขั้นที่ 4 ---------------- */
+{name:'4 สตริง',title:'ขั้นที่ 4: สตริง (String) คือ char array + \\0',widget:'strbox',
+ learn:C`<p>ภาษาซีไม่มีชนิดข้อมูล "ข้อความ" โดยตรง แต่ใช้ <b>อาร์เรย์ของ char</b> เก็บทีละตัวอักษร แล้วต่อท้ายด้วยอักขระพิเศษ <code>'\0'</code> (null character มีรหัสเป็น 0) เพื่อบอกว่า "ข้อความจบตรงนี้" เหมือน <b>จุด full stop</b> ท้ายประโยค</p>
+ <pre class="show">char name[8] = "Somchai";
+ [0] [1] [2] [3] [4] [5] [6] [7]
+ 'S' 'o' 'm' 'c' 'h' 'a' 'i' '\0'   ← ภาษาซีเติม \0 ให้อัตโนมัติ</pre>
+ <div class="box warn"><b>กฎทอง:</b> ข้อความยาว n ตัวอักษร ต้องใช้อาร์เรย์อย่างน้อย <b>n + 1</b> ช่อง (เผื่อที่ให้ <code>\0</code>)</div>
+ <h3>'A' กับ "A" ไม่เหมือนกัน!</h3>
+ <div class="tw"><table><tr><th></th><th><code>'A'</code> (ฝนทองเดี่ยว)</th><th><code>"A"</code> (ฟันหนู)</th></tr>
+ <tr><td>คืออะไร</td><td>ตัวอักษร 1 ตัว (char)</td><td>ข้อความ (string)</td></tr>
+ <tr><td>ใช้กี่ไบต์</td><td>1</td><td>2 (<code>'A'</code> + <code>'\0'</code>)</td></tr>
+ <tr><td>ใช้กับ printf</td><td><code>%c</code></td><td><code>%s</code></td></tr></table></div>
+ <h3>วิธีประกาศสตริง</h3>
+ <div class="tw"><table><tr><th>เขียน</th><th>ผล</th></tr>
+ <tr><td><code>char s[10] = "Hi";</code></td><td>จอง 10 ช่อง ใช้จริง 3 ช่อง (H, i, \0)</td></tr>
+ <tr><td><code>char s[] = "Hi";</code></td><td>ให้ภาษาซีนับเอง ได้ 3 ช่องพอดี</td></tr>
+ <tr><td><code>char s[] = {'H', 'i', '\0'};</code></td><td>เหมือนกัน แต่ใส่ทีละตัว (ต้องใส่ \0 เอง)</td></tr>
+ <tr><td><code>char s[20];</code></td><td>จองว่างไว้ รอรับค่าด้วย scanf</td></tr></table></div>
+ <h3>รับและแสดงข้อความ</h3>
+ <pre class="show">char name[20];
+scanf("%s", name);          // ไม่ต้องใส่ & เพราะชื่ออาร์เรย์คือแอดเดรสอยู่แล้ว
+printf("Hi %s\n", name);    // %s พิมพ์ไปเรื่อยๆ จนเจอ \0</pre>
+ <ul><li><code>scanf("%s")</code> อ่านได้ทีละคำ <b>หยุดที่ช่องว่าง</b> (พิมพ์ <code>Somchai Jaidee</code> จะได้แค่ <code>Somchai</code>)</li>
+ <li>ถ้าผู้ใช้พิมพ์ยาวเกินขนาดอาร์เรย์ จะเกิด <b>buffer overflow</b> คือเขียนทับหน่วยความจำส่วนอื่น เป็นช่องโหว่ความปลอดภัยที่ร้ายแรง จึงควรจองขนาดเผื่อไว้เสมอ</li>
+ <li>เข้าถึงตัวอักษรทีละตัวได้เหมือนอาร์เรย์ทั่วไป เช่น <code>name[0]</code> คือตัวอักษรแรก</li></ul>`,
+ labs:[
+  {tip:'พิมพ์ทีละตัวอักษรพร้อมรหัส ASCII ดูภาพหน่วยความจำจะเห็น \\0 สีแดง จากนั้นลองกด 😈',trace:true,
+   code:C`#include <stdio.h>
+
+int main(void)
+{
+    char word[10] = "Hello";
+    int i;
+
+    printf("word = %s\n", word);
+    for (i = 0; word[i] != '\0'; i++) {
+        printf("word[%d] = '%c' (code %d)\n", i, word[i], word[i]);
+    }
+
+    word[0] = 'J';
+    printf("Changed: %s\n", word);
+    return 0;
+}`,tries:[{label:'😈 จองแค่ [5] (ไม่เหลือที่ให้ \\0)',fn:c=>c.replace('word[10]','word[5]')}]},
+  {tip:'รับชื่อด้วย scanf("%s") สังเกตว่าไม่มี & หน้า name ลองกด 😈 ทั้งสองปุ่ม',input:'Somchai',
+   code:C`#include <stdio.h>
+
+int main(void)
+{
+    char name[20];
+    char initial;
+
+    printf("What is your name? ");
+    scanf("%s", name);
+
+    initial = name[0];
+    printf("Hello, %s!\n", name);
+    printf("Your initial is %c\n", initial);
+    return 0;
+}`,tries:[
+    {label:'😈 จอง name แค่ 4 ช่อง',fn:c=>c.replace('name[20]','name[4]')},
+    {label:'😈 ใส่ & หน้า name',fn:c=>c.replace('scanf("%s", name)','scanf("%s", &name)')}]}],
+ mission:{title:'นับความยาวข้อความเอง',task:C`<p>รับคำ 1 คำด้วย <code>scanf("%s", s)</code> แล้ว <b>นับจำนวนตัวอักษรเอง</b> โดยวน loop ไปเรื่อยๆ จนเจอ <code>'\0'</code> (ห้ามใช้ <code>strlen</code>) แสดงผล <code>Length=…</code></p>`,
+  hint:C`while (s[len] != '\0') { len++; } เมื่อ loop จบ len คือจำนวนตัวอักษรพอดี`,
+  code:C`#include <stdio.h>
+
+int main(void)
+{
+    char s[50];
+    int len = 0;
+
+    scanf("%s", s);
+
+    /* นับตัวอักษรไปเรื่อยๆ จนเจอ \0 (ห้ามใช้ strlen) */
+
+    printf("Length=%d\n", len);
+    return 0;
+}`,tests:[{input:'hello',expected:'Length=5\n'},{input:'a',expected:'Length=1\n'},{input:'programming',expected:'Length=11\n'}],
+  requires:[{re:/(while|for)\s*\(/,msg:'ใช้ loop'},{re:/^(?![\s\S]*strlen)/,msg:'ไม่ใช้ strlen (นับเอง)'}],
+  solution:C`#include <stdio.h>
+
+int main(void)
+{
+    char s[50];
+    int len = 0;
+
+    scanf("%s", s);
+    while (s[len] != '\0') {
+        len++;
+    }
+    printf("Length=%d\n", len);
+    return 0;
+}`},
+ quiz:[
+  {q:C`<code>char s[] = "Hello";</code> อาร์เรย์ s มีกี่ช่อง`,c:['5','6','4','10'],a:1,e:'5 ตัวอักษร + 1 ช่องสำหรับ \\0 = 6'},
+  {q:C`ทำไม <code>scanf("%s", name);</code> ไม่ต้องมี <code>&amp;</code> หน้า name`,c:['เพราะ %s ไม่ต้องใช้แอดเดรส','เพราะชื่ออาร์เรย์คือแอดเดรสของช่องแรกอยู่แล้ว','เพราะ name เป็นตัวแปร global','ใส่หรือไม่ใส่ก็ผิด'],a:1,e:'ชื่ออาร์เรย์แปลงเป็นแอดเดรสของช่องแรกโดยอัตโนมัติ'},
+  {q:C`<code>char w[] = "cat"; printf("%c", w[1]);</code> แสดงผลอะไร`,c:['c','a','t','cat'],a:1,e:'w[0]=c, w[1]=a, w[2]=t'}]},
+
+/* ---------------- ขั้นที่ 5 ---------------- */
+{name:'5 ฟังก์ชันสตริง',title:'ขั้นที่ 5: ฟังก์ชันจัดการสตริงและตัวอักษร',
+ learn:C`<p>ภาษาซีมีชุดฟังก์ชันสำเร็จรูปสำหรับจัดการข้อความ ต้องเพิ่ม <code>#include &lt;string.h&gt;</code> ที่หัวโปรแกรม</p>
+ <div class="tw"><table><tr><th>ฟังก์ชัน</th><th>หน้าที่</th><th>ตัวอย่าง</th></tr>
+ <tr><td><code>strlen(s)</code></td><td>นับจำนวนตัวอักษร (ไม่นับ \0)</td><td><code>strlen("Hi")</code> ได้ 2</td></tr>
+ <tr><td><code>strcpy(ปลายทาง, ต้นทาง)</code></td><td>คัดลอกข้อความ</td><td><code>strcpy(t, "Hi");</code> t เป็น "Hi"</td></tr>
+ <tr><td><code>strcat(ปลายทาง, ต้นทาง)</code></td><td>ต่อท้ายข้อความ</td><td><code>strcat(t, "!");</code> t เป็น "Hi!"</td></tr>
+ <tr><td><code>strcmp(a, b)</code></td><td>เปรียบเทียบข้อความ</td><td>ได้ <b>0</b> ถ้าเหมือนกัน, ค่าติดลบถ้า a มาก่อน b ตามพจนานุกรม, ค่าบวกถ้า a มาทีหลัง</td></tr></table></div>
+ <div class="box err"><b>2 ข้อห้ามที่มือใหม่ทำบ่อยที่สุด</b><ul>
+ <li><b>ห้ามใช้ <code>=</code> กับอาร์เรย์:</b> <code>name = "Somchai";</code> คอมไพล์ไม่ผ่าน ต้องใช้ <code>strcpy(name, "Somchai");</code></li>
+ <li><b>ห้ามใช้ <code>==</code> เทียบข้อความ:</b> <code>if (pass == "1234")</code> เป็นการเทียบ <i>แอดเดรส</i> ไม่ใช่เนื้อหา ผลจึงเป็นเท็จเกือบเสมอ ต้องใช้ <code>if (strcmp(pass, "1234") == 0)</code></li></ul></div>
+ <div class="box warn"><b>ระวัง:</b> <code>strcpy</code> และ <code>strcat</code> ไม่ตรวจว่าปลายทางมีที่พอหรือไม่ ผู้เขียนต้องจองขนาดเผื่อไว้เอง</div>
+ <h3>ฟังก์ชันจัดการตัวอักษร <code>#include &lt;ctype.h&gt;</code></h3>
+ <div class="tw"><table><tr><th>ฟังก์ชัน</th><th>หน้าที่</th></tr>
+ <tr><td><code>toupper(c)</code> / <code>tolower(c)</code></td><td>แปลงเป็นตัวพิมพ์ใหญ่ / เล็ก</td></tr>
+ <tr><td><code>isalpha(c)</code></td><td>เป็นตัวอักษร A-Z หรือ a-z หรือไม่</td></tr>
+ <tr><td><code>isdigit(c)</code></td><td>เป็นตัวเลข 0-9 หรือไม่</td></tr>
+ <tr><td><code>isupper(c)</code> / <code>islower(c)</code></td><td>เป็นตัวพิมพ์ใหญ่ / เล็ก หรือไม่</td></tr></table></div>
+ <p>💡 เบื้องหลัง: ตัวอักษรคือตัวเลขรหัส ASCII เช่น <code>'A'</code> = 65, <code>'a'</code> = 97 ห่างกัน 32 พอดี จึงคำนวณได้ เช่น <code>'a' - 32</code> ได้ <code>'A'</code></p>`,
+ labs:[
+  {tip:'ทดลอง strlen strcpy strcat strcmp แล้วกดปุ่ม 😈 ทั้ง 3 ปุ่มเพื่อดูข้อผิดพลาดยอดฮิต',trace:true,
+   code:C`#include <stdio.h>
+#include <string.h>
+
+int main(void)
+{
+    char first[20] = "Somchai";
+    char last[20] = "Jaidee";
+    char full[50];
+
+    printf("strlen(first) = %d\n", (int)strlen(first));
+
+    strcpy(full, first);
+    strcat(full, " ");
+    strcat(full, last);
+    printf("full = %s\n", full);
+    printf("strlen(full) = %d\n", (int)strlen(full));
+
+    if (strcmp(first, "Somchai") == 0) {
+        printf("first is Somchai\n");
+    }
+    printf("strcmp(apple, banana) = %d\n", strcmp("apple", "banana"));
+    return 0;
+}`,tries:[
+    {label:'😈 ใช้ = แทน strcpy',fn:c=>c.replace('strcpy(full, first);','full = first;')},
+    {label:'😈 ใช้ == เทียบข้อความ',fn:c=>c.replace('strcmp(first, "Somchai") == 0','first == "Somchai"')},
+    {label:'😈 full เล็กเกินไป',fn:c=>c.replace('full[50]','full[10]')}]},
+  {tip:'นับตัวอักษร/ตัวเลข และแปลงเป็นตัวพิมพ์ใหญ่ ลองพิมพ์คำอื่น เช่น Bangkok2025',trace:true,input:'Room101b',
+   code:C`#include <stdio.h>
+#include <ctype.h>
+
+int main(void)
+{
+    char s[50];
+    int i, letters = 0, digits = 0;
+
+    scanf("%s", s);
+    for (i = 0; s[i] != '\0'; i++) {
+        if (isalpha(s[i])) {
+            letters++;
+        } else if (isdigit(s[i])) {
+            digits++;
+        }
+        s[i] = toupper(s[i]);
+    }
+    printf("Upper: %s\n", s);
+    printf("Letters = %d, Digits = %d\n", letters, digits);
+    return 0;
+}`}],
+ mission:{title:'ตรวจคำพาลินโดรม',task:C`<p><b>พาลินโดรม (palindrome)</b> คือคำที่อ่านจากหน้าไปหลังกับหลังไปหน้าแล้วเหมือนกัน เช่น <code>radar</code>, <code>noon</code>, <code>level</code> ให้รับคำ 1 คำ แล้วตรวจว่าเป็นพาลินโดรมหรือไม่</p>`,
+  hint:C`เทียบตัวที่ i กับตัวที่ len - 1 - i โดยวน i จาก 0 ถึง len / 2 ถ้าเจอคู่ไหนไม่เท่ากันให้ isPal = 0; แล้ว break;`,
+  code:C`#include <stdio.h>
+#include <string.h>
+
+int main(void)
+{
+    char word[50];
+    int i, len, isPal = 1;
+
+    scanf("%s", word);
+    len = strlen(word);
+
+    /* เทียบตัวอักษรคู่หน้า-หลัง ถ้าไม่เท่ากันให้ isPal = 0 */
+
+    if (isPal) {
+        printf("Palindrome\n");
+    } else {
+        printf("Not palindrome\n");
+    }
+    return 0;
+}`,tests:[{input:'radar',expected:'Palindrome\n'},{input:'hello',expected:'Not palindrome\n'},{input:'noon',expected:'Palindrome\n'},{input:'a',expected:'Palindrome\n'},{input:'ab',expected:'Not palindrome\n'}],
+  requires:[{re:/(for|while)\s*\(/,msg:'ใช้ loop เทียบตัวอักษร'}],
+  solution:C`#include <stdio.h>
+#include <string.h>
+
+int main(void)
+{
+    char word[50];
+    int i, len, isPal = 1;
+
+    scanf("%s", word);
+    len = strlen(word);
+    for (i = 0; i < len / 2; i++) {
+        if (word[i] != word[len - 1 - i]) {
+            isPal = 0;
+            break;
+        }
+    }
+    if (isPal) {
+        printf("Palindrome\n");
+    } else {
+        printf("Not palindrome\n");
+    }
+    return 0;
+}`},
+ quiz:[
+  {q:C`ต้องการตรวจว่าข้อความ <code>pass</code> ตรงกับ "1234" หรือไม่ ควรเขียนอย่างไร`,c:['if (pass == "1234")','if (strcmp(pass, "1234") == 0)','if (pass = "1234")','if (strcmp(pass, "1234") == 1)'],a:1,e:'strcmp ให้ค่า 0 เมื่อข้อความเหมือนกันทุกตัวอักษร'},
+  {q:C`<code>strlen("Hello World")</code> ได้ค่าเท่าใด`,c:['10','11','12','2'],a:1,e:'นับช่องว่างด้วย แต่ไม่นับ \\0 จึงได้ 11'},
+  {q:C`<code>char t[5]; strcpy(t, "Bangkok");</code> มีปัญหาอะไร`,c:['ไม่มีปัญหา','buffer overflow เพราะต้องใช้ 8 ช่องแต่มีแค่ 5','ต้องใช้ strcat แทน','ต้องใส่ & หน้า t'],a:1,e:'"Bangkok" ยาว 7 ตัว + \\0 = 8 ช่อง เกินขนาด t'}]},
+
+/* ---------------- ขั้นที่ 6 ---------------- */
+{name:'6 พอยน์เตอร์',title:'ขั้นที่ 6: พอยน์เตอร์ (Pointer) ตัวแปรเก็บที่อยู่',widget:'ptrsim',
+ learn:C`<p>ตัวแปรทุกตัวถูกเก็บในหน่วยความจำ และทุกตำแหน่งของหน่วยความจำมี <b>แอดเดรส (address)</b> หรือ "บ้านเลขที่" เช่น <code>0x1000</code></p>
+ <p><b>พอยน์เตอร์ (pointer)</b> คือตัวแปรที่ <b>เก็บแอดเดรสของตัวแปรอื่น</b> เหมือน <b>กระดาษจดที่อยู่บ้าน</b> 🏠📝 กระดาษไม่ใช่ตัวบ้าน แต่บอกได้ว่าบ้านอยู่ที่ไหน และถ้าเดินไปตามที่อยู่ ก็เข้าไปดูหรือแก้ของในบ้านได้</p>
+ <div class="tw"><table><tr><th>เขียน</th><th>อ่านว่า</th><th>เปรียบเทียบ</th></tr>
+ <tr><td><code>int *p;</code></td><td>p เป็นพอยน์เตอร์ไปยัง int</td><td>เตรียมกระดาษไว้จดที่อยู่ของบ้านแบบ int</td></tr>
+ <tr><td><code>&amp;x</code></td><td>แอดเดรสของ x</td><td>ถามว่าบ้าน x อยู่เลขที่เท่าไร</td></tr>
+ <tr><td><code>p = &amp;x;</code></td><td>ให้ p ชี้ไปที่ x</td><td>จดที่อยู่บ้าน x ลงกระดาษ</td></tr>
+ <tr><td><code>*p</code></td><td>ค่าที่ p ชี้อยู่</td><td>เดินไปตามที่อยู่ แล้วเปิดบ้านดูหรือแก้ของ</td></tr>
+ <tr><td><code>NULL</code></td><td>ไม่ชี้ที่ใด</td><td>กระดาษเปล่า ยังไม่มีที่อยู่</td></tr></table></div>
+ <div class="box warn"><b>เครื่องหมาย * มี 2 ความหมาย:</b> ตอน <b>ประกาศ</b> <code>int *p;</code> แปลว่า "p เป็นพอยน์เตอร์" แต่ตอน <b>ใช้งาน</b> <code>*p = 5;</code> แปลว่า "ค่าในบ้านที่ p ชี้อยู่"</div>
+ <p>คลิกแต่ละบรรทัดด้านล่างเพื่อดูว่าเกิดอะไรขึ้นในหน่วยความจำ</p>`,
+ annot:[
+  {c:'int x = 10;',e:`สร้างตัวแปร x เก็บค่า 10 สมมติว่าอยู่ที่แอดเดรส <code>0x1000</code><pre class="show">x: [ 10 ]  @0x1000</pre>`},
+  {c:'int *p;',e:`สร้างพอยน์เตอร์ p (กระดาษจดที่อยู่) <b>ยังไม่ได้จดอะไร</b> ห้ามใช้ <code>*p</code> ตอนนี้เด็ดขาด`},
+  {c:'p = &x;',e:`จดแอดเดรสของ x ลงใน p ตอนนี้ p เก็บค่า <code>0x1000</code> เรียกว่า <b>p ชี้ไปที่ x</b><pre class="show">x: [ 10 ]  @0x1000
+p: [0x1000] ──► x</pre>`},
+  {c:'printf("%d\\n", *p);',e:`<code>*p</code> = เดินไปที่ 0x1000 แล้วอ่านค่า ได้ <b>10</b>`},
+  {c:'*p = 20;',e:`เดินไปที่ 0x1000 แล้วเขียน 20 ลงไป <b>x จึงเปลี่ยนเป็น 20</b> ทั้งที่บรรทัดนี้ไม่มีคำว่า x เลย`},
+  {c:'printf("%d\\n", x);',e:`แสดงผล <b>20</b> ยืนยันว่า x เปลี่ยนผ่านพอยน์เตอร์จริง`}],
+ learn2:C`<h3>พอยน์เตอร์มีไว้ทำอะไร?</h3>
+ <p>จำได้ไหมว่าฟังก์ชันได้รับ <b>สำเนา</b> ของค่า (pass by value) จึงแก้ตัวแปรของผู้เรียกไม่ได้ ถ้าส่ง <b>แอดเดรส</b> ไปแทน ฟังก์ชันจะ "เดินไปที่บ้าน" แล้วแก้ของจริงได้ นี่คือเหตุผลที่ <code>scanf("%d", &amp;x)</code> ต้องมี <code>&amp;</code> เพราะ scanf ต้องเขียนค่าลงตัวแปรของเรา</p>
+ <ul><li>ให้ฟังก์ชันแก้ค่าตัวแปรของผู้เรียกได้ เช่น <code>swap(&amp;a, &amp;b)</code></li>
+ <li>ให้ฟังก์ชัน "ส่งค่ากลับ" ได้หลายค่าพร้อมกัน ผ่านพอยน์เตอร์หลายตัว</li>
+ <li>ส่งอาร์เรย์ใหญ่ๆ เข้าฟังก์ชันได้โดยไม่ต้องคัดลอก (เรียนในขั้นถัดไป)</li></ul>
+ <div class="box err"><b>อันตราย:</b> ห้ามใช้ <code>*p</code> ถ้า p ยังไม่ได้ชี้ไปที่ตัวแปรใด (ยังไม่กำหนดค่า หรือเป็น NULL) โปรแกรมจริงจะ crash ด้วย <i>Segmentation fault</i></div>`,
+ labs:[
+  {tip:'ดูค่าของ x, &x, p และ *p แล้วดูภาพหน่วยความจำ จะเห็นลูกศร "→ x" ในช่อง p ลองกดปุ่ม 😈 ด้วย',trace:true,
+   code:C`#include <stdio.h>
+
+int main(void)
+{
+    int x = 10;
+    int *p = &x;
+
+    printf("x  = %d\n", x);
+    printf("&x = %p\n", &x);
+    printf("p  = %p\n", p);
+    printf("*p = %d\n", *p);
+
+    *p = 25;
+    printf("After *p = 25, x = %d\n", x);
+    return 0;
+}`,tries:[
+    {label:'😈 ลืม & (p = x)',fn:c=>c.replace('int *p = &x;','int *p = x;')},
+    {label:'😈 p เป็น NULL',fn:c=>c.replace('int *p = &x;','int *p = NULL;')}]},
+  {tip:'เปรียบเทียบฟังก์ชันสลับค่า 2 แบบ ลองเดาก่อนว่าแบบไหนสลับได้จริง แล้วค่อยกดรัน',trace:true,
+   code:C`#include <stdio.h>
+
+void swapWrong(int a, int b)
+{
+    int t = a;
+    a = b;
+    b = t;
+}
+
+void swapRight(int *a, int *b)
+{
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+int main(void)
+{
+    int x = 1, y = 2;
+
+    swapWrong(x, y);
+    printf("After swapWrong: x = %d, y = %d\n", x, y);
+
+    swapRight(&x, &y);
+    printf("After swapRight: x = %d, y = %d\n", x, y);
+    return 0;
+}`,tries:[{label:'😈 ลืม & ตอนเรียก swapRight',fn:c=>c.replace('swapRight(&x, &y)','swapRight(x, y)')}]}],
+ mission:{title:'ส่งค่ากลับ 2 ค่าด้วยพอยน์เตอร์',task:C`<p>เขียนเนื้อหาฟังก์ชัน <code>void minMax(int a, int b, int c, int *mn, int *mx)</code> ให้หาค่าน้อยสุดของ a, b, c เก็บลงใน <code>*mn</code> และค่ามากสุดเก็บลงใน <code>*mx</code> (main เขียนไว้ให้แล้ว)</p>`,
+  hint:C`เริ่ม *mn = a; *mx = a; แล้วเทียบกับ b และ c เช่น if (b &lt; *mn) *mn = b; ทำแบบเดียวกันกับ *mx`,
+  code:C`#include <stdio.h>
+
+void minMax(int a, int b, int c, int *mn, int *mx)
+{
+    /* หาค่าน้อยสุดเก็บใน *mn และค่ามากสุดเก็บใน *mx */
+
+}
+
+int main(void)
+{
+    int a, b, c, low, high;
+
+    scanf("%d %d %d", &a, &b, &c);
+    minMax(a, b, c, &low, &high);
+    printf("Min=%d Max=%d\n", low, high);
+    return 0;
+}`,tests:[{input:'7 2 9',expected:'Min=2 Max=9\n'},{input:'5 5 5',expected:'Min=5 Max=5\n'},{input:'-1 0 -8',expected:'Min=-8 Max=0\n'},{input:'3 10 1',expected:'Min=1 Max=10\n'}],
+  requires:[{re:/void\s+minMax\s*\(/,msg:'มีฟังก์ชัน minMax'},{re:/\*\s*mn\s*=/,msg:'เขียนค่าผ่าน *mn'},{re:/\*\s*mx\s*=/,msg:'เขียนค่าผ่าน *mx'}],
+  solution:C`#include <stdio.h>
+
+void minMax(int a, int b, int c, int *mn, int *mx)
+{
+    *mn = a;
+    *mx = a;
+    if (b < *mn) *mn = b;
+    if (c < *mn) *mn = c;
+    if (b > *mx) *mx = b;
+    if (c > *mx) *mx = c;
+}
+
+int main(void)
+{
+    int a, b, c, low, high;
+
+    scanf("%d %d %d", &a, &b, &c);
+    minMax(a, b, c, &low, &high);
+    printf("Min=%d Max=%d\n", low, high);
+    return 0;
+}`},
+ quiz:[
+  {q:C`<code>int x = 5; int *p = &amp;x; *p = 8; printf("%d", x);</code> แสดงผลอะไร`,c:['5','8','แอดเดรสของ x','เกิดข้อผิดพลาด'],a:1,e:'*p = 8 คือการเขียนค่าลงบ้านที่ p ชี้อยู่ ซึ่งคือ x'},
+  {q:C`เครื่องหมาย <code>&amp;</code> หน้าชื่อตัวแปร เช่น <code>&amp;x</code> หมายถึงอะไร`,c:['ค่าของ x','แอดเดรสของ x','x คูณ 2','ลบ x ทิ้ง'],a:1,e:'& คือ address-of operator ใช้หาแอดเดรสของตัวแปร'},
+  {q:'ข้อใดประกาศพอยน์เตอร์ p ให้ชี้ไปที่ตัวแปร int y ได้ถูกต้อง',c:['int p = &y;','int *p = y;','int *p = &y;','int &p = *y;'],a:2,e:'p ต้องเป็น int * และเก็บแอดเดรส &y'}]},
+
+/* ---------------- ขั้นที่ 7 ---------------- */
+{name:'7 พอยน์เตอร์+อาร์เรย์',title:'ขั้นที่ 7: พอยน์เตอร์กับอาร์เรย์และสตริง',widget:'ptrarith',
+ learn:C`<h3>ความลับ: ชื่ออาร์เรย์คือแอดเดรสของช่องแรก</h3>
+ <p>เมื่อเขียนชื่ออาร์เรย์ <code>a</code> เฉยๆ ภาษาซีจะแปลงเป็นแอดเดรสของ <code>a[0]</code> ให้อัตโนมัติ จึงเขียน <code>int *p = a;</code> ได้เลยไม่ต้องมี <code>&amp;</code></p>
+ <h3>เลขคณิตของพอยน์เตอร์ (pointer arithmetic)</h3>
+ <p><code>p + 1</code> <b>ไม่ใช่</b> แอดเดรสบวก 1 ไบต์ แต่คือ <b>ช่องถัดไป</b> ภาษาซีคูณขนาดของชนิดข้อมูลให้เอง</p>
+ <div class="tw"><table><tr><th>ชนิด</th><th>ขนาด</th><th>ถ้า p = 0x1000 แล้ว p + 1 =</th></tr>
+ <tr><td><code>char *</code></td><td>1 ไบต์</td><td>0x1001</td></tr>
+ <tr><td><code>int *</code></td><td>4 ไบต์</td><td>0x1004</td></tr>
+ <tr><td><code>double *</code></td><td>8 ไบต์</td><td>0x1008</td></tr></table></div>
+ <h3>เขียนได้หลายแบบ ความหมายเดียวกัน</h3>
+ <div class="tw"><table><tr><th>แบบอาร์เรย์</th><th>แบบพอยน์เตอร์</th><th>ความหมาย</th></tr>
+ <tr><td><code>a[i]</code></td><td><code>*(a + i)</code></td><td>ค่าในช่องที่ i</td></tr>
+ <tr><td><code>&amp;a[i]</code></td><td><code>a + i</code></td><td>แอดเดรสของช่องที่ i</td></tr>
+ <tr><td><code>p[i]</code></td><td><code>*(p + i)</code></td><td>ถ้า p = a ก็คือ a[i]</td></tr></table></div>
+ <h3>ส่งอาร์เรย์เข้าฟังก์ชัน</h3>
+ <pre class="show">int sumArray(int *arr, int n)   // หรือเขียน int arr[] ก็ได้ ความหมายเหมือนกัน
+...
+total = sumArray(data, 6);      // ส่งแค่ชื่ออาร์เรย์ (= แอดเดรสช่องแรก)</pre>
+ <ul><li>ฟังก์ชันได้รับ <b>แอดเดรส</b> ไม่ใช่สำเนา ถ้าฟังก์ชันแก้ <code>arr[i]</code> อาร์เรย์ตัวจริงใน main ก็เปลี่ยนด้วย</li>
+ <li>ฟังก์ชันไม่รู้ว่าอาร์เรย์มีกี่ช่อง จึง <b>ต้องส่งขนาด n ไปด้วยเสมอ</b> (ยกเว้นสตริง ที่ใช้ <code>\0</code> บอกจุดจบแทน)</li></ul>
+ <h3>เดินไปตามสตริงด้วยพอยน์เตอร์</h3>
+ <pre class="show">while (*s != '\0') {   // ยังไม่ถึงจุดจบ
+    ... *s ...         // ตัวอักษรปัจจุบัน
+    s++;               // เลื่อนไปตัวถัดไป
+}</pre>`,
+ labs:[
+  {tip:'ดูว่า a[i], *(a+i), p[i] ได้ค่าเดียวกัน และแอดเดรสเพิ่มทีละ 4 ลองกด 😈 เพื่อเลื่อน p ออกนอกอาร์เรย์',trace:true,
+   code:C`#include <stdio.h>
+
+int main(void)
+{
+    int a[5] = {10, 20, 30, 40, 50};
+    int *p = a;
+    int i;
+
+    for (i = 0; i < 5; i++) {
+        printf("a[%d]=%d  *(a+%d)=%d  p[%d]=%d  at %p\n", i, a[i], i, *(a + i), i, p[i], &a[i]);
+    }
+
+    p = &a[2];
+    printf("*p = %d\n", *p);
+    p++;
+    printf("after p++: *p = %d\n", *p);
+    printf("p - a = %d\n", (int)(p - a));
+    return 0;
+}`,tries:[{label:'😈 เริ่ม p ที่ช่องสุดท้าย แล้ว p++',fn:c=>c.replace('p = &a[2];','p = &a[4];')}]},
+  {tip:'ส่งอาร์เรย์และสตริงเข้าฟังก์ชัน สังเกตว่า addOne แก้อาร์เรย์ตัวจริงใน main ได้ และ countChar เดินไปตามสตริงด้วย s++',trace:true,
+   code:C`#include <stdio.h>
+
+int sumArray(int *arr, int n)
+{
+    int i, total = 0;
+    for (i = 0; i < n; i++) {
+        total += arr[i];
+    }
+    return total;
+}
+
+void addOne(int arr[], int n)
+{
+    int i;
+    for (i = 0; i < n; i++) {
+        arr[i]++;
+    }
+}
+
+int countChar(char *s, char ch)
+{
+    int count = 0;
+    while (*s != '\0') {
+        if (*s == ch) {
+            count++;
+        }
+        s++;
+    }
+    return count;
+}
+
+int main(void)
+{
+    int data[5] = {3, 8, 1, 6, 2};
+    char text[] = "banana";
+
+    printf("Sum = %d\n", sumArray(data, 5));
+    addOne(data, 5);
+    printf("After addOne: data[0] = %d, Sum = %d\n", data[0], sumArray(data, 5));
+    printf("'a' appears %d times in %s\n", countChar(text, 'a'), text);
+    return 0;
+}`}],
+ mission:{title:'เติมกำลังสองลงอาร์เรย์',task:C`<p>เขียนฟังก์ชัน <code>void fillSquares(int *arr, int n)</code> ไว้เหนือ main ให้เติมค่า 1², 2², 3², …, n² ลงในอาร์เรย์ (<code>arr[0] = 1, arr[1] = 4, arr[2] = 9, …</code>) โดย main เขียนไว้ให้แล้ว (n ไม่เกิน 10)</p>`,
+  hint:C`for (i = 0; i &lt; n; i++) { arr[i] = (i + 1) * (i + 1); } หรือลองเขียนแบบพอยน์เตอร์ *(arr + i) = (i + 1) * (i + 1);`,
+  code:C`#include <stdio.h>
+
+/* เขียนฟังก์ชัน fillSquares ที่นี่ */
+
+int main(void)
+{
+    int a[10];
+    int n, i;
+
+    scanf("%d", &n);
+    fillSquares(a, n);
+    for (i = 0; i < n; i++) {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+    return 0;
+}`,tests:[{input:'5',expected:'1 4 9 16 25\n'},{input:'1',expected:'1\n'},{input:'8',expected:'1 4 9 16 25 36 49 64\n'}],
+  requires:[{re:/void\s+fillSquares\s*\(\s*int\s*(\*\s*\w+|\w+\s*\[\s*\])\s*,\s*int\s+\w+\s*\)/,msg:'มีฟังก์ชัน void fillSquares(int *arr, int n)'}],
+  solution:C`#include <stdio.h>
+
+void fillSquares(int *arr, int n)
+{
+    int i;
+    for (i = 0; i < n; i++) {
+        *(arr + i) = (i + 1) * (i + 1);
+    }
+}
+
+int main(void)
+{
+    int a[10];
+    int n, i;
+
+    scanf("%d", &n);
+    fillSquares(a, n);
+    for (i = 0; i < n; i++) {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+    return 0;
+}`},
+ quiz:[
+  {q:C`<code>int a[5] = {10,20,30,40,50}; int *p = a; printf("%d", *(p + 3));</code> แสดงผลอะไร`,c:['13','30','40','แอดเดรส'],a:2,e:'p + 3 คือช่อง a[3] ซึ่งเก็บ 40'},
+  {q:C`ถ้า <code>int *p</code> มีค่า 0x2000 แล้ว <code>p + 2</code> มีค่าเท่าใด`,c:['0x2002','0x2004','0x2008','0x2010'],a:2,e:'int ใหญ่ 4 ไบต์ จึงเป็น 0x2000 + 2 × 4 = 0x2008'},
+  {q:'ทำไมฟังก์ชันที่รับอาร์เรย์ (เช่น sumArray) ต้องรับจำนวนช่อง n ด้วย',c:['เพื่อให้ทำงานเร็วขึ้น','เพราะฟังก์ชันได้แค่แอดเดรสช่องแรก จึงไม่รู้ว่าอาร์เรย์มีกี่ช่อง','เป็นแค่ธรรมเนียม ไม่จำเป็น','เพราะภาษาซีบังคับทุกฟังก์ชัน'],a:1,e:'สิ่งที่ส่งไปคือพอยน์เตอร์ ข้อมูลขนาดของอาร์เรย์หายไป จึงต้องส่ง n แยก'}]},
+
+/* ---------------- ขั้นที่ 8 ---------------- */
+{name:'8 โจทย์รวม',title:'ขั้นที่ 8: รวมพลัง อาร์เรย์ + สตริง + พอยน์เตอร์',last:true,
+ learn:C`<p>ถึงขั้นสุดท้ายแล้ว 🎉 ขั้นนี้รวมทุกอย่างเข้าด้วยกัน คือ อาร์เรย์ + loop + ฟังก์ชัน + สตริง + พอยน์เตอร์</p>
+ <h3>สรุปทั้งบท</h3>
+ <div class="tw"><table><tr><th>เรื่อง</th><th>จำไว้ว่า</th></tr>
+ <tr><td>อาร์เรย์</td><td>index เริ่ม 0 ถึง ขนาด−1 ภาษาซีไม่ตรวจขอบให้</td></tr>
+ <tr><td>อาร์เรย์ 2 มิติ</td><td><code>m[แถว][คอลัมน์]</code> ใช้ loop ซ้อน loop</td></tr>
+ <tr><td>สตริง</td><td>char array + <code>\0</code> จองเผื่อ 1 ช่องเสมอ</td></tr>
+ <tr><td>ฟังก์ชันสตริง</td><td>คัดลอกใช้ <code>strcpy</code> เทียบใช้ <code>strcmp(...) == 0</code></td></tr>
+ <tr><td>พอยน์เตอร์</td><td><code>&amp;</code> = เอาแอดเดรส, <code>*</code> = ไปที่แอดเดรสนั้น</td></tr>
+ <tr><td>พอยน์เตอร์ + อาร์เรย์</td><td><code>a[i]</code> เท่ากับ <code>*(a + i)</code> ส่งอาร์เรย์เข้าฟังก์ชันต้องส่งขนาดด้วย</td></tr></table></div>
+ <h3>Bubble Sort เรียงลำดับข้อมูล</h3>
+ <p>เทียบช่องที่ติดกันทีละคู่ ถ้าตัวหน้ามากกว่าตัวหลังให้สลับ ทำซ้ำหลายรอบ แต่ละรอบค่าที่มากที่สุดจะ "ลอย" ไปอยู่ท้ายสุดเหมือนฟองอากาศ 🫧</p>
+ <h3>รหัสซีซาร์ (Caesar Cipher)</h3>
+ <p>วิธีเข้ารหัสแบบโบราณ เลื่อนตัวอักษรไปข้างหน้า n ตำแหน่ง เช่น เลื่อน 3: A→D, B→E, … X→A, Y→B, Z→C ใช้สูตร <code>'A' + (c - 'A' + shift) % 26</code></p>
+ <h3>เช็กลิสต์ก่อนส่งงาน ✅</h3>
+ <ul><li>loop ใช้ <code>i &lt; N</code> ไม่ใช่ <code>i &lt;= N</code></li><li>char array ใหญ่พอสำหรับข้อความ + <code>\0</code></li><li><code>scanf</code> ตัวแปรธรรมดาต้องใส่ <code>&amp;</code> แต่ char array ไม่ต้องใส่</li><li>พอยน์เตอร์ต้องชี้ไปที่ตัวแปรจริงก่อนใช้ <code>*p</code></li><li>ส่งอาร์เรย์เข้าฟังก์ชันพร้อมขนาด</li></ul>`,
+ labs:[
+  {tip:'Bubble Sort ผ่านฟังก์ชันที่รับพอยน์เตอร์ ดูใน 🔍 ว่าบรรทัดเปรียบเทียบทำงานกี่ครั้ง ลองเปลี่ยนตัวเลขในช่องข้อมูล',trace:true,input:'64 34 25 12 22 11',
+   code:C`#include <stdio.h>
+#define N 6
+
+void printArray(int *a, int n)
+{
+    int i;
+    for (i = 0; i < n; i++) {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+}
+
+void bubbleSort(int *a, int n)
+{
+    int i, j, temp;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - 1 - i; j++) {
+            if (a[j] > a[j + 1]) {
+                temp = a[j];
+                a[j] = a[j + 1];
+                a[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int main(void)
+{
+    int data[N];
+    int i;
+
+    for (i = 0; i < N; i++) {
+        scanf("%d", &data[i]);
+    }
+    printf("Before: ");
+    printArray(data, N);
+    bubbleSort(data, N);
+    printf("After:  ");
+    printArray(data, N);
+    return 0;
+}`},
+  {tip:'รหัสซีซาร์: พิมพ์คำแล้วตามด้วยจำนวนตำแหน่งที่จะเลื่อน เช่น Hello 3 หรือ Zebra 1',trace:true,input:'Hello 3',
+   code:C`#include <stdio.h>
+#include <ctype.h>
+
+void caesar(char *s, int shift)
+{
+    while (*s != '\0') {
+        if (isupper(*s)) {
+            *s = 'A' + (*s - 'A' + shift) % 26;
+        } else if (islower(*s)) {
+            *s = 'a' + (*s - 'a' + shift) % 26;
+        }
+        s++;
+    }
+}
+
+int main(void)
+{
+    char msg[50];
+    int shift;
+
+    scanf("%s %d", msg, &shift);
+    caesar(msg, shift);
+    printf("Encrypted: %s\n", msg);
+    return 0;
+}`}],
+ mission:{title:'กลับด้านข้อความด้วยพอยน์เตอร์',task:C`<p>เขียนฟังก์ชัน <code>void reverseStr(char *s)</code> ไว้เหนือ main ให้กลับด้านข้อความ <b>ในอาร์เรย์เดิม</b> เช่น <code>hello</code> → <code>olleh</code> (main เขียนไว้ให้แล้ว)</p>`,
+  hint:C`ใช้พอยน์เตอร์ 2 ตัว: char *left = s; char *right = s + strlen(s) - 1; แล้ว while (left &lt; right) สลับ *left กับ *right จากนั้น left++; right--; (อย่าลืม #include &lt;string.h&gt;)`,
+  code:C`#include <stdio.h>
+#include <string.h>
+
+/* เขียนฟังก์ชัน reverseStr ที่นี่ */
+
+int main(void)
+{
+    char word[50];
+
+    scanf("%s", word);
+    reverseStr(word);
+    printf("%s\n", word);
+    return 0;
+}`,tests:[{input:'hello',expected:'olleh\n'},{input:'abc',expected:'cba\n'},{input:'x',expected:'x\n'},{input:'programming',expected:'gnimmargorp\n'}],
+  requires:[{re:/void\s+reverseStr\s*\(\s*char\s*\*\s*\w+\s*\)/,msg:'มีฟังก์ชัน void reverseStr(char *s)'}],
+  solution:C`#include <stdio.h>
+#include <string.h>
+
+void reverseStr(char *s)
+{
+    char *left = s;
+    char *right = s + strlen(s) - 1;
+    char temp;
+
+    while (left < right) {
+        temp = *left;
+        *left = *right;
+        *right = temp;
+        left++;
+        right--;
+    }
+}
+
+int main(void)
+{
+    char word[50];
+
+    scanf("%s", word);
+    reverseStr(word);
+    printf("%s\n", word);
+    return 0;
+}`},
+ quiz:[
+  {q:'หลังจบรอบแรกของ Bubble Sort (เรียงน้อยไปมาก) ข้อใดเป็นจริงเสมอ',c:['ค่าน้อยสุดอยู่ช่องแรก','ค่ามากสุดอยู่ช่องสุดท้าย','อาร์เรย์เรียงเสร็จแล้ว','ไม่มีการสลับเกิดขึ้น'],a:1,e:'ค่ามากสุดจะถูกสลับต่อไปเรื่อยๆ จนไปอยู่ท้ายสุดในรอบแรก'},
+  {q:C`<code>char name[20]; name = "Ann";</code> ควรแก้เป็นอย่างไร`,c:['name == "Ann";','strcpy(name, "Ann");','*name = "Ann";','name[20] = "Ann";'],a:1,e:'กำหนดข้อความให้ char array ต้องใช้ strcpy'},
+  {q:C`รหัสซีซาร์เลื่อน 3 ตำแหน่ง ตัวอักษร <code>'Y'</code> จะกลายเป็นอะไร`,c:['B','A','Z','C'],a:0,e:"Y → Z → A → B (วนกลับต้นด้วย % 26)"}]}
+];
+
+/* =====================================================================
+   ส่วนที่ 4: ระบบแสดงหน้า
+   ===================================================================== */
+let cur=0;
+function renderDots(){
+  $('#steps').innerHTML=STEPS.map((s,i)=>`<button class="dot ${i===cur?'cur':''} ${progress['p'+i]?'done':''}" data-i="${i}">${progress['p'+i]?'✅ ':''}${s.name}</button>`).join('');
+  document.querySelectorAll('.dot').forEach(b=>b.onclick=()=>go(+b.dataset.i));
+}
+function go(i){
+  cur=i;const S=STEPS[i];
+  let h=`<div class="card learn"><h2>${S.title}</h2>${S.learn}${S.annot?'<div id="an"></div>':''}${S.learn2||''}</div>`;
+  if(S.widget)h+='<div class="card"><div id="wd"></div></div>';
+  S.labs.forEach((l,k)=>{h+=`<div class="card"><h3 style="margin-top:0">🧪 ลองรันดู${S.labs.length>1?' ตัวอย่างที่ '+(k+1):''}</h3><p>${l.tip}</p><div id="lab${k}"></div></div>`;});
+  h+=`<div class="card mission" id="ms"></div><div class="card quiz" id="qz"></div>`;
+  if(S.last)h+=`<div class="card fin"><h2>🎉 จบบทอาร์เรย์ สตริง และพอยน์เตอร์แล้ว!</h2><p>ตอนนี้คุณเก็บข้อมูลจำนวนมากด้วย <b>อาร์เรย์</b> จัดการข้อความด้วย <b>สตริง</b> และเข้าใจ <b>หน่วยความจำกับพอยน์เตอร์</b> ซึ่งเป็นหัวใจของภาษาซีแล้ว 🌟</p><p>เรื่องที่น่าเรียนต่อ: โครงสร้างข้อมูล <code>struct</code>, การอ่าน-เขียนไฟล์ (<code>fopen</code>, <code>fprintf</code>) และการจองหน่วยความจำแบบไดนามิก (<code>malloc</code>, <code>free</code>)</p></div>`;
+  h+=`<div class="nav"><button class="btn" id="pv" ${i===0?'disabled':''}>◀ ขั้นก่อนหน้า</button><button class="btn go" id="nx" ${i===STEPS.length-1?'disabled':''}>ขั้นต่อไป ▶</button></div>`;
+  $('#page').innerHTML=h;
+  if(S.annot)mkAnnot($('#an'),S.annot);
+  if(S.widget==='arrbox')mkArrBox($('#wd'));
+  if(S.widget==='strbox')mkStrBox($('#wd'));
+  if(S.widget==='grid')mkGrid($('#wd'));
+  if(S.widget==='ptrsim')mkPtrSim($('#wd'));
+  if(S.widget==='ptrarith')mkPtrArith($('#wd'));
+  S.labs.forEach((l,k)=>mkEditor($('#lab'+k),l));
+  mkMission($('#ms'),S.mission,'p'+i,renderDots);
+  mkQuiz($('#qz'),S.quiz);
+  $('#pv').onclick=()=>go(i-1);
+  $('#nx').onclick=()=>go(i+1);
+  renderDots();
+  window.scrollTo(0,0);
+}
+$('#rstp').onclick=()=>{if(confirm('ต้องการล้างความก้าวหน้าทั้งหมดหรือไม่')){progress={};saveP();go(cur);}};
+go(0);
+</script>
+</body>
+</html>
