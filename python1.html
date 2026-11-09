@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>เรียน Python เบื้องต้น: จาก print() ถึงตัวแปร</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5f9;color:#1e293b;font-family:'Sarabun','Noto Sans Thai',Tahoma,sans-serif;font-size:18px;line-height:1.7}
+.wrap{max-width:900px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:8px 0 2px}
+h2{font-size:1.4rem;margin:0 0 8px;color:#1d4ed8}
+h3{margin:14px 0 6px}
+.sub{color:#64748b;margin:0 0 8px}
+code,pre,textarea,.mono{font-family:Consolas,'Courier New',monospace}
+code{background:#e0e7ff;color:#3730a3;padding:1px 6px;border-radius:5px;font-size:.92em}
+.status{padding:8px 14px;border-radius:10px;margin:8px 0 12px;font-size:.92rem}
+.st-load{background:#fffbeb;border:1px solid #fcd34d;color:#92400e}
+.st-ok{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+.st-err{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 16px}
+.dot{flex:1;min-width:100px;border:2px solid #cbd5e1;background:#fff;border-radius:12px;padding:6px 4px;cursor:pointer;font:inherit;font-size:.85rem;text-align:center}
+.dot.cur{border-color:#2563eb;background:#dbeafe;font-weight:700}
+.dot.done{border-color:#22c55e}
+.card{background:#fff;border-radius:16px;padding:18px 22px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.learn{background:#eff6ff;border-left:6px solid #2563eb}
+.mission{background:#faf5ff;border-left:6px solid #9333ea}
+.quiz{background:#fffbeb;border-left:6px solid #f59e0b}
+.fin{background:#ecfdf5;border:2px solid #22c55e}
+pre.show{background:#0f172a;color:#e2e8f0;padding:10px 14px;border-radius:10px;overflow-x:auto;font-size:.95rem;margin:8px 0}
+textarea.code{width:100%;background:#0f172a;color:#e2e8f0;border:0;border-radius:10px;padding:12px;font-size:1rem;line-height:1.55;resize:vertical;white-space:pre;tab-size:4}
+textarea.inbox{width:100%;border:2px solid #cbd5e1;border-radius:8px;padding:6px 10px;font-size:1rem;resize:vertical;margin-top:2px}
+.txt{border:2px solid #cbd5e1;border-radius:8px;padding:6px 10px;font-size:1rem;font-family:Consolas,monospace;background:#fff}
+.lab{display:block;font-size:.9rem;color:#475569;margin-top:8px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.btn{border:2px solid #cbd5e1;background:#fff;border-radius:10px;padding:7px 14px;font:inherit;font-size:.98rem;cursor:pointer}
+.btn:hover{background:#f1f5f9}
+.btn.go{background:#2563eb;border-color:#2563eb;color:#fff;font-weight:700}
+.btn.ok{background:#16a34a;border-color:#16a34a;color:#fff;font-weight:700}
+.btn.mono{font-size:.88rem;padding:5px 10px}
+.btn:disabled{opacity:.4;cursor:default}
+.term{background:#020617;color:#4ade80;border-radius:10px;padding:10px 14px;min-height:44px;white-space:pre-wrap;font-size:1rem;margin-top:6px}
+.term i{color:#fde68a;font-style:normal}
+.tlabel{font-size:.82rem;color:#64748b;margin-top:8px}
+.box{padding:10px 14px;border-radius:10px;margin-top:8px;font-size:.98rem}
+.err{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+.good{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+.warn{background:#fffbeb;border:1px solid #fcd34d;color:#92400e}
+.box ul{margin:4px 0 0 20px;padding:0}
+.eng{font-size:.82rem;color:#7f1d1d;margin-top:6px;opacity:.85}
+table{border-collapse:collapse;margin:8px 0;font-size:.95rem}
+td,th{border:1px solid #cbd5e1;padding:5px 12px;text-align:left;vertical-align:top}
+th{background:#f1f5f9}
+.tw{overflow-x:auto}
+.aline{display:flex;gap:12px;width:100%;border:0;background:transparent;color:#e2e8f0;text-align:left;padding:3px 12px;cursor:pointer;font-family:Consolas,monospace;font-size:1rem;white-space:pre}
+.aline:hover{background:#1e293b}.aline.sel{background:#1d4ed8}
+.aline .n{color:#64748b;min-width:18px;text-align:right}
+.acode{background:#0f172a;border-radius:10px;padding:8px 0;overflow-x:auto}
+.aexp{background:#fff;border:2px dashed #93c5fd;border-radius:10px;padding:10px 14px;margin-top:8px;min-height:70px}
+.choice{display:block;width:100%;text-align:left;margin:6px 0;padding:9px 14px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font:inherit;font-size:1rem;cursor:pointer}
+.choice:hover{border-color:#2563eb}
+.choice.right{background:#dcfce7;border-color:#22c55e}.choice.wrong{background:#fee2e2;border-color:#ef4444}
+.q{border:1px solid #fde68a;border-radius:12px;padding:8px 14px;margin:10px 0;background:#fff}
+.nav{display:flex;justify-content:space-between;margin:8px 0 12px}
+.reset{background:none;border:0;color:#64748b;text-decoration:underline;cursor:pointer;font:inherit;font-size:.85rem;margin-bottom:40px}
+.rules{list-style:none;padding:0;margin:8px 0}.rules li.p{color:#166534}.rules li.f{color:#991b1b}
+/* stepper */
+.stpwrap{margin-top:10px}
+.stpwrap>summary{cursor:pointer;color:#1d4ed8;font-weight:700}
+.stp{margin-top:8px;border:2px solid #c7d2fe;border-radius:12px;padding:10px 12px;background:#f8fafc}
+.stp-ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.stp-n{font-weight:700;margin:0 6px}
+.stp-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:12px;margin-top:8px}
+@media(max-width:720px){.stp-grid{grid-template-columns:1fr}}
+.scode{background:#0f172a;border-radius:10px;padding:6px 0;overflow-x:auto}
+.sl{display:flex;gap:8px;padding:1px 10px;font-family:Consolas,monospace;font-size:.92rem;color:#e2e8f0;white-space:pre}
+.sl .sa{width:20px;color:#fde047;font-weight:700}
+.sl .sn{color:#64748b;min-width:20px;text-align:right}
+.sl.done{background:#14532d}.sl.next{background:#713f12}.sl.bad{background:#7f1d1d}
+.vt td.new{background:#dcfce7}.vt td.chg{background:#fef9c3}
+.tag{font-size:.75rem;border-radius:6px;padding:0 6px;background:#e2e8f0}
+.tag.int{background:#dbeafe;color:#1e40af}.tag.float{background:#ede9fe;color:#5b21b6}.tag.str{background:#dcfce7;color:#166534}.tag.bool{background:#ffedd5;color:#9a3412}
+.tag.newv{background:#16a34a;color:#fff;margin-left:4px}
+/* shell */
+.shell{background:#0b1220;border-radius:10px;padding:8px 12px;font-family:Consolas,monospace;color:#e2e8f0}
+.sh-log{max-height:280px;overflow-y:auto;white-space:pre-wrap;font-size:.95rem}
+.sh-log .p{color:#93c5fd}.sh-log .o{color:#4ade80}.sh-log .e{color:#fca5a5}
+.sh-in{display:flex;gap:8px;align-items:center}
+.sh-in span{color:#93c5fd}
+.sh-in input{flex:1;background:transparent;border:0;outline:0;color:#fff;font:inherit;font-size:1rem;padding:6px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🐍 เรียน Python เบื้องต้น: จาก print() ถึงตัวแปร</h1>
+  <p class="sub">ทำทีละขั้น: อ่าน → ลองเล่น → ลองรัน → ทำภารกิจ → ตอบคำถาม (รัน Python ตัวจริงในเบราว์เซอร์)</p>
+  <div id="pystatus" class="status st-load">⏳ กำลังโหลด Python ...</div>
+  <div class="steps" id="steps"></div>
+  <div id="page"></div>
+  <button class="reset" id="rstp">ล้างความก้าวหน้าทั้งหมด</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+/* =====================================================================
+   ส่วนที่ 1: เชื่อมต่อ Python (Pyodide)
+   ===================================================================== */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let py=null,pyReady=false,pyRun=null,pyShell=null,pyShellReset=null;
+
+const RUNNER=String.raw`
+import sys, io, json, builtins
+from contextlib import redirect_stdout
+
+_SKIP = ('module', 'function', 'builtin_function_or_method', 'type', 'method')
+
+def _snap(g, skip_obj):
+    d = {}
+    for k, v in list(g.items()):
+        if k.startswith('__') or v is skip_obj:
+            continue
+        tn = type(v).__name__
+        if tn in _SKIP:
+            continue
+        try:
+            r = repr(v)
+        except Exception:
+            r = '?'
+        if len(r) > 80:
+            r = r[:77] + '...'
+        d[k] = [tn, r]
+    return d
+
+def _err_info(e):
+    line = 0
+    tb = e.__traceback__
+    while tb is not None:
+        if tb.tb_frame.f_code.co_filename == '<student>':
+            line = tb.tb_lineno
+        tb = tb.tb_next
+    return {'kind': 'run', 'type': type(e).__name__, 'msg': str(e), 'line': line}
+
+def _run(src, inputs_json):
+    inputs = json.loads(inputs_json)
+    out = io.StringIO()
+    steps = []
+    g = {'__name__': '__main__', '__builtins__': builtins}
+    def _input(prompt=''):
+        out.write('\x03' + str(prompt) + '\x04')
+        if not inputs:
+            raise EOFError('__NO_INPUT__')
+        v = inputs.pop(0)
+        out.write('\x01' + v + '\x02\n')
+        return v
+    g['input'] = _input
+    count = [0]
+    def _tracer(frame, event, arg):
+        if frame.f_code.co_filename != '<student>':
+            return None
+        if event == 'line':
+            count[0] += 1
+            if count[0] > 20000:
+                raise RuntimeError('__STEP_LIMIT__')
+            if len(steps) < 800:
+                steps.append({'line': frame.f_lineno, 'vars': _snap(frame.f_globals, _input), 'out': len(out.getvalue())})
+        return _tracer
+    res = {'err': None}
+    try:
+        code = compile(src, '<student>', 'exec')
+    except SyntaxError as e:
+        res['err'] = {'kind': 'syntax', 'type': type(e).__name__, 'msg': str(e.msg), 'line': e.lineno or 0, 'offset': e.offset or 0, 'text': (e.text or '').rstrip('\r\n')}
+        res['out'] = ''
+        res['steps'] = []
+        res['final'] = {}
+        return json.dumps(res, ensure_ascii=False)
+    old = sys.gettrace()
+    try:
+        with redirect_stdout(out):
+            sys.settrace(_tracer)
+            try:
+                exec(code, g)
+            finally:
+                sys.settrace(old)
+    except SystemExit:
+        pass
+    except BaseException as e:
+        res['err'] = _err_info(e)
+    res['out'] = out.getvalue()
+    res['steps'] = steps
+    res['final'] = _snap(g, _input)
+    return json.dumps(res, ensure_ascii=False)
+
+_shells = {}
+
+def _shell(sid, line):
+    g = _shells.get(sid)
+    if g is None:
+        g = {'__name__': '__main__', '__builtins__': builtins}
+        _shells[sid] = g
+    def _noinput(prompt=''):
+        raise RuntimeError('__SHELL_INPUT__')
+    g['input'] = _noinput
+    out = io.StringIO()
+    err = None
+    count = [0]
+    def _tr(frame, event, arg):
+        if frame.f_code.co_filename != '<shell>':
+            return None
+        if event == 'line':
+            count[0] += 1
+            if count[0] > 20000:
+                raise RuntimeError('__STEP_LIMIT__')
+        return _tr
+    old = sys.gettrace()
+    try:
+        with redirect_stdout(out):
+            try:
+                code = compile(line, '<shell>', 'eval')
+                is_eval = True
+            except SyntaxError:
+                code = compile(line, '<shell>', 'exec')
+                is_eval = False
+            v = None
+            sys.settrace(_tr)
+            try:
+                if is_eval:
+                    v = eval(code, g)
+                else:
+                    exec(code, g)
+            finally:
+                sys.settrace(old)
+            if v is not None:
+                print(repr(v))
+    except BaseException as e:
+        msg = e.msg if isinstance(e, SyntaxError) else str(e)
+        err = {'type': type(e).__name__, 'msg': str(msg)}
+    return json.dumps({'out': out.getvalue(), 'err': err}, ensure_ascii=False)
+
+def _shell_reset(sid):
+    _shells.pop(sid, None)
+`;
+
+async function initPy(){
+  const st=$('#pystatus');
+  st.className='status st-load';
+  st.innerHTML='⏳ กำลังโหลด Python ... (ครั้งแรกใช้เวลาประมาณ 10-30 วินาที และต้องต่ออินเทอร์เน็ต) ระหว่างนี้อ่านเนื้อหาไปก่อนได้เลย';
+  try{
+    if(typeof loadPyodide!=='function')throw new Error('โหลดไฟล์ pyodide.js ไม่ได้ (ตรวจการเชื่อมต่ออินเทอร์เน็ต)');
+    py=await loadPyodide();
+    py.runPython(RUNNER);
+    pyRun=py.globals.get('_run');
+    pyShell=py.globals.get('_shell');
+    pyShellReset=py.globals.get('_shell_reset');
+    const ver=py.runPython('import sys; sys.version.split()[0]');
+    pyReady=true;
+    st.className='status st-ok';
+    st.innerHTML=`✅ Python ${esc(ver)} พร้อมใช้งานแล้ว กดปุ่ม ▶ รันโปรแกรม หรือพิมพ์ใน Python Shell ได้เลย`;
+  }catch(e){
+    st.className='status st-err';
+    st.innerHTML=`❌ โหลด Python ไม่สำเร็จ: ${esc(e.message||e)} <button class="btn" id="retry">ลองโหลดใหม่</button>`;
+    $('#retry').onclick=()=>location.reload();
+  }
+}
+function runPy(src,inputText){
+  const lines=(inputText||'').replace(/\r/g,'').split('\n');
+  while(lines.length&&lines[lines.length-1]==='')lines.pop();
+  try{return JSON.parse(pyRun(src,JSON.stringify(lines)));}
+  catch(e){return{out:'',steps:[],final:{},err:{kind:'run',type:'InternalError',msg:String(e),line:0}};}
+}
+
+/* =====================================================================
+   ส่วนที่ 2: แปลข้อผิดพลาดเป็นภาษาไทย
+   ===================================================================== */
+const PY_KW=['False','None','True','and','as','assert','async','await','break','class','continue','def','del','elif','else','except','finally','for','from','global','if','import','in','is','lambda','nonlocal','not','or','pass','raise','return','try','while','with','yield'];
+const BUILTIN_NAMES=['print','input','int','float','str','bool','type','len','round','abs','max','min','sum','range','list','True','False','None'];
+function thaiErr(e,names){
+  const t=e.type||'Error',m=e.msg||'';let k;
+  const R=(h,d)=>({h,d});
+  if(m==='__NO_INPUT__')return R('ไม่มีข้อมูลให้ input() อ่าน','โปรแกรมเรียก <code>input()</code> แต่ช่อง "ข้อมูลที่จะพิมพ์ให้ input()" ไม่มีค่าเหลือแล้ว ให้พิมพ์ค่าเพิ่ม <b>บรรทัดละ 1 ค่า</b> ตามจำนวนครั้งที่เรียก input()');
+  if(m==='__STEP_LIMIT__')return R('โปรแกรมทำงานนานผิดปกติ','โปรแกรมทำงานเกิน 20,000 ขั้นตอน อาจวนซ้ำไม่รู้จบ (infinite loop) จึงถูกหยุดไว้');
+  if(m==='__SHELL_INPUT__')return R('ใช้ input() ใน Shell นี้ไม่ได้','ให้ลองคำสั่ง input() ในกล่อง "ลองรันดู" แทน');
+  if(t==='IndentationError'||t==='TabError'){
+    if(/unexpected indent/.test(m))return R('มีการเว้นวรรคหน้าบรรทัดเกินมา','Python ใช้การย่อหน้า (ช่องว่างหน้าบรรทัด) เป็นส่วนหนึ่งของไวยากรณ์ คำสั่งทั่วไปต้อง<b>ชิดซ้าย</b> ให้ลบช่องว่างหน้าบรรทัดนี้ออก');
+    return R('การย่อหน้าไม่ถูกต้อง','ตรวจช่องว่างหน้าบรรทัด คำสั่งในบทนี้ทุกบรรทัดต้องชิดซ้าย');
+  }
+  if(t==='SyntaxError'){
+    if(/unterminated triple-quoted/.test(m))return R('ลืมปิดข้อความแบบ """ """','ข้อความที่เปิดด้วย """ ต้องปิดด้วย """ เช่นกัน');
+    if(/unterminated string|EOL while scanning/.test(m))return R('ลืมปิดเครื่องหมายคำพูด','ข้อความที่เปิดด้วย " หรือ \' ต้องปิดด้วยเครื่องหมาย<b>แบบเดียวกัน</b>ในบรรทัดเดียวกัน เช่น <code>print("Hi")</code> ถ้าในข้อความมี \' อยู่ข้างใน เช่น It\'s ให้ครอบด้วย " แทน');
+    if((k=/'(.)' was never closed/.exec(m)))return R(`ลืมปิดวงเล็บ ${esc(k[1])}`,'มีวงเล็บเปิด แต่ไม่มีวงเล็บปิด ให้นับวงเล็บเปิดกับวงเล็บปิดให้มีจำนวนเท่ากัน');
+    if((k=/unmatched '(.)'/.exec(m)))return R(`มีวงเล็บปิด ${esc(k[1])} เกินมา`,'วงเล็บปิดมากกว่าวงเล็บเปิด ให้ลบตัวที่เกินออก');
+    if(/does not match opening parenthesis/.test(m))return R('วงเล็บเปิดกับปิดไม่ตรงคู่กัน','เช่น เปิดด้วย ( แต่ปิดด้วย ] ให้ใช้แบบเดียวกัน');
+    if(/Missing parentheses in call to 'print'/.test(m))return R('print ต้องมีวงเล็บ','Python 3 ต้องเขียน <code>print("ข้อความ")</code> (แบบไม่มีวงเล็บเป็นของ Python 2 รุ่นเก่า)');
+    if(/invalid decimal literal|invalid imaginary literal/.test(m))return R('มีตัวเลขติดกับตัวอักษร','มักเกิดจากตั้งชื่อตัวแปร<b>ขึ้นต้นด้วยตัวเลข</b> เช่น <code>2score</code> (ห้าม ต้องเป็น <code>score2</code>) หรือลืมเครื่องหมายคูณ เช่น <code>2x</code> ต้องเขียน <code>2 * x</code>');
+    if(/cannot assign to literal/.test(m))return R('ด้านซ้ายของ = ต้องเป็นชื่อตัวแปร','เครื่องหมาย = หมายถึง "นำค่าทางขวา ไปเก็บในตัวแปรทางซ้าย" จึงต้องเขียน <code>x = 5</code> ไม่ใช่ <code>5 = x</code>');
+    if((k=/cannot assign to (True|False|None)/.exec(m)))return R(`'${k[1]}' เป็นคำสงวน`,'ใช้เป็นชื่อตัวแปรไม่ได้ ให้เปลี่ยนชื่อ');
+    if(/cannot assign to/.test(m))return R('ด้านซ้ายของ = ต้องเป็นชื่อตัวแปรเดี่ยวๆ','เช่น <code>total = a + b</code> ไม่ใช่ <code>a + b = total</code> และชื่อตัวแปร<b>ห้ามมีเครื่องหมาย -</b> หรือช่องว่าง (ใช้ _ แทน เช่น <code>my_score</code>)');
+    if(/Perhaps you forgot a comma/.test(m))return R('น่าจะลืมเครื่องหมายจุลภาค ( , ) หรือเขียนเครื่องหมายผิด','ถ้าจะแสดงหลายค่าใน print ต้องคั่นด้วย , เช่น <code>print("Total:", total)</code> และการคูณต้องใช้ <code>*</code> ไม่ใช่ x');
+    if(/invalid character/.test(m))return R('มีอักขระที่ Python ไม่รู้จัก','มักเกิดจากคัดลอกโค้ดจาก Word หรือเว็บ ทำให้ได้เครื่องหมายคำพูดแบบโค้ง “ ” หรือ ‘ ’ ให้ลบแล้วพิมพ์ " หรือ \' ใหม่ด้วยแป้นพิมพ์');
+    if(/incomplete input|unexpected EOF/.test(m))return R('คำสั่งยังเขียนไม่จบ','ตรวจวงเล็บและเครื่องหมายคำพูดว่าปิดครบหรือไม่');
+    const tx=(e.text||'').trim();
+    if((k=/^([A-Za-z_]\w*)\s*=/.exec(tx))&&PY_KW.includes(k[1]))return R(`'${esc(k[1])}' เป็นคำสงวนของ Python`,'ใช้เป็นชื่อตัวแปรไม่ได้ ลองเพิ่มคำ เช่น <code>my_'+esc(k[1])+'</code>');
+    if(/^[^\s"'#=(]+\s+[^\s"'#=(]+\s*=/.test(tx))return R('ชื่อตัวแปรห้ามมีช่องว่าง','ถ้าชื่อมีหลายคำให้เชื่อมด้วย _ เช่น <code>total_price</code>');
+    return R('เขียนผิดไวยากรณ์','Python อ่านบรรทัดนี้ไม่เข้าใจ ลองตรวจ ① เครื่องหมายคำพูดและวงเล็บครบคู่ ② ชื่อตัวแปรไม่มีช่องว่างหรือขีด - ③ ไม่ได้ใช้คำสงวน ④ บางครั้งจุดผิดจริงอยู่ที่<b>บรรทัดก่อนหน้า</b>');
+  }
+  if(t==='NameError'){
+    k=/name '(.+?)' is not defined/.exec(m);const n=k?k[1]:'?';
+    const sim=[...(names||[]),...BUILTIN_NAMES].find(x=>x!==n&&x.toLowerCase()===n.toLowerCase());
+    if(sim)return R(`ไม่รู้จักชื่อ '${esc(n)}' คุณหมายถึง '${esc(sim)}' หรือเปล่า?`,`Python <b>แยกตัวพิมพ์เล็ก-ใหญ่</b> (case-sensitive) <code>${esc(n)}</code> กับ <code>${esc(sim)}</code> จึงเป็นคนละชื่อกัน`);
+    return R(`ไม่รู้จักชื่อ '${esc(n)}'`,`สาเหตุที่พบบ่อย: ① ใช้ตัวแปรก่อนกำหนดค่า (ต้องมี <code>${esc(n)} = ...</code> อยู่<b>ก่อน</b>บรรทัดนี้) ② สะกดชื่อผิด ③ ถ้าตั้งใจให้เป็นข้อความ ต้องครอบด้วยเครื่องหมายคำพูด เช่น <code>"${esc(n)}"</code>`);
+  }
+  if(t==='TypeError'){
+    if(/can only concatenate str \(not "(\w+)"\) to str/.test(m))return R('นำข้อความ (str) มา + กับตัวเลขไม่ได้','Python ไม่เดาให้ว่าจะต่อข้อความหรือบวกเลข ทางแก้: แปลงตัวเลขเป็นข้อความด้วย <code>str()</code> หรือใช้ , ใน print หรือใช้ f-string<br>⚠️ ถ้าค่ามาจาก <code>input()</code> อย่าลืมว่า input() ให้ค่าเป็น<b>ข้อความเสมอ</b> ต้องครอบด้วย <code>int()</code> หรือ <code>float()</code> ก่อนนำไปคำนวณ');
+    if((k=/unsupported operand type\(s\) for (.+?): '(\w+)' and '(\w+)'/.exec(m))){
+      if(k[2]==='str'||k[3]==='str')return R(`คำนวณ ${esc(k[1])} ระหว่างข้อความกับตัวเลขไม่ได้`,'ค่าหนึ่งเป็นข้อความ (str) มักมาจาก <code>input()</code> ที่ยังไม่ได้แปลง ให้แปลงด้วย <code>int()</code> หรือ <code>float()</code> ก่อน เช่น <code>age = int(input())</code>');
+      return R(`ใช้เครื่องหมาย ${esc(k[1])} กับข้อมูลชนิด ${esc(k[2])} และ ${esc(k[3])} ไม่ได้`,'ตรวจชนิดข้อมูลของค่าทั้งสองข้างด้วย <code>type()</code>');
+    }
+    if(/can't multiply sequence by non-int/.test(m))return R('คูณข้อความได้เฉพาะกับจำนวนเต็ม','<code>"Ha" * 3</code> ได้ แต่ <code>"Ha" * 2.5</code> หรือ <code>"5" * "2"</code> ไม่ได้ ถ้าต้องการคำนวณให้แปลงข้อความเป็นตัวเลขก่อน');
+    if((k=/'(\w+)' object is not callable/.exec(m)))return R(`ค่าชนิด ${esc(k[1])} ถูกเรียกเหมือนเป็นคำสั่ง`,'มักเกิดจาก ① ตั้งชื่อตัวแปรทับชื่อคำสั่ง เช่น <code>print = 5</code> แล้วเรียก print() อีก ② ลืมเครื่องหมาย * เช่น <code>2(3 + 4)</code> ต้องเขียน <code>2 * (3 + 4)</code>');
+    return R('ใช้ข้อมูลผิดชนิด','ตรวจว่าค่าที่ส่งให้คำสั่งหรือที่นำมาคำนวณเป็นชนิดที่ถูกต้อง');
+  }
+  if(t==='ValueError'){
+    if((k=/invalid literal for int\(\) with base 10: '(.*)'/.exec(m))){
+      if(/^\s*[-+]?\d*\.\d+\s*$/.test(k[1]))return R(`int() แปลงข้อความทศนิยม '${esc(k[1])}' ไม่ได้`,'ถ้าต้องการรับทศนิยมให้ใช้ <code>float()</code> แทน หรือใช้ <code>int(float(...))</code> ถ้าต้องการตัดทศนิยมทิ้ง');
+      return R(`'${esc(k[1])}' ไม่ใช่จำนวนเต็ม`,'int() แปลงได้เฉพาะข้อความที่เป็นตัวเลขจำนวนเต็ม เช่น "42" ตรวจข้อมูลที่พิมพ์ให้โปรแกรมด้วย');
+    }
+    if((k=/could not convert string to float: '(.*)'/.exec(m)))return R(`'${esc(k[1])}' ไม่ใช่ตัวเลข`,'float() แปลงได้เฉพาะข้อความที่เป็นตัวเลข เช่น "3.5" หรือ "7"');
+    return R('ค่าที่ให้มาไม่ถูกต้อง','ชนิดถูกแต่ค่าใช้ไม่ได้ ตรวจข้อมูลที่ส่งให้คำสั่ง');
+  }
+  if(t==='ZeroDivisionError')return R('หารด้วยศูนย์ไม่ได้','ทั้ง / // และ % ห้ามมีตัวหารเป็น 0 (ทางคณิตศาสตร์ไม่มีความหมาย)');
+  if(t==='OverflowError')return R('ตัวเลขใหญ่เกินไป','ผลลัพธ์ทศนิยมใหญ่เกินกว่าที่คอมพิวเตอร์เก็บได้');
+  if(t==='EOFError')return R('ไม่มีข้อมูลให้ input() อ่าน','พิมพ์ค่าเพิ่มในช่องข้อมูล บรรทัดละ 1 ค่า');
+  return R(`เกิดข้อผิดพลาดชนิด ${esc(t)}`,'อ่านข้อความภาษาอังกฤษด้านล่างประกอบ');
+}
+function engMsg(e){
+  const m=e.msg||'';
+  if(/^__/.test(m))return '';
+  return `<div class="eng">Python บอกว่า: <code>${esc(e.type)}: ${esc(m)}</code></div>`;
+}
+function errBox(e,names){
+  const t=thaiErr(e,names);
+  const syn=e.kind==='syntax';
+  let h=`<div class="box err"><b>${syn?'❌ เขียนผิดไวยากรณ์ โปรแกรมยังไม่ได้เริ่มทำงานเลย':'❌ โปรแกรมหยุดทำงานกลางทาง'}</b>${e.line?` · <b>บรรทัดที่ ${e.line}</b>`:''}<br>🧩 <b>${t.h}</b><br>${t.d}`;
+  if(syn&&e.text){
+    const caret=' '.repeat(Math.max(0,(e.offset||1)-1))+'^';
+    h+=`<pre class="show">${esc(e.text)}\n${esc(caret)}</pre>`;
+  }
+  return h+engMsg(e)+'</div>';
+}
+function lint(src){
+  const w=[];
+  src.split('\n').forEach((l,i)=>{
+    const code=l.replace(/#.*$/,'');
+    if(/["'][^"'\n]*\{[A-Za-z_]\w*[^"'\n]*\}[^"'\n]*["']/.test(code)&&!/[fF]["'][^"'\n]*\{/.test(code))
+      w.push({line:i+1,msg:'ในข้อความมี {ชื่อตัวแปร} แต่ไม่มีตัว f นำหน้าเครื่องหมายคำพูด Python จึงแสดงวงเล็บปีกกาออกมาตรงๆ ถ้าต้องการแทนค่าตัวแปร ให้เขียนเป็น f"..."'});
+    const m=/^\s*(print|input|int|float|str|type|len|sum|max|min|round)\s*=[^=]/.exec(code);
+    if(m)w.push({line:i+1,msg:`ตั้งชื่อตัวแปรว่า ${m[1]} ซ้ำกับคำสั่งของ Python ทำให้ใช้ ${m[1]}() ไม่ได้อีก ควรเปลี่ยนชื่อ`});
+  });
+  return w;
+}
+
+/* =====================================================================
+   ส่วนที่ 3: แสดงผลลัพธ์ และดูการทำงานทีละบรรทัด
+   ===================================================================== */
+const fmtOut=raw=>esc(raw||'').replace(/\x01([\s\S]*?)\x02/g,'<i>$1</i>').replace(/[\x03\x04]/g,'');
+const cleanOut=raw=>(raw||'').replace(/\x03[\s\S]*?\x04/g,'').replace(/\x01[\s\S]*?\x02\n?/g,'');
+const norm=s=>s.replace(/\r/g,'').split('\n').map(x=>x.replace(/\s+$/,'')).join('\n').replace(/\n+$/,'');
+
+function showResult(host,r,src,openStep){
+  const names=Object.keys(r.final||{});
+  const syn=r.err&&r.err.kind==='syntax';
+  let h='';
+  if(!syn)h+=`<div class="tlabel">🖥️ หน้าจอผลลัพธ์ (ตัวอักษรสีเหลือง = สิ่งที่ผู้ใช้พิมพ์ให้ input())</div><div class="term mono">${fmtOut(r.out)||'<span style="color:#64748b">(ไม่มีอะไรแสดง)</span>'}</div>`;
+  h+=r.err?errBox(r.err,names):'<div class="box good">✅ โปรแกรมทำงานสำเร็จ</div>';
+  const w=lint(src);
+  if(w.length)h+=`<div class="box warn"><b>⚠️ ข้อสังเกต</b><ul>${w.map(x=>`<li>บรรทัดที่ ${x.line}: ${esc(x.msg)}</li>`).join('')}</ul></div>`;
+  if(!syn&&r.steps&&r.steps.length)h+=`<details class="stpwrap" ${openStep?'open':''}><summary>👣 ดูการทำงานทีละบรรทัด และค่าของตัวแปร</summary><div class="stp"></div></details>`;
+  host.innerHTML=h;
+  const sh=$('.stp',host);
+  if(sh)mkStepper(sh,r,src);
+}
+function mkStepper(host,r,src){
+  const lines=src.split('\n');
+  const outArr=Array.from(r.out||'');
+  const views=r.steps.map(s=>({line:s.line,vars:s.vars,out:s.out}));
+  views.push({line:null,vars:r.final||{},out:outArr.length,end:true});
+  const trunc=r.steps.length>=800;
+  let k=0;
+  host.innerHTML=`<div class="stp-ctl"><button class="btn" data-a="first">⏮ เริ่ม</button><button class="btn" data-a="prev">◀ ย้อน</button><span class="stp-n"></span><button class="btn go" data-a="next">ถัดไป ▶</button><button class="btn" data-a="last">จบ ⏭</button></div>
+  <div class="box warn smsg"></div>
+  <div class="stp-grid"><div><div class="tlabel">โค้ด (➜ = บรรทัดที่กำลังจะทำ · แถบเขียว = บรรทัดที่เพิ่งทำเสร็จ)</div><div class="scode"></div></div>
+  <div><div class="tlabel">📦 ตัวแปรในหน่วยความจำ</div><div class="svars"></div><div class="tlabel">🖥️ หน้าจอ ณ ขั้นนี้</div><div class="term mono sout"></div></div></div>`;
+  const draw=()=>{
+    const v=views[k],pv=k>0?views[k-1]:null;
+    const doneL=pv?pv.line:null,nextL=v.end?null:v.line;
+    const badL=(v.end&&r.err)?r.err.line:null;
+    $('.scode',host).innerHTML=lines.map((l,i)=>{
+      const n=i+1;let c='',a='';
+      if(n===badL){c='bad';a='✖';}else if(n===nextL){c='next';a='➜';}else if(n===doneL)c='done';
+      return `<div class="sl ${c}"><span class="sa">${a}</span><span class="sn">${n}</span><span>${esc(l)||' '}</span></div>`;
+    }).join('');
+    const old=pv?pv.vars:{};const changes=[];
+    const names=Object.keys(v.vars);
+    $('.svars',host).innerHTML=names.length?`<table class="vt"><tr><th>ชื่อ</th><th>ชนิด</th><th>ค่า</th></tr>${names.map(n=>{
+      const ty=v.vars[n][0],rep=v.vars[n][1];let cls='',note='';
+      if(pv&&!(n in old)){cls='new';note='<span class="tag newv">ใหม่!</span>';changes.push(`สร้างตัวแปร <code>${esc(n)}</code> = <code>${esc(rep)}</code>`);}
+      else if(pv&&(old[n][1]!==rep||old[n][0]!==ty)){cls='chg';note=` <span style="font-size:.8rem;color:#92400e">(เดิม ${esc(old[n][1])})</span>`;changes.push(`<code>${esc(n)}</code> เปลี่ยนจาก <code>${esc(old[n][1])}</code> เป็น <code>${esc(rep)}</code>`);}
+      return `<tr><td class="${cls}"><code>${esc(n)}</code></td><td class="${cls}"><span class="tag ${esc(ty)}">${esc(ty)}</span></td><td class="${cls} mono">${esc(rep)}${note}</td></tr>`;
+    }).join('')}</table>`:'<div class="tlabel">(ยังไม่มีตัวแปร)</div>';
+    $('.sout',host).innerHTML=fmtOut(outArr.slice(0,v.out).join(''))||'<span style="color:#64748b">(ว่าง)</span>';
+    let msg;
+    if(k===0)msg='▶ ยังไม่เริ่มทำงาน ลูกศร ➜ ชี้บรรทัดแรกที่จะทำ กด "ถัดไป" เพื่อให้ Python ทำทีละบรรทัด (ลองทายก่อนกดทุกครั้ง!)';
+    else if(v.end&&r.err)msg=`❌ ระหว่างทำบรรทัดที่ ${r.err.line} เกิดข้อผิดพลาด โปรแกรมจึงหยุดทันที บรรทัดที่เหลือไม่ได้ทำงาน`;
+    else{
+      msg=`✔ ทำบรรทัดที่ ${doneL} เสร็จแล้ว`;
+      const shown=v.out>pv.out;
+      if(changes.length)msg+=': '+changes.join(', ')+(shown?' และแสดงผลบนหน้าจอ':'');
+      else msg+=shown?' (แสดงผลบนหน้าจอ ไม่มีตัวแปรเปลี่ยน)':' (ไม่มีตัวแปรเปลี่ยน)';
+      if(v.end)msg+=' · 🏁 จบโปรแกรม';
+    }
+    if(trunc&&v.end)msg+=' (บันทึกไว้เฉพาะ 800 ขั้นแรก)';
+    $('.smsg',host).innerHTML=msg;
+    $('.stp-n',host).textContent=`ขั้น ${k} / ${views.length-1}`;
+    host.querySelector('[data-a=first]').disabled=k===0;
+    host.querySelector('[data-a=prev]').disabled=k===0;
+    host.querySelector('[data-a=next]').disabled=k===views.length-1;
+    host.querySelector('[data-a=last]').disabled=k===views.length-1;
+  };
+  host.querySelectorAll('.stp-ctl button').forEach(b=>b.onclick=()=>{
+    const a=b.dataset.a;
+    if(a==='first')k=0;else if(a==='prev')k=Math.max(0,k-1);else if(a==='next')k=Math.min(views.length-1,k+1);else k=views.length-1;
+    draw();
+  });
+  draw();
+}
+
+/* =====================================================================
+   ส่วนที่ 4: ส่วนประกอบหน้าเว็บ
+   ===================================================================== */
+let progress={};
+try{progress=JSON.parse(localStorage.getItem('pylab1')||'{}');}catch(e){}
+const saveP=()=>{try{localStorage.setItem('pylab1',JSON.stringify(progress));}catch(e){}};
+const notReady='<div class="box warn">⏳ Python ยังโหลดไม่เสร็จ รอสักครู่แล้วกดใหม่ (ดูสถานะที่แถบด้านบนสุด)</div>';
+
+function mkEditor(host,cfg){
+  const hasIn=cfg.input!==undefined;
+  host.innerHTML=`<textarea class="code" spellcheck="false" wrap="off"></textarea>${hasIn?'<label class="lab">⌨️ ข้อมูลที่จะพิมพ์ให้ input() (บรรทัดละ 1 ค่า เรียงตามลำดับที่ input() ถูกเรียก)<textarea class="inbox mono"></textarea></label>':''}<div class="btns"><button class="btn go run">▶ รันโปรแกรม</button><button class="btn rs">↺ เริ่มใหม่</button></div><div class="res"></div>`;
+  const ta=$('textarea.code',host),inp=$('.inbox',host),res=$('.res',host);
+  ta.value=cfg.code;ta.rows=Math.min(24,cfg.code.split('\n').length+1);
+  if(inp){inp.value=cfg.input;inp.rows=Math.max(2,cfg.input.split('\n').length);}
+  const run=()=>{
+    if(!pyReady){res.innerHTML=notReady;return;}
+    const src=ta.value;
+    res.innerHTML='<div class="tlabel">กำลังรัน...</div>';
+    setTimeout(()=>showResult(res,runPy(src,inp?inp.value:''),src,!!cfg.trace),10);
+  };
+  $('.run',host).onclick=run;
+  $('.rs',host).onclick=()=>{ta.value=cfg.code;if(inp)inp.value=cfg.input;res.innerHTML='';};
+  ta.addEventListener('keydown',e=>{
+    if(e.key==='Tab'){e.preventDefault();ta.setRangeText('    ',ta.selectionStart,ta.selectionEnd,'end');}
+    if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();run();}
+  });
+  (cfg.tries||[]).forEach(t=>{
+    const b=document.createElement('button');b.className='btn';b.textContent=t.label;
+    b.onclick=()=>{ta.value=t.fn(cfg.code);if(inp)inp.value=cfg.input;run();};
+    $('.btns',host).appendChild(b);
+  });
+  return{get:()=>ta.value};
+}
+function mkMission(host,cfg,stepId,onDone){
+  const hasIn=cfg.tests.some(t=>t.input!==undefined);
+  host.innerHTML=`<h3 style="margin-top:0">🎯 ภารกิจ: ${cfg.title}</h3>${cfg.task}
+  <div class="tw"><table><tr>${hasIn?'<th>ข้อมูลที่พิมพ์ให้ input()</th>':''}<th>ผลลัพธ์ที่ต้องได้</th></tr>${cfg.tests.map(t=>`<tr>${hasIn?`<td><pre class="mono" style="margin:0">${esc(t.input||'')}</pre></td>`:''}<td><pre class="mono" style="margin:0">${esc(t.expected)}</pre></td></tr>`).join('')}</table></div>
+  ${hasIn?'<p class="tlabel">ℹ️ ข้อความชวนพิมพ์ใน input("...") จะไม่ถูกนำมาตรวจ ใส่หรือไม่ใส่ก็ได้</p>':''}
+  <div class="ed"></div>
+  <div class="btns"><button class="btn ok chk">✔ ตรวจคำตอบ</button><button class="btn hint">💡 ขอคำใบ้</button><button class="btn sol">👀 ดูเฉลย</button></div>
+  <div class="hb"></div><div class="cr"></div>`;
+  const ed=mkEditor($('.ed',host),{code:cfg.code,input:hasIn?cfg.tests[0].input:undefined});
+  const cr=$('.cr',host);
+  $('.hint',host).onclick=()=>{$('.hb',host).innerHTML=`<div class="box warn">💡 ${cfg.hint}</div>`;};
+  $('.sol',host).onclick=()=>{$('.hb',host).innerHTML='<div class="box warn">เฉลย (ลองทำเองก่อน แล้วค่อยเทียบนะ)<pre class="show"></pre></div>';$('.hb pre',host).textContent=cfg.solution;};
+  $('.chk',host).onclick=()=>{
+    if(!pyReady){cr.innerHTML=notReady;return;}
+    const code=ed.get();let all=true,h='<ul>';
+    (cfg.requires||[]).forEach(q=>{const ok=q.re.test(code);if(!ok)all=false;h+=`<li>${ok?'✅':'❌'} ${q.msg}</li>`;});
+    cfg.tests.forEach((t,i)=>{
+      const r=runPy(code,t.input||'');
+      const lbl=`ชุดทดสอบที่ ${i+1}${t.input!==undefined?` (พิมพ์ <code>${esc(t.input).replace(/\n/g,' ⏎ ')}</code>)`:''}`;
+      if(r.err){all=false;const te=thaiErr(r.err,Object.keys(r.final||{}));h+=`<li>❌ ${lbl}: ${r.err.kind==='syntax'?'เขียนผิดไวยากรณ์':'โปรแกรมหยุดทำงาน'}${r.err.line?' (บรรทัด '+r.err.line+')':''} · ${te.h}</li>`;return;}
+      const got=cleanOut(r.out);const ok=norm(got)===norm(t.expected);if(!ok)all=false;
+      h+=`<li>${ok?'✅':'❌'} ${lbl}`;
+      if(!ok)h+=`<br>ต้องได้:<pre class="show">${esc(t.expected)}</pre>แต่ได้:<pre class="show">${esc(got)||'(ว่างเปล่า)'}</pre>`;
+      h+='</li>';
+    });
+    h+='</ul>';
+    if(all){progress[stepId]=true;saveP();onDone();h='<div class="box good"><b>🎉 ผ่านแล้ว เก่งมาก!</b></div>'+h;}
+    else h='<div class="box err"><b>ยังไม่ผ่าน ไม่เป็นไร ลองดูผลเปรียบเทียบแล้วแก้อีกนิด</b></div>'+h;
+    cr.innerHTML=h;
+  };
+  if(progress[stepId])cr.innerHTML='<div class="box good">✅ คุณเคยทำภารกิจนี้ผ่านแล้ว</div>';
+}
+function mkQuiz(host,list){
+  host.innerHTML='<h3 style="margin-top:0">🤔 ถามเล็กๆ</h3>'+list.map((q,qi)=>`<div class="q" data-q="${qi}"><p><b>ข้อ ${qi+1}.</b> ${q.q}</p>${q.c.map((c,i)=>`<button class="choice" data-i="${i}">${esc(c)}</button>`).join('')}<div class="fb"></div></div>`).join('');
+  list.forEach((q,qi)=>{
+    const box=host.querySelector(`.q[data-q="${qi}"]`);
+    box.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i,fb=$('.fb',box);
+      if(i===q.a){b.classList.remove('wrong');b.classList.add('right');fb.innerHTML=`<div class="box good">✅ ถูกต้อง! ${q.e}</div>`;}
+      else{b.classList.add('wrong');fb.innerHTML='<div class="box err">ยังไม่ใช่ ลองเลือกใหม่ได้เลย</div>';}
+    });
+  });
+}
+function mkAnnot(host,cfg){
+  host.innerHTML=`<div class="acode">${cfg.map((l,i)=>`<button class="aline" data-i="${i}"><span class="n">${i+1}</span><span>${esc(l.c)||' '}</span></button>`).join('')}</div><div class="aexp">👆 คลิกที่บรรทัดของโปรแกรม เพื่ออ่านว่าบรรทัดนั้นทำอะไร</div>`;
+  host.querySelectorAll('.aline').forEach(b=>b.onclick=()=>{
+    host.querySelectorAll('.aline').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
+    $('.aexp',host).innerHTML=cfg[+b.dataset.i].e;
+  });
+}
+function mkShell(host,cfg){
+  host.innerHTML=`<h3 style="margin-top:0">🐍 ลองเล่น: Python Shell</h3><p>${cfg.tip}</p>
+  <div class="shell"><div class="sh-log"></div><div class="sh-in"><span>&gt;&gt;&gt;</span><input class="sh-inp" spellcheck="false" autocomplete="off" placeholder="พิมพ์คำสั่งแล้วกด Enter"></div></div>
+  <div class="tlabel">กดปุ่มด้านล่างเพื่อลองคำสั่งตัวอย่าง (ทายผลก่อนกดนะ! ปุ่มลูกศรขึ้น ↑ เรียกคำสั่งเดิมได้)</div><div class="btns sm"></div>`;
+  const log=$('.sh-log',host),inp=$('.sh-inp',host),hist=[];let hp=0;
+  const add=(cls,html)=>{const d=document.createElement('div');d.className=cls;d.innerHTML=html;log.appendChild(d);log.scrollTop=log.scrollHeight;};
+  const run=line=>{
+    if(!line.trim())return;
+    add('p','&gt;&gt;&gt; '+esc(line));hist.push(line);hp=hist.length;
+    if(!pyReady){add('e','⏳ รอให้ Python โหลดเสร็จก่อนนะ');return;}
+    let r;
+    try{r=JSON.parse(pyShell(cfg.id,line));}catch(e){add('e',esc(String(e)));return;}
+    if(r.out)add('o',esc(r.out.replace(/\n$/,'')));
+    if(r.err){const t=thaiErr(r.err,[]);add('e',`${/^__/.test(r.err.msg)?'':esc(r.err.type)+': '+esc(r.err.msg)+'<br>'}💡 ${t.h}`);}
+  };
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){run(inp.value);inp.value='';}
+    else if(e.key==='ArrowUp'){if(hp>0){hp--;inp.value=hist[hp];}e.preventDefault();}
+    else if(e.key==='ArrowDown'){if(hp<hist.length-1){hp++;inp.value=hist[hp];}else{hp=hist.length;inp.value='';}e.preventDefault();}
+  });
+  const bar=$('.sm',host);
+  cfg.samples.forEach(s=>{const b=document.createElement('button');b.className='btn mono';b.textContent=s;b.onclick=()=>run(s);bar.appendChild(b);});
+  const rb=document.createElement('button');rb.className='btn';rb.textContent='🧹 ล้าง Shell';
+  rb.onclick=()=>{log.innerHTML='';if(pyReady)pyShellReset(cfg.id);};bar.appendChild(rb);
+}
+function mkIdent(host){
+  host.innerHTML=`<h3 style="margin-top:0">🧪 ลองเล่น: ตั้งชื่อตัวแปรแบบนี้ได้ไหม?</h3><p>ลองพิมพ์ เช่น <code>my_score</code> <code>2score</code> <code>my-score</code> <code>my score</code> <code>class</code> <code>print</code> <code>Score</code> <code>คะแนน</code> <code>_temp1</code></p>
+  <input class="txt" style="width:260px" value="my_score" maxlength="40"><ul class="rules"></ul><div class="vd"></div>`;
+  const inp=$('input',host),ul=$('.rules',host),vd=$('.vd',host);
+  const upd=()=>{
+    const v=inp.value;
+    const rules=[
+      ['ไม่เป็นค่าว่าง',v.length>0],
+      ['ขึ้นต้นด้วยตัวอักษร หรือเครื่องหมาย _ (ห้ามขึ้นต้นด้วยตัวเลข)',/^[\p{L}_]/u.test(v)],
+      ['มีแค่ตัวอักษร ตัวเลข และ _ (ห้ามมีช่องว่าง - @ # . หรือเครื่องหมายอื่น)',v.length>0&&/^[\p{L}\p{N}\p{M}_]+$/u.test(v)],
+      ['ไม่ซ้ำกับคำสงวน เช่น if, for, class, True',v.length>0&&!PY_KW.includes(v)]
+    ];
+    ul.innerHTML=rules.map(r=>`<li class="${r[1]?'p':'f'}">${r[1]?'✅':'❌'} ${r[0]}</li>`).join('');
+    if(!rules.every(r=>r[1])){vd.innerHTML=`<div class="box err"><b>❌ '${esc(v)}' ใช้เป็นชื่อตัวแปรไม่ได้</b> Python จะแจ้ง SyntaxError</div>`;return;}
+    const notes=[];
+    if(BUILTIN_NAMES.includes(v)&&!['True','False','None'].includes(v))notes.push(`ชื่อนี้ซ้ำกับคำสั่ง <code>${esc(v)}()</code> ของ Python ถ้าตั้งเป็นตัวแปร จะใช้คำสั่งเดิมไม่ได้อีก`);
+    if(/[^\x00-\x7f]/.test(v))notes.push('Python 3 ยอมให้ใช้ตัวอักษรไทยได้ แต่<b>ไม่แนะนำ</b> เพราะพิมพ์สลับภาษายาก และหลายเครื่องมือไม่รองรับ ควรใช้ภาษาอังกฤษ');
+    if(/[A-Z]/.test(v)&&/^[\x00-\x7f]+$/.test(v))notes.push(`ธรรมเนียมของ Python นิยมตั้งชื่อตัวแปรด้วยตัวพิมพ์เล็กคั่นด้วย _ เช่น <code>${esc(v.replace(/([a-z0-9])([A-Z])/g,'$1_$2').toLowerCase())}</code> และจำไว้ว่า <code>${esc(v)}</code> กับ <code>${esc(v.toLowerCase())}</code> เป็นคนละตัวกัน`);
+    vd.innerHTML=notes.length?`<div class="box warn"><b>⚠️ '${esc(v)}' ใช้ได้ แต่...</b><ul>${notes.map(n=>`<li>${n}</li>`).join('')}</ul></div>`:`<div class="box good"><b>✅ '${esc(v)}' เป็นชื่อตัวแปรที่ดี</b></div>`;
+  };
+  inp.oninput=upd;upd();
+}
+
+/* =====================================================================
+   ส่วนที่ 5: เนื้อหา 7 ขั้น
+   ===================================================================== */
+const C=String.raw;
+const STEPS=[
+/* ---------------- ขั้นที่ 1 ---------------- */
+{name:'1 print()',title:'ขั้นที่ 1: รู้จัก Python และคำสั่งแรก print()',
+ learn:C`<p><b>Python</b> (ไพธอน) เป็นภาษาโปรแกรมที่ <b>อ่านง่าย ใกล้เคียงภาษาอังกฤษ</b> สร้างโดย Guido van Rossum เมื่อปี ค.ศ. 1991 ปัจจุบันเป็นหนึ่งในภาษาที่นิยมที่สุดในโลก 🌏 ใช้ทำได้แทบทุกอย่าง</p>
+ <ul><li>🤖 ปัญญาประดิษฐ์ (AI) และ Machine Learning</li><li>📊 วิเคราะห์ข้อมูลและวาดกราฟ</li><li>🌐 เว็บไซต์ และงานอัตโนมัติ</li><li>🎮 เกม และ 🔌 ควบคุมบอร์ดไมโครคอนโทรลเลอร์ (MicroPython)</li></ul>
+ <h3>เทียบกับภาษาซี</h3>
+ <div class="tw"><table><tr><th>ภาษาซี</th><th>Python</th></tr>
+ <tr><td><pre class="show" style="margin:0">#include &lt;stdio.h&gt;
+int main(void)
+{
+    printf("Hello\n");
+    return 0;
+}</pre></td><td><pre class="show" style="margin:0">print("Hello")</pre><p style="margin:6px 0 0">บรรทัดเดียวจบ! 😎</p></td></tr></table></div>
+ <div class="tw"><table><tr><th>เรื่อง</th><th>ภาษาซี</th><th>Python</th></tr>
+ <tr><td>วิธีทำงาน</td><td>คอมไพล์ทั้งไฟล์ก่อนรัน</td><td>อ่านและทำทีละบรรทัด (interpreter)</td></tr>
+ <tr><td>จบคำสั่ง</td><td>ต้องมี <code>;</code></td><td>ไม่ต้องมี ขึ้นบรรทัดใหม่ก็จบคำสั่ง</td></tr>
+ <tr><td>ฟังก์ชัน main</td><td>ต้องมี</td><td>ไม่ต้องมี เขียนคำสั่งได้เลย</td></tr>
+ <tr><td>ชนิดตัวแปร</td><td>ต้องประกาศ เช่น <code>int x;</code></td><td>ไม่ต้องประกาศ Python ดูจากค่าเอง</td></tr>
+ <tr><td>การย่อหน้า</td><td>เพื่อความสวยงาม</td><td>เป็นไวยากรณ์ ย่อหน้าผิดก็ error</td></tr></table></div>
+ <h3>คำสั่ง print() แสดงผลบนหน้าจอ</h3>
+ <pre class="show">print("ข้อความที่ต้องการแสดง")</pre>
+ <p>คลิกแต่ละบรรทัดของโปรแกรมด้านล่าง เพื่ออ่านว่าทำอะไร</p>`,
+ annot:[
+  {c:'# My first Python program',e:'<b>คอมเมนต์ (comment)</b> ขึ้นต้นด้วย <code>#</code> Python จะข้ามไปไม่ทำงาน ใช้เขียนบันทึกไว้ให้คนอ่าน'},
+  {c:'print("Hello, Python!")',e:'<b>คำสั่งแสดงผล</b> ประกอบด้วย ชื่อคำสั่ง <code>print</code> (ตัวพิมพ์เล็กทั้งหมด) + วงเล็บ <code>( )</code> + ข้อความในเครื่องหมายคำพูด <code>" "</code><br>หน้าจอแสดง <code>Hello, Python!</code> (เครื่องหมายคำพูดไม่แสดงออกมา)'},
+  {c:'print("สวัสดีครับ")',e:'ใช้ข้อความภาษาไทยได้เลย'},
+  {c:'print(10 + 5)',e:'<b>ไม่มีเครื่องหมายคำพูด</b> Python จึงมองว่าเป็นตัวเลข แล้วคำนวณก่อนแสดง ได้ <code>15</code>'},
+  {c:'print("10 + 5")',e:'<b>มีเครื่องหมายคำพูด</b> จึงเป็นข้อความ แสดงตรงตัว <code>10 + 5</code> ไม่มีการคำนวณ'},
+  {c:'print()',e:'วงเล็บว่างเปล่า = แสดง <b>บรรทัดว่าง</b> 1 บรรทัด'}],
+ learn2:C`<div class="box warn" style="margin-top:12px"><b>กฎ 4 ข้อของ print()</b><ul>
+ <li><code>print</code> ต้องเป็น<b>ตัวพิมพ์เล็ก</b> Python แยกตัวพิมพ์เล็ก-ใหญ่ <code>Print</code> จึงผิด</li>
+ <li>ข้อความต้องอยู่ในเครื่องหมาย <code>" "</code> หรือ <code>' '</code> และต้องปิดให้ครบคู่</li>
+ <li>วงเล็บ <code>( )</code> ต้องครบคู่</li>
+ <li>คำสั่งต้อง<b>ชิดซ้าย</b> ห้ามเว้นวรรคหน้าบรรทัดโดยไม่จำเป็น</li></ul></div>
+ <p>💡 Python ทำงาน <b>จากบนลงล่าง ทีละบรรทัด</b> ลองกด "👣 ดูการทำงานทีละบรรทัด" หลังรัน จะเห็นลำดับนี้ชัดเจน</p>`,
+ labs:[{tip:'กด ▶ รันโปรแกรม แล้วเปิด "👣 ดูการทำงานทีละบรรทัด" จากนั้นลองกดปุ่ม 😈 ทีละปุ่ม แล้วอ่านคำอธิบายภาษาไทยว่าผิดตรงไหน',trace:true,
+  code:C`# My first Python program
+print("Hello, Python!")
+print("สวัสดีครับ")
+print(10 + 5)
+print("10 + 5")`,
+  tries:[
+   {label:'😈 ลืมปิดเครื่องหมายคำพูด',fn:c=>c.replace('print("Hello, Python!")','print("Hello, Python!)')},
+   {label:'😈 พิมพ์ Print ตัวใหญ่',fn:c=>c.replace('print("สวัสดีครับ")','Print("สวัสดีครับ")')},
+   {label:'😈 ลืมวงเล็บปิด',fn:c=>c.replace('print("10 + 5")','print("10 + 5"')},
+   {label:'😈 ไม่ใส่เครื่องหมายคำพูด',fn:c=>c.replace('print("Hello, Python!")','print(Hello)')},
+   {label:'😈 เว้นวรรคหน้าบรรทัด',fn:c=>c.replace('print(10 + 5)','    print(10 + 5)')}]}],
+ mission:{title:'ป้ายทักทาย',task:'<p>เขียนโปรแกรมด้วย <code>print()</code> 3 คำสั่ง ให้แสดงผลตามตาราง (ดอกจันบรรทัดแรกและบรรทัดสุดท้ายมี 9 ตัว)</p>',
+  hint:'print("*********") แล้วตามด้วย print("* Hello *") และ print("*********")',
+  code:C`# เขียน print 3 บรรทัดตรงนี้
+`,tests:[{expected:'*********\n* Hello *\n*********\n'}],requires:[{re:/print\s*\(/,msg:'ใช้คำสั่ง print()'}],
+  solution:C`print("*********")
+print("* Hello *")
+print("*********")`},
+ quiz:[
+  {q:'ข้อใดเขียนคำสั่งแสดงข้อความ Hi ได้ถูกต้อง',c:['print("Hi")','Print("Hi")','print "Hi"','print(Hi)'],a:0,e:'print ตัวพิมพ์เล็ก มีวงเล็บ และข้อความอยู่ในเครื่องหมายคำพูด'},
+  {q:C`<code>print(2 + 3)</code> และ <code>print("2 + 3")</code> แสดงผลอะไรตามลำดับ`,c:['5 และ 5','2 + 3 และ 5','5 และ 2 + 3','2 + 3 และ 2 + 3'],a:2,e:'ไม่มีเครื่องหมายคำพูดจะคำนวณ ส่วนที่มีเครื่องหมายคำพูดเป็นข้อความ แสดงตรงตัว'},
+  {q:'บรรทัดที่ขึ้นต้นด้วย # คืออะไร',c:['คำสั่งพิเศษที่ทำก่อนบรรทัดอื่น','คอมเมนต์ที่ Python ข้ามไม่ทำงาน','บรรทัดที่ผิดพลาด','คำสั่งแสดงหัวข้อ'],a:1,e:'คอมเมนต์ใช้เขียนบันทึกให้คนอ่าน'}]},
+
+/* ---------------- ขั้นที่ 2 ---------------- */
+{name:'2 ข้อความ',title:'ขั้นที่ 2: ข้อความ (String) และคอมเมนต์',
+ widget:{type:'shell',id:'s2',tip:'Shell คือที่ทดลองคำสั่งทีละบรรทัด พิมพ์แล้วกด Enter เห็นผลทันที (ถ้าพิมพ์ค่าเฉยๆ Shell จะแสดงค่านั้นพร้อมเครื่องหมายคำพูด เพื่อบอกว่าเป็นข้อความ)',
+  samples:['"Hello" + "World"','"Ha" * 3','"5" + "5"','len("Python")','"python".upper()','print("A", "B", "C")','print("A", "B", sep="-")','print("Line1\\nLine2")']},
+ learn:C`<p>ข้อมูลที่เป็นตัวอักษรเรียกว่า <b>ข้อความ (string ย่อว่า str)</b> เขียนไว้ในเครื่องหมาย <code>" "</code> หรือ <code>' '</code> ก็ได้ ความหมายเหมือนกัน</p>
+ <pre class="show">print("Hello")      # ใช้ " " ได้
+print('Hello')      # ใช้ ' ' ก็ได้ผลเหมือนกัน
+print("It's fun")   # ข้อความมี ' อยู่ข้างใน ให้ครอบด้วย " "
+print('He said "Hi"')</pre>
+ <h3>อักขระพิเศษ (Escape sequence)</h3>
+ <div class="tw"><table><tr><th>เขียน</th><th>ความหมาย</th></tr>
+ <tr><td><code>\n</code></td><td>ขึ้นบรรทัดใหม่</td></tr><tr><td><code>\t</code></td><td>เว้นระยะ (tab)</td></tr>
+ <tr><td><code>\"</code> หรือ <code>\'</code></td><td>แสดงเครื่องหมายคำพูด</td></tr><tr><td><code>\\</code></td><td>แสดง \</td></tr></table></div>
+ <h3>เทคนิคการแสดงผลด้วย print()</h3>
+ <div class="tw"><table><tr><th>เขียน</th><th>ผลลัพธ์</th><th>อธิบาย</th></tr>
+ <tr><td><code>print("A" + "B")</code></td><td><code>AB</code></td><td>+ ต่อข้อความติดกัน</td></tr>
+ <tr><td><code>print("A", "B")</code></td><td><code>A B</code></td><td>คั่นด้วย , จะเว้นวรรคให้อัตโนมัติ</td></tr>
+ <tr><td><code>print("Ha" * 3)</code></td><td><code>HaHaHa</code></td><td>* ทำซ้ำข้อความ</td></tr>
+ <tr><td><code>print("A", "B", sep="-")</code></td><td><code>A-B</code></td><td>sep = ตัวคั่นระหว่างค่า</td></tr>
+ <tr><td><code>print("A", end=" ")</code><br><code>print("B")</code></td><td><code>A B</code></td><td>end = สิ่งที่ต่อท้าย (ปกติคือขึ้นบรรทัดใหม่)</td></tr></table></div>
+ <h3>คอมเมนต์ (Comment)</h3>
+ <pre class="show"># คอมเมนต์บรรทัดเดียว ขึ้นต้นด้วย #
+print("Hi")   # เขียนต่อท้ายคำสั่งก็ได้</pre>
+ <p>คอมเมนต์ที่ดีควรอธิบาย <b>"ทำไม"</b> ไม่ใช่แค่ทวนสิ่งที่โค้ดเขียนอยู่แล้ว</p>`,
+ labs:[{tip:'ทายผลลัพธ์ของแต่ละบรรทัดก่อนกดรัน แล้วกดปุ่ม 😈 ดูข้อผิดพลาดที่พบบ่อย',trace:true,
+  code:C`# This line is a comment (Python skips it)
+print("Hello" + "World")
+print("Hello", "World")
+print("Ha" * 3)
+print("2024", "06", "15", sep="-")
+print("Loading", end="...")
+print("Done!")
+print("Name:\tSomchai\nClass:\tM.4/1")
+print('He said "Hi"')
+print("It's fun!")`,
+  tries:[
+   {label:"😈 ครอบ It's ด้วย ' '",fn:c=>c.replace("print(\"It's fun!\")","print('It's fun!')")},
+   {label:'😈 ลบ # หน้าคอมเมนต์',fn:c=>c.replace('# This line','This line')},
+   {label:'😈 เอาข้อความ + ตัวเลข',fn:c=>c.replace('print("Ha" * 3)','print("Ha" + 3)')}]}],
+ mission:{title:'ป้ายชื่อ',task:C`<p>แสดงป้ายชื่อ 4 บรรทัดตามตาราง โดยเส้นบนและเส้นล่าง (เครื่องหมาย = 10 ตัว) <b>ต้องสร้างด้วย</b> <code>"=" * 10</code></p>`,
+  hint:'print("=" * 10) แล้วตามด้วย print("Name: Mali") และ print("Class: M.4") แล้วปิดด้วย print("=" * 10)',
+  code:C`# ใช้ "=" * 10 สร้างเส้น แล้วใช้ print แสดงชื่อและชั้น
+`,tests:[{expected:'==========\nName: Mali\nClass: M.4\n==========\n'}],requires:[{re:/\*\s*10|10\s*\*/,msg:'ใช้ "=" * 10 สร้างเส้น'}],
+  solution:C`print("=" * 10)
+print("Name: Mali")
+print("Class: M.4")
+print("=" * 10)`},
+ quiz:[
+  {q:C`<code>print("Hi" * 3)</code> แสดงผลอะไร`,c:['Hi3','HiHiHi','Hi Hi Hi','เกิดข้อผิดพลาด'],a:1,e:'* กับข้อความคือการทำซ้ำ'},
+  {q:C`<code>print("A", "B", sep="")</code> แสดงผลอะไร`,c:['A B','AB','A,B','A-B'],a:1,e:'sep="" คือไม่มีตัวคั่น'},
+  {q:C`<code>print("Py" + "thon")</code> กับ <code>print("Py", "thon")</code> แสดงผลอะไรตามลำดับ`,c:['Python และ Python','Py thon และ Python','Python และ Py thon','Py+thon และ Py,thon'],a:2,e:'+ ต่อติดกัน ส่วน , เว้นวรรคให้'}]},
+
+/* ---------------- ขั้นที่ 3 ---------------- */
+{name:'3 คำนวณ',title:'ขั้นที่ 3: ตัวเลขและการคำนวณ',
+ widget:{type:'shell',id:'s3',tip:'ใช้ Python เป็นเครื่องคิดเลข ลองกดตัวอย่างทีละปุ่ม เปรียบเทียบผลของ / // และ %',
+  samples:['7 + 2','7 / 2','6 / 2','7 // 2','7 % 2','2 ** 10','2 + 3 * 4','(2 + 3) * 4','-7 // 2','0.1 + 0.2','10 / 0']},
+ learn:C`<p>Python มีตัวเลข 2 แบบหลัก</p>
+ <div class="tw"><table><tr><th>ชนิด</th><th>ความหมาย</th><th>ตัวอย่าง</th></tr>
+ <tr><td><code>int</code></td><td>จำนวนเต็ม (integer)</td><td><code>16</code>, <code>-5</code>, <code>1000000</code></td></tr>
+ <tr><td><code>float</code></td><td>จำนวนทศนิยม</td><td><code>3.14</code>, <code>-0.5</code>, <code>2.0</code></td></tr></table></div>
+ <h3>เครื่องหมายคำนวณ</h3>
+ <div class="tw"><table><tr><th>เครื่องหมาย</th><th>ความหมาย</th><th>ตัวอย่าง</th><th>ผล</th></tr>
+ <tr><td><code>+</code> <code>-</code></td><td>บวก ลบ</td><td><code>7 - 2</code></td><td>5</td></tr>
+ <tr><td><code>*</code></td><td>คูณ (ไม่ใช่ x)</td><td><code>7 * 2</code></td><td>14</td></tr>
+ <tr><td><code>/</code></td><td>หาร ได้ทศนิยม<b>เสมอ</b></td><td><code>7 / 2</code> · <code>6 / 2</code></td><td>3.5 · 3.0</td></tr>
+ <tr><td><code>//</code></td><td>หารเอาแต่จำนวนเต็ม (ปัดลง)</td><td><code>7 // 2</code></td><td>3</td></tr>
+ <tr><td><code>%</code></td><td>เศษจากการหาร</td><td><code>7 % 2</code></td><td>1</td></tr>
+ <tr><td><code>**</code></td><td>ยกกำลัง (ไม่ใช่ ^)</td><td><code>2 ** 3</code></td><td>8</td></tr></table></div>
+ <div class="box warn"><b>ต่างจากภาษาซี!</b> ในภาษาซี <code>7 / 2</code> ได้ 3 แต่ใน Python ได้ <b>3.5</b> ถ้าต้องการหารแบบตัดเศษให้ใช้ <code>//</code></div>
+ <h3>ลำดับการคำนวณ</h3>
+ <p><code>( )</code> → <code>**</code> → <code>*  /  //  %</code> → <code>+  -</code> (ลำดับเท่ากันทำจากซ้ายไปขวา) เช่น <code>2 + 3 * 4</code> ได้ 14 ส่วน <code>(2 + 3) * 4</code> ได้ 20</p>
+ <p>💡 <code>0.1 + 0.2</code> ได้ <code>0.30000000000000004</code> ไม่ใช่บั๊กของ Python แต่เป็นธรรมชาติของการเก็บทศนิยมในคอมพิวเตอร์ (เลขฐานสอง)</p>
+ <h3>ใช้ // และ % คู่กัน</h3>
+ <p>เหมาะกับการแปลงหน่วย เช่น 135 นาที → <code>135 // 60</code> = 2 ชั่วโมง เหลือ <code>135 % 60</code> = 15 นาที</p>`,
+ labs:[{tip:'เครื่องคิดเลขด้วย print ลองทายผลแต่ละบรรทัดก่อนรัน แล้วกด 😈',trace:true,
+  code:C`print("7 + 2 =", 7 + 2)
+print("7 - 2 =", 7 - 2)
+print("7 * 2 =", 7 * 2)
+print("7 / 2 =", 7 / 2)
+print("7 // 2 =", 7 // 2)
+print("7 % 2 =", 7 % 2)
+print("7 ** 2 =", 7 ** 2)
+print("2 + 3 * 4 =", 2 + 3 * 4)
+print("(2 + 3) * 4 =", (2 + 3) * 4)`,
+  tries:[{label:'😈 หารด้วย 0',fn:c=>c.replace('print("7 / 2 =", 7 / 2)','print("7 / 0 =", 7 / 0)')}]}],
+ mission:{title:'แปลงนาทีเป็นชั่วโมง',task:C`<p>135 นาที เท่ากับกี่ชั่วโมงกี่นาที ให้ใช้ <code>//</code> หาชั่วโมง และ <code>%</code> หานาทีที่เหลือ แล้วแสดงผลตามตาราง (ให้ Python คำนวณ ห้ามพิมพ์คำตอบตรงๆ)</p>`,
+  hint:'print(135 // 60, "hours", 135 % 60, "minutes")',
+  code:C`# 135 นาที = ? ชั่วโมง ? นาที
+`,tests:[{expected:'2 hours 15 minutes\n'}],requires:[{re:/\/\//,msg:'ใช้ // หาชั่วโมง'},{re:/%/,msg:'ใช้ % หานาทีที่เหลือ'}],
+  solution:C`print(135 // 60, "hours", 135 % 60, "minutes")`},
+ quiz:[
+  {q:C`<code>print(7 / 2)</code> แสดงผลอะไร`,c:['3','3.5','3.0','4'],a:1,e:'/ ใน Python ให้ผลเป็นทศนิยมเสมอ'},
+  {q:C`<code>print(17 // 5, 17 % 5)</code> แสดงผลอะไร`,c:['3 2','3.4 0','2 3','3 4'],a:0,e:'17 = 5 × 3 + 2 ได้ผลหาร 3 เศษ 2'},
+  {q:C`<code>print(2 + 3 * 2)</code> แสดงผลอะไร`,c:['10','8','7','12'],a:1,e:'คูณก่อนบวก 3 × 2 = 6 แล้ว 2 + 6 = 8'}]},
+
+/* ---------------- ขั้นที่ 4 ---------------- */
+{name:'4 ตัวแปร',title:'ขั้นที่ 4: ตัวแปร (Variable) ที่เก็บข้อมูล',
+ widget:{type:'ident'},
+ learn:C`<p>ถ้าต้องใช้ค่าเดิมหลายครั้ง หรือต้องจำค่าไว้ใช้ทีหลัง เราเก็บไว้ใน <b>ตัวแปร (variable)</b> เปรียบเหมือน <b>กล่องที่ติดป้ายชื่อ</b> 📦🏷️</p>
+ <pre class="show">ชื่อตัวแปร = ค่า
+score = 80        # สร้างกล่องชื่อ score แล้วใส่ 80 ลงไป</pre>
+ <div class="box warn"><b>เครื่องหมาย = ไม่ได้แปลว่า "เท่ากับ"</b> แบบคณิตศาสตร์ แต่แปลว่า <b>"เอาค่าทางขวา ไปเก็บในตัวแปรทางซ้าย"</b> (อ่านจากขวาไปซ้าย) Python จะ<b>คำนวณทางขวาให้เสร็จก่อน</b> แล้วจึงเก็บ</div>
+ <h3>การใช้งานตัวแปร</h3>
+ <div class="tw"><table><tr><th>เขียน</th><th>ความหมาย</th></tr>
+ <tr><td><code>price = 25</code></td><td>สร้างตัวแปร price เก็บ 25</td></tr>
+ <tr><td><code>total = price * 3</code></td><td>อ่านค่าใน price มาคำนวณ ได้ 75 แล้วเก็บใน total</td></tr>
+ <tr><td><code>price = 30</code></td><td>เปลี่ยนค่า ค่าเดิม 25 หายไป</td></tr>
+ <tr><td><code>count = count + 1</code></td><td>นำค่าเดิมมาบวก 1 แล้วเก็บกลับที่เดิม (ทางคณิตศาสตร์เป็นไปไม่ได้ แต่ในโปรแกรมทำได้!)</td></tr>
+ <tr><td><code>count += 1</code></td><td>เขียนย่อของบรรทัดบน (มี <code>-=</code> <code>*=</code> <code>/=</code> ด้วย)</td></tr>
+ <tr><td><code>a, b = 1, 2</code></td><td>กำหนดหลายตัวพร้อมกัน</td></tr>
+ <tr><td><code>a, b = b, a</code></td><td>สลับค่า a กับ b (ท่าพิเศษของ Python)</td></tr></table></div>
+ <p>💡 ต่างจากภาษาซีตรงที่ <b>ไม่ต้องบอกชนิด</b> (ภาษาซีเขียน <code>int score = 80;</code> แต่ Python เขียนแค่ <code>score = 80</code>)</p>
+ <p>คลิกแต่ละบรรทัดด้านล่าง แล้วลองตอบในใจว่า <b>บรรทัดที่ 6 แสดงผลอะไร?</b></p>`,
+ annot:[
+  {c:'score = 80',e:'สร้างตัวแปร <code>score</code> เก็บค่า 80<pre class="show">score → [ 80 ]</pre>'},
+  {c:'bonus = 5',e:'สร้างตัวแปร <code>bonus</code> เก็บค่า 5'},
+  {c:'total = score + bonus',e:'Python คำนวณทางขวาก่อน: 80 + 5 = <b>85</b> แล้วเก็บผลลัพธ์ลงใน <code>total</code>'},
+  {c:'print(total)',e:'แสดงผล <b>85</b>'},
+  {c:'score = 90',e:'เปลี่ยนค่า score เป็น 90 (ค่า 80 หายไป)'},
+  {c:'print(total)',e:'แสดงผล... <b>85</b> ไม่ใช่ 95! 😮 เพราะ total เก็บ<b>ผลลัพธ์</b> 85 ไว้แล้ว ไม่ได้เก็บ "สูตร" เมื่อ score เปลี่ยน total จึงไม่เปลี่ยนตาม จุดนี้หลายคนเข้าใจผิด'},
+  {c:'total = score + bonus',e:'คำนวณใหม่: 90 + 5 = 95 แล้วเก็บทับใน total'},
+  {c:'print(total)',e:'แสดงผล <b>95</b>'}],
+ learn2:C`<h3>กฎการตั้งชื่อตัวแปร</h3>
+ <div class="tw"><table><tr><th>✅ ใช้ได้</th><th>❌ ใช้ไม่ได้</th><th>เหตุผล</th></tr>
+ <tr><td><code>score2</code></td><td><code>2score</code></td><td>ห้ามขึ้นต้นด้วยตัวเลข</td></tr>
+ <tr><td><code>total_price</code></td><td><code>total price</code> <code>total-price</code></td><td>ห้ามมีช่องว่างหรือขีด - (ใช้ _ แทน)</td></tr>
+ <tr><td><code>my_class</code></td><td><code>class</code></td><td>ห้ามใช้คำสงวน</td></tr>
+ <tr><td><code>_temp</code></td><td><code>price$</code></td><td>ใช้ได้เฉพาะตัวอักษร ตัวเลข และ _</td></tr></table></div>
+ <ul><li><code>score</code> กับ <code>Score</code> เป็น<b>คนละตัว</b> (แยกตัวพิมพ์เล็ก-ใหญ่)</li>
+ <li>ควรตั้งชื่อ<b>ให้สื่อความหมาย</b> เช่น <code>total_price</code> ดีกว่า <code>x</code> และนิยมใช้ตัวพิมพ์เล็กคั่นด้วย _ (snake_case)</li></ul>`,
+ labs:[
+  {tip:'รันแล้วกด "ถัดไป ▶" ใน 👣 ดูทีละบรรทัด สังเกตตารางตัวแปร (เขียว = สร้างใหม่ เหลือง = เปลี่ยนค่า) แล้วกด 😈 ดูข้อผิดพลาดที่พบบ่อยเกี่ยวกับตัวแปร',trace:true,
+   code:C`score = 80
+bonus = 5
+total = score + bonus
+print(total)
+score = 90
+print(total)
+total = score + bonus
+print(total)`,
+   tries:[
+    {label:'😈 ใช้ตัวแปรก่อนสร้าง',fn:c=>c.replace('bonus = 5\n','')},
+    {label:'😈 ตัวพิมพ์ไม่ตรงกัน',fn:c=>c.replace('print(total)','print(Total)')},
+    {label:'😈 ชื่อขึ้นต้นด้วยตัวเลข',fn:c=>c.replace('bonus = 5','5bonus = 5')},
+    {label:'😈 เขียนสลับข้าง =',fn:c=>c.replace('score = 80','80 = score')},
+    {label:'😈 ชื่อมีขีด -',fn:c=>c.replace('bonus = 5','my-bonus = 5')}]},
+  {tip:'สลับค่าและเพิ่มค่าตัวแปร ทายก่อนว่า count สุดท้ายเป็นเท่าไร แล้วดูทีละบรรทัด',trace:true,
+   code:C`a = 10
+b = 20
+print("Before:", a, b)
+a, b = b, a
+print("After:", a, b)
+
+count = 0
+count = count + 1
+count += 1
+count *= 5
+print("count =", count)`}],
+ mission:{title:'ค่าขนมของฉัน',task:C`<p>ดินสอราคาแท่งละ 12 บาท สมุดราคาเล่มละ 25 บาท มีเงิน 100 บาท <b>ซื้อดินสอ 3 แท่ง และสมุด 2 เล่ม</b> ให้คำนวณราคารวมเก็บในตัวแปร <code>total</code> และเงินทอนเก็บในตัวแปร <code>change</code> แล้วแสดงผลตามตาราง (ใช้ตัวแปรที่ให้ไว้ ห้ามพิมพ์คำตอบตรงๆ)</p>`,
+  hint:'total = pencil * 3 + notebook * 2 แล้ว change = money - total จากนั้น print("Total:", total) และ print("Change:", change)',
+  code:C`pencil = 12      # ราคาดินสอ แท่งละ 12 บาท
+notebook = 25    # ราคาสมุด เล่มละ 25 บาท
+money = 100      # เงินที่มี
+
+# 1) คำนวณราคารวม (ดินสอ 3 แท่ง สมุด 2 เล่ม) เก็บในตัวแปร total
+# 2) คำนวณเงินทอน เก็บในตัวแปร change
+# 3) แสดงผล
+`,tests:[{expected:'Total: 86\nChange: 14\n'}],
+  requires:[{re:/\btotal\s*=/,msg:'สร้างตัวแปร total'},{re:/\bchange\s*=/,msg:'สร้างตัวแปร change'},{re:/print\s*\([^\n]*\btotal\b/,msg:'แสดงผลด้วยตัวแปร total (ไม่พิมพ์ตัวเลขตรงๆ)'}],
+  solution:C`pencil = 12
+notebook = 25
+money = 100
+
+total = pencil * 3 + notebook * 2
+change = money - total
+print("Total:", total)
+print("Change:", change)`},
+ quiz:[
+  {q:C`<code>x = 5</code> แล้ว <code>x = x + 3</code> แล้ว <code>print(x)</code> แสดงผลอะไร`,c:['5','8','x + 3','เกิดข้อผิดพลาด'],a:1,e:'คำนวณทางขวา 5 + 3 = 8 แล้วเก็บกลับใน x'},
+  {q:C`<code>a = 3</code> แล้ว <code>b = a</code> แล้ว <code>a = 10</code> แล้ว <code>print(b)</code> แสดงผลอะไร`,c:['10','3','13','a'],a:1,e:'b ได้ค่า 3 ไปตอนที่กำหนด การเปลี่ยน a ภายหลังไม่ทำให้ b เปลี่ยน'},
+  {q:'ข้อใดตั้งชื่อตัวแปรได้ถูกต้อง',c:['my_score','2nd_place','my-score','class'],a:0,e:'ห้ามขึ้นต้นด้วยตัวเลข ห้ามมีขีด - และห้ามใช้คำสงวน'},
+  {q:C`ในโปรแกรม <code>speed = 60</code> หมายความว่าอย่างไร`,c:['speed เท่ากับ 60 จริงหรือไม่','นำค่า 60 ไปเก็บในตัวแปร speed','นำ speed ไปเก็บใน 60','แสดงค่า speed'],a:1,e:'= คือการกำหนดค่า อ่านจากขวาไปซ้าย'}]},
+
+/* ---------------- ขั้นที่ 5 ---------------- */
+{name:'5 ชนิดข้อมูล',title:'ขั้นที่ 5: ชนิดข้อมูลและการแปลงชนิด',
+ widget:{type:'shell',id:'s5',tip:'ใช้ type() ถามชนิดของข้อมูล และลองแปลงชนิดด้วย int() float() str() (ปุ่มท้ายๆ จะเกิด error ลองอ่านดูว่าทำไม)',
+  samples:['type(16)','type(165.5)','type("16")','type(True)','"5" + "5"','5 + 5','int("42") + 1','float("3.5") * 2','str(99) + "%"','int(3.9)','round(3.14159, 2)','int("3.5")','"Age: " + 16']},
+ learn:C`<p>ข้อมูลทุกค่าใน Python มี <b>ชนิด (type)</b> ซึ่งกำหนดว่าทำอะไรกับมันได้บ้าง</p>
+ <div class="tw"><table><tr><th>ชนิด</th><th>ความหมาย</th><th>ตัวอย่าง</th></tr>
+ <tr><td><span class="tag int">int</span></td><td>จำนวนเต็ม</td><td><code>16</code></td></tr>
+ <tr><td><span class="tag float">float</span></td><td>ทศนิยม</td><td><code>165.5</code></td></tr>
+ <tr><td><span class="tag str">str</span></td><td>ข้อความ</td><td><code>"Mali"</code>, <code>"16"</code></td></tr>
+ <tr><td><span class="tag bool">bool</span></td><td>จริง/เท็จ</td><td><code>True</code>, <code>False</code> (ตัวแรกพิมพ์ใหญ่)</td></tr></table></div>
+ <div class="box warn"><b><code>16</code> กับ <code>"16"</code> ไม่เหมือนกัน!</b> <code>16</code> เป็นตัวเลข นำไปคำนวณได้ ส่วน <code>"16"</code> เป็นข้อความ <code>16 + 16</code> ได้ 32 แต่ <code>"16" + "16"</code> ได้ <code>"1616"</code></div>
+ <h3>ถามชนิดด้วย type()</h3>
+ <pre class="show">print(type(16))       # &lt;class 'int'&gt;
+print(type("16"))     # &lt;class 'str'&gt;</pre>
+ <h3>แปลงชนิดข้อมูล</h3>
+ <div class="tw"><table><tr><th>คำสั่ง</th><th>ผล</th><th>หมายเหตุ</th></tr>
+ <tr><td><code>int("42")</code></td><td><code>42</code></td><td>ข้อความ → จำนวนเต็ม</td></tr>
+ <tr><td><code>int(3.9)</code></td><td><code>3</code></td><td>ตัดทศนิยมทิ้ง <b>ไม่ปัดเศษ</b></td></tr>
+ <tr><td><code>float("3.5")</code></td><td><code>3.5</code></td><td>ข้อความ → ทศนิยม</td></tr>
+ <tr><td><code>float(7)</code></td><td><code>7.0</code></td><td>จำนวนเต็ม → ทศนิยม</td></tr>
+ <tr><td><code>str(99)</code></td><td><code>"99"</code></td><td>ตัวเลข → ข้อความ</td></tr>
+ <tr><td><code>round(3.567, 1)</code></td><td><code>3.6</code></td><td>ปัดเศษตามจำนวนตำแหน่ง</td></tr>
+ <tr><td><code>int("3.5")</code></td><td>❌ ValueError</td><td>int() แปลงข้อความทศนิยมไม่ได้</td></tr>
+ <tr><td><code>int("abc")</code></td><td>❌ ValueError</td><td>ไม่ใช่ตัวเลข</td></tr></table></div>
+ <h3>แสดงข้อความคู่กับตัวเลข</h3>
+ <pre class="show">age = 16
+print("Age: " + age)        # ❌ TypeError: str + int ไม่ได้
+print("Age: " + str(age))   # ✅ แปลงเป็นข้อความก่อน
+print("Age:", age)          # ✅ ใช้ , คั่น
+print(f"Age: {age}")        # ✅ f-string (เรียนขั้นถัดไป)</pre>`,
+ labs:[{tip:'ดูชนิดของตัวแปรแต่ละตัวใน 👣 (ป้ายสีบอกชนิด) แล้วกด 😈 ทั้งสองปุ่ม',trace:true,
+  code:C`name = "Mali"
+age = 16
+height = 165.5
+is_student = True
+
+print(name, type(name))
+print(age, type(age))
+print(height, type(height))
+print(is_student, type(is_student))
+
+text = "100"
+number = int(text)
+print(text + text)
+print(number + number)
+print("Age: " + str(age))`,
+  tries:[
+   {label:'😈 ต่อข้อความกับตัวเลขตรงๆ',fn:c=>c.replace('"Age: " + str(age)','"Age: " + age')},
+   {label:'😈 แปลง "abc" เป็น int',fn:c=>c.replace('text = "100"','text = "abc"')}]}],
+ mission:{title:'ต่อข้อความ หรือ บวกเลข?',task:C`<p>ตัวแปร <code>a</code> และ <code>b</code> เก็บตัวเลขไว้ในรูป<b>ข้อความ</b> ให้แสดงผล 2 บรรทัด ① นำ a กับ b มาต่อกันแบบข้อความ ② แปลงเป็นตัวเลขด้วย <code>int()</code> แล้วบวกกัน</p>`,
+  hint:'print("Joined:", a + b) แล้ว print("Sum:", int(a) + int(b))',
+  code:C`a = "25"
+b = "17"
+
+# 1) แสดงผลการต่อข้อความ a กับ b
+# 2) แปลงเป็นตัวเลขแล้วบวกกัน
+`,tests:[{expected:'Joined: 2517\nSum: 42\n'}],requires:[{re:/int\s*\(/,msg:'ใช้ int() แปลงข้อความเป็นตัวเลข'}],
+  solution:C`a = "25"
+b = "17"
+print("Joined:", a + b)
+print("Sum:", int(a) + int(b))`},
+ quiz:[
+  {q:C`<code>type(3.0)</code> คือชนิดใด`,c:['int','float','str','bool'],a:1,e:'มีจุดทศนิยมจึงเป็น float แม้ทศนิยมเป็น 0'},
+  {q:C`<code>print("3" + "4")</code> แสดงผลอะไร`,c:['7','34','"34"','เกิดข้อผิดพลาด'],a:1,e:'ทั้งสองเป็นข้อความ + จึงเป็นการต่อข้อความ'},
+  {q:C`<code>print(int("7") + 3)</code> แสดงผลอะไร`,c:['73','10','7 3','เกิดข้อผิดพลาด'],a:1,e:'int("7") ได้ตัวเลข 7 แล้วบวก 3 ได้ 10'},
+  {q:C`<code>print(int(9.99))</code> แสดงผลอะไร`,c:['10','9','9.99','9.0'],a:1,e:'int() ตัดทศนิยมทิ้ง ไม่ปัดเศษ'}]},
+
+/* ---------------- ขั้นที่ 6 ---------------- */
+{name:'6 input()',title:'ขั้นที่ 6: รับข้อมูลด้วย input() และ f-string',
+ learn:C`<p>โปรแกรมจะน่าสนใจขึ้นเมื่อ <b>โต้ตอบกับผู้ใช้</b> ได้ คำสั่ง <code>input()</code> ใช้รับข้อมูลที่ผู้ใช้พิมพ์</p>
+ <pre class="show">name = input("What is your name? ")</pre>
+ <ol><li>แสดงข้อความชวนพิมพ์ <code>What is your name? </code></li><li>รอให้ผู้ใช้พิมพ์แล้วกด Enter</li><li>นำสิ่งที่พิมพ์มาเก็บในตัวแปร <code>name</code></li></ol>
+ <div class="box err"><b>สำคัญที่สุดของบทนี้:</b> <code>input()</code> ให้ค่าเป็น <b>ข้อความ (str) เสมอ</b> แม้ผู้ใช้จะพิมพ์ตัวเลข ถ้าจะนำไปคำนวณต้องแปลงก่อน</div>
+ <div class="tw"><table><tr><th>ต้องการรับ</th><th>เขียน</th></tr>
+ <tr><td>ข้อความ</td><td><code>name = input("Name: ")</code></td></tr>
+ <tr><td>จำนวนเต็ม</td><td><code>age = int(input("Age: "))</code></td></tr>
+ <tr><td>ทศนิยม</td><td><code>weight = float(input("Weight: "))</code></td></tr></table></div>
+ <p>💡 อ่าน <code>int(input())</code> จาก<b>ในออกนอก</b>: input() รับข้อความมาก่อน แล้ว int() แปลงเป็นตัวเลข</p>
+ <h3>f-string: ใส่ตัวแปรลงในข้อความ</h3>
+ <p>เติมตัว <code>f</code> หน้าเครื่องหมายคำพูด แล้วใส่ตัวแปรหรือสูตรไว้ใน <code>{ }</code></p>
+ <div class="tw"><table><tr><th>เขียน (เมื่อ name = "Mali", score = 87.456, n = 7)</th><th>ผล</th></tr>
+ <tr><td><code>f"Hello {name}!"</code></td><td><code>Hello Mali!</code></td></tr>
+ <tr><td><code>f"Next: {n + 1}"</code></td><td><code>Next: 8</code></td></tr>
+ <tr><td><code>f"{score:.2f}"</code></td><td><code>87.46</code> (ทศนิยม 2 ตำแหน่ง)</td></tr>
+ <tr><td><code>f"{n:02d}"</code></td><td><code>07</code> (เติม 0 ให้ครบ 2 หลัก)</td></tr></table></div>
+ <div class="box warn">ในเว็บนี้ ให้พิมพ์ข้อมูลไว้ล่วงหน้าในช่อง <b>"ข้อมูลที่จะพิมพ์ให้ input()"</b> <b>บรรทัดละ 1 ค่า</b> ตามลำดับที่ input() ถูกเรียก</div>`,
+ labs:[
+  {tip:'ลองเปลี่ยนชื่อและอายุในช่องข้อมูล (ลองพิมพ์อายุเป็น sixteen ดูด้วย) แล้วกด 😈',trace:true,input:'มะลิ\n16',
+   code:C`name = input("What is your name? ")
+age = int(input("How old are you? "))
+
+print(f"Hello {name}!")
+print(f"Next year you will be {age + 1} years old.")
+print(f"In 10 years: {age + 10}")`,
+   tries:[
+    {label:'😈 ลืม int() ครอบ input()',fn:c=>c.replace('int(input("How old are you? "))','input("How old are you? ")')},
+    {label:'😈 ลืมตัว f หน้าข้อความ',fn:c=>c.replace('print(f"Hello {name}!")','print("Hello {name}!")')}]},
+  {tip:'คำนวณพื้นที่สี่เหลี่ยมผืนผ้า รับทศนิยมด้วย float() และแสดงผลทศนิยม 2 ตำแหน่ง',trace:true,input:'3.5\n2',
+   code:C`width = float(input("Width: "))
+height = float(input("Height: "))
+
+area = width * height
+print(f"Area = {area:.2f}")
+print(f"Perimeter = {2 * (width + height):.2f}")`}],
+ mission:{title:'เครื่องบวกเลข',task:C`<p>รับจำนวนเต็ม 2 จำนวน (บรรทัดละ 1 ค่า) เก็บในตัวแปร <code>a</code> และ <code>b</code> แล้วแสดงผลในรูปแบบ <code>a + b = ผลบวก</code> ตามตาราง</p>`,
+  hint:'a = int(input()) และ b = int(input()) แล้ว print(f"{a} + {b} = {a + b}")',
+  code:C`# รับค่า a และ b เป็นจำนวนเต็ม
+
+# แสดงผลด้วย f-string
+`,tests:[{input:'7\n5',expected:'7 + 5 = 12\n'},{input:'-3\n10',expected:'-3 + 10 = 7\n'},{input:'100\n250',expected:'100 + 250 = 350\n'}],
+  requires:[{re:/input\s*\(/,msg:'ใช้ input() รับค่า'},{re:/int\s*\(/,msg:'ใช้ int() แปลงเป็นตัวเลข'}],
+  solution:C`a = int(input("a: "))
+b = int(input("b: "))
+print(f"{a} + {b} = {a + b}")`},
+ quiz:[
+  {q:C`<code>x = input()</code> ผู้ใช้พิมพ์ 5 แล้ว <code>type(x)</code> คือชนิดใด`,c:['int','float','str','bool'],a:2,e:'input() ให้ค่าเป็นข้อความเสมอ'},
+  {q:'ข้อใดใช้รับค่าทศนิยมได้ถูกต้อง',c:['x = input(float())','x = float(input())','x = float input()','x = input().float'],a:1,e:'input() อยู่ข้างใน แล้ว float() แปลงอยู่ข้างนอก'},
+  {q:C`เมื่อ <code>n = 3</code> แล้ว <code>print(f"{n} x 2 = {n * 2}")</code> แสดงผลอะไร`,c:['{n} x 2 = {n * 2}','3 x 2 = 6','n x 2 = 6','3 x 2 = n * 2'],a:1,e:'ใน f-string ทุกอย่างใน { } ถูกคำนวณแล้วแทนค่า'}]},
+
+/* ---------------- ขั้นที่ 7 ---------------- */
+{name:'7 โจทย์รวม',title:'ขั้นที่ 7: เขียนโปรแกรมแก้ปัญหาจริง',last:true,
+ learn:C`<p>ตอนนี้คุณมีเครื่องมือครบแล้ว 🎉 โปรแกรมส่วนใหญ่ทำงานตามแบบ <b>IPO</b></p>
+ <pre class="show">Input  (รับข้อมูล)    →  input(), int(), float()
+Process (ประมวลผล)   →  คำนวณ เก็บในตัวแปร
+Output (แสดงผล)      →  print(), f-string</pre>
+ <h3>5 ขั้นตอนเขียนโปรแกรมจากโจทย์</h3>
+ <ol><li><b>อ่านโจทย์ให้เข้าใจ:</b> ต้องการให้โปรแกรมทำอะไร</li><li><b>หา Input และ Output:</b> รับอะไรเข้ามา ต้องแสดงอะไรออกไป</li><li><b>หาสูตรหรือวิธีคิด:</b> ลองคิดด้วยมือก่อน 1 ตัวอย่าง</li><li><b>เขียนโค้ด:</b> ตั้งชื่อตัวแปรให้สื่อความหมาย</li><li><b>ทดสอบหลายๆ ค่า:</b> รวมถึงค่าแปลกๆ เช่น 0 หรือค่าติดลบ</li></ol>
+ <h3>ตัวอย่าง: แปลงวินาทีด้วย // และ %</h3>
+ <pre class="show">3725 วินาที
+ชั่วโมง  = 3725 // 3600           = 1
+นาที    = (3725 % 3600) // 60    = 125 // 60 = 2
+วินาที  = 3725 % 60              = 5</pre>
+ <div class="box good"><b>เช็กลิสต์ก่อนส่งงาน ✅</b><ul><li>ค่าที่รับจาก input() แปลงชนิดแล้วหรือยัง</li><li>ชื่อตัวแปรสะกดตรงกันทุกที่ (ตัวพิมพ์เล็ก-ใหญ่)</li><li>ใช้ตัวแปรหลังจากกำหนดค่าแล้วเท่านั้น</li><li>ข้อความใน print ใช้ f-string หรือแปลงด้วย str() แล้ว</li></ul></div>`,
+ labs:[
+  {tip:'โปรแกรมคำนวณ BMI แยกเป็นส่วน Input / Process / Output ลองใส่น้ำหนักและส่วนสูงของตัวเอง',trace:true,input:'55\n165',
+   code:C`# Input
+weight = float(input("Weight (kg): "))
+height_cm = float(input("Height (cm): "))
+
+# Process
+height_m = height_cm / 100
+bmi = weight / height_m ** 2
+
+# Output
+print(f"Height = {height_m} m")
+print(f"Your BMI is {bmi:.1f}")`},
+  {tip:'โปรแกรมทอนเงิน (ฉบับย่อ: แบงก์ 100, แบงก์ 20, เหรียญ 5 และเหรียญ 1) ดูใน 👣 ว่าตัวแปร change ค่อยๆ ลดลงอย่างไร',trace:true,input:'37\n500',
+   code:C`price = int(input("Price: "))
+paid = int(input("Paid: "))
+
+change = paid - price
+print("Change:", change, "baht")
+
+print("100 baht notes:", change // 100)
+change = change % 100
+print("20 baht notes:", change // 20)
+change = change % 20
+print("5 baht coins:", change // 5)
+change = change % 5
+print("1 baht coins:", change)`}],
+ mission:{title:'นาฬิกาดิจิทัล',task:C`<p>รับจำนวนวินาทีทั้งหมด (จำนวนเต็ม) แล้วแสดงเป็นรูปแบบนาฬิกา <code>HH:MM:SS</code> โดยแต่ละส่วนต้องมี 2 หลัก (เติม 0 ข้างหน้า)</p>`,
+  hint:'h = total // 3600, m = (total % 3600) // 60, s = total % 60 แล้ว print(f"{h:02d}:{m:02d}:{s:02d}")',
+  code:C`total = int(input())
+
+# คำนวณชั่วโมง นาที วินาที
+
+# แสดงผลรูปแบบ HH:MM:SS
+`,tests:[{input:'3725',expected:'01:02:05\n'},{input:'59',expected:'00:00:59\n'},{input:'86399',expected:'23:59:59\n'},{input:'3600',expected:'01:00:00\n'}],
+  requires:[{re:/\/\//,msg:'ใช้ // หาชั่วโมงและนาที'},{re:/%/,msg:'ใช้ % หาเศษ'}],
+  solution:C`total = int(input())
+
+h = total // 3600
+m = (total % 3600) // 60
+s = total % 60
+
+print(f"{h:02d}:{m:02d}:{s:02d}")`},
+ quiz:[
+  {q:'ลำดับการทำงานของโปรแกรมแบบ IPO คือข้อใด',c:['Input → Process → Output','Process → Input → Output','Output → Input → Process','Input → Output → Process'],a:0,e:'รับข้อมูล → ประมวลผล → แสดงผล'},
+  {q:C`<code>x = input()</code> ผู้ใช้พิมพ์ 5 แล้ว <code>print(x * 2)</code> แสดงผลอะไร`,c:['10','55','x2','เกิดข้อผิดพลาด'],a:1,e:'x เป็นข้อความ "5" การคูณข้อความด้วย 2 คือทำซ้ำ ได้ 55'},
+  {q:C`<code>print(7384 // 3600)</code> แสดงผลอะไร`,c:['2','2.05','184','3'],a:0,e:'7384 ÷ 3600 ได้ 2 เศษ 184 ส่วน // เอาเฉพาะผลหาร'}]}
+];
+
+/* =====================================================================
+   ส่วนที่ 6: ระบบแสดงหน้า
+   ===================================================================== */
+let cur=0;
+function renderDots(){
+  $('#steps').innerHTML=STEPS.map((s,i)=>`<button class="dot ${i===cur?'cur':''} ${progress['y'+i]?'done':''}" data-i="${i}">${progress['y'+i]?'✅ ':''}${s.name}</button>`).join('');
+  document.querySelectorAll('.dot').forEach(b=>b.onclick=()=>go(+b.dataset.i));
+}
+function go(i){
+  cur=i;const S=STEPS[i];
+  let h=`<div class="card learn"><h2>${S.title}</h2>${S.learn}${S.annot?'<div id="an"></div>':''}${S.learn2||''}</div>`;
+  if(S.widget)h+='<div class="card"><div id="wd"></div></div>';
+  S.labs.forEach((l,k)=>{h+=`<div class="card"><h3 style="margin-top:0">🧪 ลองรันดู${S.labs.length>1?' ตัวอย่างที่ '+(k+1):''}</h3><p>${l.tip}</p><div id="lab${k}"></div></div>`;});
+  h+='<div class="card mission" id="ms"></div><div class="card quiz" id="qz"></div>';
+  if(S.last)h+=`<div class="card fin"><h2>🎉 จบบทเรียน Python เบื้องต้นแล้ว!</h2><p>ตอนนี้คุณเขียนโปรแกรมที่ <b>แสดงผล</b> (<code>print</code>), <b>เก็บข้อมูล</b> (ตัวแปร), <b>แปลงชนิดข้อมูล</b>, <b>รับค่าจากผู้ใช้</b> (<code>input</code>) และ<b>คำนวณ</b>ได้แล้ว 🌟</p><p>บทต่อไปที่น่าเรียน: การตัดสินใจด้วย <code>if-elif-else</code>, การวนซ้ำด้วย <code>for</code> และ <code>while</code>, รายการข้อมูล <code>list</code> และการสร้างฟังก์ชันด้วย <code>def</code></p></div>`;
+  h+=`<div class="nav"><button class="btn" id="pv" ${i===0?'disabled':''}>◀ ขั้นก่อนหน้า</button><button class="btn go" id="nx" ${i===STEPS.length-1?'disabled':''}>ขั้นต่อไป ▶</button></div>`;
+  $('#page').innerHTML=h;
+  if(S.annot)mkAnnot($('#an'),S.annot);
+  if(S.widget){if(S.widget.type==='shell')mkShell($('#wd'),S.widget);else if(S.widget.type==='ident')mkIdent($('#wd'));}
+  S.labs.forEach((l,k)=>mkEditor($('#lab'+k),l));
+  mkMission($('#ms'),S.mission,'y'+i,renderDots);
+  mkQuiz($('#qz'),S.quiz);
+  $('#pv').onclick=()=>go(i-1);
+  $('#nx').onclick=()=>go(i+1);
+  renderDots();
+  window.scrollTo(0,0);
+}
+$('#rstp').onclick=()=>{if(confirm('ต้องการล้างความก้าวหน้าทั้งหมดหรือไม่')){progress={};saveP();go(cur);}};
+go(0);
+initPy();
+</script>
+</body>
+</html>
