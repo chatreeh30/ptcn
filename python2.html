@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>เรียน Python ภาค 2: เงื่อนไข ลูป ลิสต์ และฟังก์ชัน</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5f9;color:#1e293b;font-family:'Sarabun','Noto Sans Thai',Tahoma,sans-serif;font-size:18px;line-height:1.7}
+.wrap{max-width:920px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:8px 0 2px}
+h2{font-size:1.4rem;margin:0 0 8px;color:#1d4ed8}
+h3{margin:14px 0 6px}
+.sub{color:#64748b;margin:0 0 8px}
+code,pre,textarea,.mono{font-family:Consolas,'Courier New',monospace}
+code{background:#e0e7ff;color:#3730a3;padding:1px 6px;border-radius:5px;font-size:.92em}
+.status{padding:8px 14px;border-radius:10px;margin:8px 0 12px;font-size:.92rem}
+.st-load{background:#fffbeb;border:1px solid #fcd34d;color:#92400e}
+.st-ok{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+.st-err{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 16px}
+.dot{flex:1;min-width:96px;border:2px solid #cbd5e1;background:#fff;border-radius:12px;padding:6px 4px;cursor:pointer;font:inherit;font-size:.85rem;text-align:center}
+.dot.cur{border-color:#2563eb;background:#dbeafe;font-weight:700}
+.dot.done{border-color:#22c55e}
+.card{background:#fff;border-radius:16px;padding:18px 22px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.learn{background:#eff6ff;border-left:6px solid #2563eb}
+.mission{background:#faf5ff;border-left:6px solid #9333ea}
+.quiz{background:#fffbeb;border-left:6px solid #f59e0b}
+.fin{background:#ecfdf5;border:2px solid #22c55e}
+pre.show{background:#0f172a;color:#e2e8f0;padding:10px 14px;border-radius:10px;overflow-x:auto;font-size:.95rem;margin:8px 0}
+textarea.code{width:100%;background:#0f172a;color:#e2e8f0;border:0;border-radius:10px;padding:12px;font-size:1rem;line-height:1.55;resize:vertical;white-space:pre;tab-size:4}
+textarea.inbox{width:100%;border:2px solid #cbd5e1;border-radius:8px;padding:6px 10px;font-size:1rem;resize:vertical;margin-top:2px}
+.txt{border:2px solid #cbd5e1;border-radius:8px;padding:6px 10px;font-size:1rem;font-family:Consolas,monospace;background:#fff}
+.lab{display:block;font-size:.9rem;color:#475569;margin-top:8px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.btn{border:2px solid #cbd5e1;background:#fff;border-radius:10px;padding:7px 14px;font:inherit;font-size:.98rem;cursor:pointer}
+.btn:hover{background:#f1f5f9}
+.btn.go{background:#2563eb;border-color:#2563eb;color:#fff;font-weight:700}
+.btn.ok{background:#16a34a;border-color:#16a34a;color:#fff;font-weight:700}
+.btn.mono{font-size:.88rem;padding:5px 10px}
+.btn:disabled{opacity:.4;cursor:default}
+.term{background:#020617;color:#4ade80;border-radius:10px;padding:10px 14px;min-height:44px;white-space:pre-wrap;font-size:1rem;margin-top:6px;max-height:420px;overflow-y:auto}
+.term i{color:#fde68a;font-style:normal}
+.tlabel{font-size:.82rem;color:#64748b;margin-top:8px}
+.box{padding:10px 14px;border-radius:10px;margin-top:8px;font-size:.98rem}
+.err{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+.good{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+.warn{background:#fffbeb;border:1px solid #fcd34d;color:#92400e}
+.box ul{margin:4px 0 0 20px;padding:0}
+.eng{font-size:.82rem;color:#7f1d1d;margin-top:6px;opacity:.85}
+table{border-collapse:collapse;margin:8px 0;font-size:.95rem}
+td,th{border:1px solid #cbd5e1;padding:5px 12px;text-align:left;vertical-align:top}
+th{background:#f1f5f9}
+.tw{overflow-x:auto}
+td.t{color:#166534;font-weight:700}td.f{color:#991b1b;font-weight:700}
+.aline{display:flex;gap:12px;width:100%;border:0;background:transparent;color:#e2e8f0;text-align:left;padding:3px 12px;cursor:pointer;font-family:Consolas,monospace;font-size:1rem;white-space:pre}
+.aline:hover{background:#1e293b}.aline.sel{background:#1d4ed8}
+.aline .n{color:#64748b;min-width:18px;text-align:right}
+.acode{background:#0f172a;border-radius:10px;padding:8px 0;overflow-x:auto}
+.aexp{background:#fff;border:2px dashed #93c5fd;border-radius:10px;padding:10px 14px;margin-top:8px;min-height:70px}
+.choice{display:block;width:100%;text-align:left;margin:6px 0;padding:9px 14px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font:inherit;font-size:1rem;cursor:pointer}
+.choice:hover{border-color:#2563eb}
+.choice.right{background:#dcfce7;border-color:#22c55e}.choice.wrong{background:#fee2e2;border-color:#ef4444}
+.q{border:1px solid #fde68a;border-radius:12px;padding:8px 14px;margin:10px 0;background:#fff}
+.qq{margin:4px 0 8px}
+.nav{display:flex;justify-content:space-between;margin:8px 0 12px}
+.reset{background:none;border:0;color:#64748b;text-decoration:underline;cursor:pointer;font:inherit;font-size:.85rem;margin-bottom:40px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:8px}
+.row label{font-size:.9rem;display:flex;flex-direction:column;gap:2px}
+.row .txt{width:100px}
+.mrow{display:flex;gap:4px;flex-wrap:nowrap;margin:6px 0}
+.mc{min-width:64px;text-align:center;border:2px solid #3b82f6;border-radius:8px;background:#eff6ff;padding:2px 6px;flex:0 0 auto}
+.mc.hl{background:#fde68a;border-color:#f59e0b}
+.mi{font-size:.75rem;color:#1d4ed8;font-weight:700}
+.mn{font-size:.75rem;color:#9333ea;font-weight:700}
+.mb{font-family:Consolas,monospace;font-weight:700}
+/* stepper */
+.stpwrap{margin-top:10px}
+.stpwrap>summary{cursor:pointer;color:#1d4ed8;font-weight:700}
+.stp{margin-top:8px;border:2px solid #c7d2fe;border-radius:12px;padding:10px 12px;background:#f8fafc}
+.stp-ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.stp-n{font-weight:700;margin:0 6px}
+.stp-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:12px;margin-top:8px}
+@media(max-width:720px){.stp-grid{grid-template-columns:1fr}}
+.scode{background:#0f172a;border-radius:10px;padding:6px 0;overflow-x:auto}
+.sl{display:flex;gap:8px;padding:1px 10px;font-family:Consolas,monospace;font-size:.92rem;color:#e2e8f0;white-space:pre}
+.sl .sa{width:18px;color:#fde047;font-weight:700}
+.sl .sn{color:#64748b;min-width:20px;text-align:right}
+.sl .hc{min-width:44px;color:#fde68a;font-size:.8rem;text-align:right}
+.sl.done{background:#14532d}.sl.next{background:#713f12}.sl.bad{background:#7f1d1d}
+.vt td.new{background:#dcfce7}.vt td.chg{background:#fef9c3}
+.was{font-size:.8rem;color:#92400e}
+.tag{font-size:.75rem;border-radius:6px;padding:0 6px;background:#e2e8f0}
+.tag.int{background:#dbeafe;color:#1e40af}.tag.float{background:#ede9fe;color:#5b21b6}.tag.str{background:#dcfce7;color:#166534}.tag.bool{background:#ffedd5;color:#9a3412}.tag.list{background:#fef3c7;color:#92400e}.tag.NoneType{background:#fee2e2;color:#991b1b}
+.tag.newv{background:#16a34a;color:#fff;margin-left:4px}
+.loc{border:2px dashed #a78bfa;border-radius:10px;padding:4px 8px;background:#faf5ff;margin-top:6px}
+/* shell */
+.shell{background:#0b1220;border-radius:10px;padding:8px 12px;font-family:Consolas,monospace;color:#e2e8f0}
+.sh-log{max-height:280px;overflow-y:auto;white-space:pre-wrap;font-size:.95rem}
+.sh-log .p{color:#93c5fd}.sh-log .o{color:#4ade80}.sh-log .e{color:#fca5a5}
+.sh-in{display:flex;gap:8px;align-items:center}
+.sh-in span{color:#93c5fd}
+.sh-in input{flex:1;background:transparent;border:0;outline:0;color:#fff;font:inherit;font-size:1rem;padding:6px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🐍 เรียน Python ภาค 2: เงื่อนไข ลูป ลิสต์ และฟังก์ชัน</h1>
+  <p class="sub">ทำทีละขั้น: อ่าน → ลองเล่น → ลองรัน → ทำภารกิจ → ตอบคำถาม (ควรเรียน print, ตัวแปร, input มาก่อน)</p>
+  <div id="pystatus" class="status st-load">⏳ กำลังโหลด Python ...</div>
+  <div class="steps" id="steps"></div>
+  <div id="page"></div>
+  <button class="reset" id="rstp">ล้างความก้าวหน้าทั้งหมด</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+/* =====================================================================
+   ส่วนที่ 1: เชื่อมต่อ Python (Pyodide)
+   ===================================================================== */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const C=String.raw;
+let py=null,pyReady=false,pyRun=null,pyShell=null,pyShellReset=null;
+
+const RUNNER=String.raw`
+import sys, io, json, builtins
+from contextlib import redirect_stdout
+
+class _Limit(BaseException):
+    pass
+
+_SKIP = ('module', 'function', 'builtin_function_or_method', 'type', 'method')
+
+def _vals(items, skip_obj):
+    d = {}
+    for k, v in items:
+        if k.startswith('__') or v is skip_obj:
+            continue
+        tn = type(v).__name__
+        if tn in _SKIP:
+            continue
+        try:
+            r = repr(v)
+        except Exception:
+            r = '?'
+        if len(r) > 90:
+            r = r[:87] + '...'
+        d[k] = [tn, r]
+    return d
+
+def _err_info(e):
+    line = 0
+    tb = e.__traceback__
+    while tb is not None:
+        if tb.tb_frame.f_code.co_filename == '<student>':
+            line = tb.tb_lineno
+        tb = tb.tb_next
+    return {'kind': 'run', 'type': type(e).__name__, 'msg': str(e), 'line': line}
+
+def _run(src, inputs_json):
+    inputs = json.loads(inputs_json)
+    out = io.StringIO()
+    steps = []
+    hits = {}
+    g = {'__name__': '__main__', '__builtins__': builtins}
+    def _input(prompt=''):
+        out.write('\x03' + str(prompt) + '\x04')
+        if not inputs:
+            raise EOFError('__NO_INPUT__')
+        v = inputs.pop(0)
+        out.write('\x01' + v + '\x02\n')
+        return v
+    g['input'] = _input
+    count = [0]
+    def _tracer(frame, event, arg):
+        if frame.f_code.co_filename != '<student>':
+            return None
+        if event == 'line':
+            count[0] += 1
+            ln = frame.f_lineno
+            hits[ln] = hits.get(ln, 0) + 1
+            if count[0] > 30000:
+                raise _Limit('__STEP_LIMIT__')
+            if out.tell() > 20000:
+                raise _Limit('__OUT_LIMIT__')
+            if len(steps) < 1000:
+                st = {'line': ln, 'vars': _vals(list(frame.f_globals.items()), _input), 'out': out.tell()}
+                if not frame.f_code.co_name.startswith('<'):
+                    st['fn'] = frame.f_code.co_name
+                    st['loc'] = _vals(list(frame.f_locals.items()), _input)
+                steps.append(st)
+        return _tracer
+    res = {'err': None, 'hits': {}}
+    try:
+        code = compile(src, '<student>', 'exec')
+    except SyntaxError as e:
+        res['err'] = {'kind': 'syntax', 'type': type(e).__name__, 'msg': str(e.msg), 'line': e.lineno or 0, 'offset': e.offset or 0, 'text': (e.text or '').rstrip('\r\n')}
+        res['out'] = ''
+        res['steps'] = []
+        res['final'] = {}
+        return json.dumps(res, ensure_ascii=False)
+    old = sys.gettrace()
+    try:
+        with redirect_stdout(out):
+            sys.settrace(_tracer)
+            try:
+                exec(code, g)
+            finally:
+                sys.settrace(old)
+    except SystemExit:
+        pass
+    except BaseException as e:
+        res['err'] = _err_info(e)
+    res['out'] = out.getvalue()
+    res['steps'] = steps
+    res['hits'] = hits
+    res['final'] = _vals(list(g.items()), _input)
+    return json.dumps(res, ensure_ascii=False)
+
+_shells = {}
+
+def _shell(sid, line):
+    g = _shells.get(sid)
+    if g is None:
+        g = {'__name__': '__main__', '__builtins__': builtins}
+        _shells[sid] = g
+    def _noinput(prompt=''):
+        raise RuntimeError('__SHELL_INPUT__')
+    g['input'] = _noinput
+    out = io.StringIO()
+    err = None
+    count = [0]
+    def _tr(frame, event, arg):
+        if frame.f_code.co_filename != '<shell>':
+            return None
+        if event == 'line':
+            count[0] += 1
+            if count[0] > 20000:
+                raise _Limit('__STEP_LIMIT__')
+        return _tr
+    old = sys.gettrace()
+    try:
+        with redirect_stdout(out):
+            try:
+                code = compile(line, '<shell>', 'eval')
+                is_eval = True
+            except SyntaxError:
+                code = compile(line, '<shell>', 'exec')
+                is_eval = False
+            v = None
+            sys.settrace(_tr)
+            try:
+                if is_eval:
+                    v = eval(code, g)
+                else:
+                    exec(code, g)
+            finally:
+                sys.settrace(old)
+            if v is not None:
+                print(repr(v))
+    except BaseException as e:
+        msg = e.msg if isinstance(e, SyntaxError) else str(e)
+        err = {'type': type(e).__name__, 'msg': str(msg)}
+    return json.dumps({'out': out.getvalue(), 'err': err}, ensure_ascii=False)
+
+def _shell_reset(sid):
+    _shells.pop(sid, None)
+`;
+
+async function initPy(){
+  const st=$('#pystatus');
+  st.className='status st-load';
+  st.innerHTML='⏳ กำลังโหลด Python ... (ครั้งแรกใช้เวลาประมาณ 10-30 วินาที และต้องต่ออินเทอร์เน็ต) ระหว่างนี้อ่านเนื้อหาไปก่อนได้เลย';
+  try{
+    if(typeof loadPyodide!=='function')throw new Error('โหลดไฟล์ pyodide.js ไม่ได้ (ตรวจการเชื่อมต่ออินเทอร์เน็ต)');
+    py=await loadPyodide();
+    py.runPython(RUNNER);
+    pyRun=py.globals.get('_run');
+    pyShell=py.globals.get('_shell');
+    pyShellReset=py.globals.get('_shell_reset');
+    const ver=py.runPython('import sys; sys.version.split()[0]');
+    pyReady=true;
+    st.className='status st-ok';
+    st.innerHTML=`✅ Python ${esc(ver)} พร้อมใช้งานแล้ว`;
+  }catch(e){
+    st.className='status st-err';
+    st.innerHTML=`❌ โหลด Python ไม่สำเร็จ: ${esc(e.message||e)} <button class="btn" id="retry">ลองโหลดใหม่</button>`;
+    $('#retry').onclick=()=>location.reload();
+  }
+}
+function runPy(src,inputText){
+  const lines=(inputText||'').replace(/\r/g,'').split('\n');
+  while(lines.length&&lines[lines.length-1]==='')lines.pop();
+  try{return JSON.parse(pyRun(src,JSON.stringify(lines)));}
+  catch(e){return{out:'',steps:[],final:{},hits:{},err:{kind:'run',type:'InternalError',msg:String(e),line:0}};}
+}
+
+/* =====================================================================
+   ส่วนที่ 2: แปลข้อผิดพลาดเป็นภาษาไทย
+   ===================================================================== */
+const PY_KW=['False','None','True','and','as','assert','async','await','break','class','continue','def','del','elif','else','except','finally','for','from','global','if','import','in','is','lambda','nonlocal','not','or','pass','raise','return','try','while','with','yield'];
+const BUILTIN_NAMES=['print','input','int','float','str','bool','type','len','round','abs','max','min','sum','range','list','sorted','enumerate','True','False','None'];
+function thaiErr(e,names,src){
+  const t=e.type||'Error',m=e.msg||'';let k;
+  const R=(h,d)=>({h,d});
+  src=src||'';
+  if(m==='__NO_INPUT__')return R('ไม่มีข้อมูลให้ input() อ่าน','โปรแกรมเรียก <code>input()</code> มากกว่าจำนวนข้อมูลที่เตรียมไว้ ให้เพิ่มข้อมูลในช่อง "ข้อมูลที่จะพิมพ์ให้ input()" <b>บรรทัดละ 1 ค่า</b> (ถ้า input() อยู่ใน loop ต้องเตรียมข้อมูลให้พอทุกรอบ)');
+  if(m==='__STEP_LIMIT__'||m==='__OUT_LIMIT__')return R('โปรแกรมวนไม่รู้จบ (infinite loop) 🔁',`${m==='__OUT_LIMIT__'?'แสดงผลเกิน 20,000 ตัวอักษร':'ทำงานเกิน 30,000 ขั้นตอน'} จึงถูกหยุดไว้ ตรวจว่า ① ตัวแปรในเงื่อนไขของ <code>while</code> ถูกเปลี่ยนค่าใน loop หรือไม่ (เช่น ลืม <code>i += 1</code>) ② เงื่อนไขมีโอกาสเป็น False จริงหรือไม่ ③ ถ้าใช้ <code>while True:</code> ต้องมี <code>break</code> ที่ทำงานได้จริง`);
+  if(m==='__SHELL_INPUT__')return R('ใช้ input() ใน Shell นี้ไม่ได้','ให้ลองคำสั่ง input() ในกล่อง "ลองรันดู" แทน');
+  if(t==='IndentationError'||t==='TabError'){
+    if((k=/expected an indented block after (?:'(\w+)' statement|function definition)/.exec(m)))
+      return R(`ลืมย่อหน้าคำสั่งใต้ ${k[1]?esc(k[1]):'def'}`,'บรรทัดที่ลงท้ายด้วย <code>:</code> ต้องตามด้วยคำสั่งอย่างน้อย 1 บรรทัดที่<b>ย่อหน้าเข้าไป 4 ช่อง</b> (กด Tab) เพื่อบอกว่าคำสั่งนั้นอยู่ "ข้างใน" if / for / while / def');
+    if(/unexpected indent/.test(m))return R('ย่อหน้าเกินมา','บรรทัดนี้ย่อหน้าเข้าไป ทั้งที่บรรทัดก่อนหน้าไม่ได้ลงท้ายด้วย : ให้ลบช่องว่างหน้าบรรทัดให้ตรงกับบรรทัดอื่นในบล็อกเดียวกัน');
+    if(/unindent does not match/.test(m))return R('ระยะย่อหน้าไม่ตรงกับระดับใดเลย','เช่น บรรทัดบนย่อหน้า 4 ช่อง แต่บรรทัดนี้ 3 หรือ 5 ช่อง ทุกบรรทัดในบล็อกเดียวกันต้องย่อหน้าเท่ากันเป๊ะ (แนะนำใช้ 4 ช่องเสมอ)');
+    if(t==='TabError')return R('ปนการกด Tab กับเคาะ Space','ให้ใช้แบบเดียวกันทั้งไฟล์ (ในเว็บนี้ปุ่ม Tab ใส่ช่องว่าง 4 ช่องให้แล้ว)');
+    return R('การย่อหน้าไม่ถูกต้อง','ตรวจช่องว่างหน้าบรรทัด คำสั่งในบล็อกเดียวกันต้องย่อหน้าเท่ากัน');
+  }
+  if(t==='SyntaxError'){
+    const tx=(e.text||'').trim();
+    if(/expected ':'/.test(m))return R('ลืมเครื่องหมายโคลอน ( : )','บรรทัดที่ขึ้นต้นด้วย <code>if</code> <code>elif</code> <code>else</code> <code>for</code> <code>while</code> <code>def</code> <b>ต้องลงท้ายด้วย :</b> เสมอ เช่น <code>if x &gt; 0:</code> และ <code>else:</code> นี่คือข้อผิดพลาดอันดับ 1 ของบทนี้!');
+    if(/Maybe you meant '==' or ':=' instead of '='|Maybe you meant '=='/.test(m))return R('ใช้ = ในเงื่อนไข ต้องใช้ ==','<code>=</code> คือการเก็บค่าลงตัวแปร ส่วน <code>==</code> คือการเปรียบเทียบว่าเท่ากันหรือไม่ ในเงื่อนไขของ if / elif / while ต้องใช้ <code>==</code> เช่น <code>if x == 10:</code>');
+    if(/'break' outside loop/.test(m))return R('ใช้ break นอก loop','break ใช้ได้เฉพาะภายใน for หรือ while ตรวจว่า break ย่อหน้าเข้าไปอยู่ในบล็อกของ loop แล้วหรือยัง');
+    if(/'continue' not properly in loop/.test(m))return R('ใช้ continue นอก loop','continue ใช้ได้เฉพาะภายใน for หรือ while');
+    if(/'return' outside function/.test(m))return R('ใช้ return นอกฟังก์ชัน','return ใช้ได้เฉพาะภายใน def ตรวจว่าย่อหน้า return เข้าไปในฟังก์ชันแล้วหรือยัง');
+    if(/^(else|elif)\b/.test(tx))return R(`พบ ${tx.startsWith('else')?'else':'elif'} ที่ไม่มี if คู่กัน`,'<code>else</code> / <code>elif</code> ต้อง<b>ย่อหน้าตรงกับ if</b> ของมันพอดี และต้องอยู่ต่อจากบล็อกของ if ทันที ห้ามมีคำสั่งที่ชิดซ้ายมาคั่นกลาง');
+    if(/unterminated string|EOL while scanning/.test(m))return R('ลืมปิดเครื่องหมายคำพูด','ข้อความที่เปิดด้วย " หรือ \' ต้องปิดด้วยเครื่องหมายแบบเดียวกันในบรรทัดเดียวกัน');
+    if((k=/'(.)' was never closed/.exec(m)))return R(`ลืมปิดวงเล็บ ${esc(k[1])}`,'นับวงเล็บเปิดกับวงเล็บปิดให้มีจำนวนเท่ากัน (บางครั้งจุดที่ผิดอยู่บรรทัดก่อนหน้า)');
+    if((k=/unmatched '(.)'/.exec(m)))return R(`มีวงเล็บปิด ${esc(k[1])} เกินมา`,'วงเล็บปิดมากกว่าวงเล็บเปิด ให้ลบตัวที่เกินออก');
+    if(/does not match opening parenthesis/.test(m))return R('วงเล็บเปิดกับปิดไม่ตรงคู่กัน','เช่น เปิดด้วย [ แต่ปิดด้วย ) ให้ใช้แบบเดียวกัน');
+    if(/invalid decimal literal/.test(m))return R('มีตัวเลขติดกับตัวอักษร','มักเกิดจากชื่อตัวแปรขึ้นต้นด้วยตัวเลข หรือลืมเครื่องหมาย * เช่น <code>2x</code> ต้องเขียน <code>2 * x</code>');
+    if(/Perhaps you forgot a comma/.test(m))return R('น่าจะลืมเครื่องหมายจุลภาค ( , )','สมาชิกใน list และอาร์กิวเมนต์ของฟังก์ชันต้องคั่นด้วย , เช่น <code>[1, 2, 3]</code> หรือ <code>print("Total:", total)</code>');
+    if(/invalid character/.test(m))return R('มีอักขระที่ Python ไม่รู้จัก','มักเกิดจากคัดลอกโค้ดจาก Word หรือเว็บ ได้เครื่องหมายคำพูดแบบโค้ง “ ” ‘ ’ ให้ลบแล้วพิมพ์ใหม่ด้วยแป้นพิมพ์');
+    if(/incomplete input|unexpected EOF/.test(m))return R('คำสั่งยังเขียนไม่จบ','ตรวจวงเล็บและเครื่องหมายคำพูดว่าปิดครบหรือไม่');
+    if((k=/^([A-Za-z_]\w*)\s*=/.exec(tx))&&PY_KW.includes(k[1]))return R(`'${esc(k[1])}' เป็นคำสงวนของ Python`,'ใช้เป็นชื่อตัวแปรไม่ได้ ลองเปลี่ยนชื่อ เช่น <code>my_'+esc(k[1])+'</code>');
+    return R('เขียนผิดไวยากรณ์','ตรวจ ① : ท้าย if / elif / else / for / while / def ② วงเล็บและเครื่องหมายคำพูดครบคู่ ③ ใช้ == ในการเปรียบเทียบ ④ บางครั้งจุดผิดจริงอยู่ที่<b>บรรทัดก่อนหน้า</b>');
+  }
+  if(t==='UnboundLocalError'){
+    k=/variable '(.+?)'/.exec(m);const n=k?k[1]:'?';
+    return R(`ตัวแปร '${esc(n)}' ในฟังก์ชันยังไม่มีค่า`,`เมื่อในฟังก์ชันมีบรรทัด <code>${esc(n)} = ...</code> Python จะถือว่า ${esc(n)} เป็นตัวแปรภายใน (local) ของฟังก์ชัน จึงไม่ไปอ่านตัวแปรชื่อเดียวกันที่อยู่ข้างนอก วิธีที่ดีคือ<b>ส่งค่าเข้ามาเป็นพารามิเตอร์</b> แล้ว <code>return</code> ค่าใหม่ออกไป`);
+  }
+  if(t==='NameError'){
+    k=/name '(.+?)' is not defined/.exec(m);const n=k?k[1]:'?';
+    if(/^\w+$/.test(n)){
+      if(new RegExp('^\\s*def\\s+'+n+'\\s*\\(','m').test(src))return R(`เรียกฟังก์ชัน '${esc(n)}' ก่อนที่จะสร้างมัน`,`Python อ่านโค้ดจากบนลงล่าง ต้องเขียน <code>def ${esc(n)}(...):</code> ไว้<b>เหนือ</b>บรรทัดที่เรียกใช้เสมอ`);
+      if(/^\s*def\s/m.test(src)&&new RegExp('^[ \\t]+'+n+'\\s*=[^=]','m').test(src)&&!new RegExp('^'+n+'\\s*=[^=]','m').test(src))
+        return R(`'${esc(n)}' ถูกสร้างไว้ภายในฟังก์ชัน (ตัวแปร local)`,`ตัวแปรที่สร้างในฟังก์ชันใช้ได้เฉพาะในฟังก์ชันนั้น พอฟังก์ชันจบก็หายไป ถ้าต้องการค่าออกมาข้างนอก ให้ใช้ <code>return</code> แล้วเก็บผลไว้ เช่น <code>result = my_func()</code> (หรือถ้าตัวแปรนี้ถูกสร้างใน if ที่ไม่ได้ทำงาน มันก็จะไม่มีอยู่จริงเช่นกัน)`);
+    }
+    const sim=[...(names||[]),...BUILTIN_NAMES].find(x=>x!==n&&x.toLowerCase()===n.toLowerCase());
+    if(sim)return R(`ไม่รู้จักชื่อ '${esc(n)}' คุณหมายถึง '${esc(sim)}' หรือเปล่า?`,`Python <b>แยกตัวพิมพ์เล็ก-ใหญ่</b> <code>${esc(n)}</code> กับ <code>${esc(sim)}</code> จึงเป็นคนละชื่อกัน`);
+    return R(`ไม่รู้จักชื่อ '${esc(n)}'`,`สาเหตุที่พบบ่อย: ① ใช้ตัวแปรก่อนกำหนดค่า ② สะกดชื่อผิด ③ ตัวแปรถูกสร้างใน if หรือ loop ที่ไม่ได้ทำงาน ④ ถ้าตั้งใจให้เป็นข้อความ ต้องครอบด้วยเครื่องหมายคำพูด เช่น <code>"${esc(n)}"</code>`);
+  }
+  if(t==='TypeError'){
+    if(/NoneType/.test(m))return R('ได้ค่า None มาใช้งาน','สาเหตุที่พบบ่อยที่สุด: ① ฟังก์ชัน<b>ไม่มี return</b> (หรือใช้ <code>print</code> แทน <code>return</code>) จึงส่งค่า <code>None</code> กลับมา ให้เปลี่ยนเป็น <code>return ...</code> ② เขียน <code>nums = nums.append(x)</code> ซึ่งทำให้ nums กลายเป็น None (append แก้ list เดิมได้เลย ไม่ต้องเก็บผลลัพธ์)');
+    if((k=/missing (\d+) required positional argument/.exec(m)))return R('ส่งอาร์กิวเมนต์ให้ฟังก์ชันไม่ครบ',`ฟังก์ชันนี้ต้องการค่าเพิ่มอีก ${k[1]} ค่า จำนวนค่าในวงเล็บตอนเรียกใช้ต้องเท่ากับจำนวนพารามิเตอร์ตอน def`);
+    if((k=/takes (\d+) positional arguments? but (\d+) (?:were|was) given/.exec(m)))return R('ส่งอาร์กิวเมนต์ให้ฟังก์ชันเกิน',`ฟังก์ชันรับได้ ${k[1]} ค่า แต่ส่งไป ${k[2]} ค่า`);
+    if((k=/'(\w+)' object cannot be interpreted as an integer/.exec(m)))return R(`range() ใช้กับค่าชนิด ${esc(k[1])} ไม่ได้`,'range() รับเฉพาะจำนวนเต็ม ถ้าค่ามาจาก <code>input()</code> ต้องแปลงด้วย <code>int()</code> ก่อน เช่น <code>n = int(input())</code>');
+    if((k=/'(\w+)' object is not iterable/.exec(m)))return R(`นำค่าชนิด ${esc(k[1])} มาวน for ไม่ได้`,k[1]==='int'?'ถ้าต้องการวน n รอบ ให้ใช้ <code>for i in range(n):</code> ไม่ใช่ <code>for i in n:</code>':'for วนได้กับ list, ข้อความ และ range() เท่านั้น');
+    if((k=/not supported between instances of '(\w+)' and '(\w+)'/.exec(m)))return R(`เปรียบเทียบ ${esc(k[1])} กับ ${esc(k[2])} ไม่ได้`,'มักเกิดจากค่าที่รับด้วย <code>input()</code> ยังเป็นข้อความ (str) แล้วนำไปเทียบกับตัวเลข ให้ครอบด้วย <code>int()</code> หรือ <code>float()</code> ก่อน');
+    if((k=/list indices must be integers or slices, not (\w+)/.exec(m)))return R('index ของ list ต้องเป็นจำนวนเต็ม',`แต่ได้ชนิด ${esc(k[1])} มา ถ้าเป็นทศนิยมจากการหาร / ให้ใช้ // แทน หรือถ้ามาจาก input() ให้แปลงด้วย int()`);
+    if(/can only concatenate list/.test(m))return R('นำ list มา + กับค่าที่ไม่ใช่ list ไม่ได้','ถ้าต้องการเพิ่มสมาชิกใหม่ ให้ใช้ <code>nums.append(x)</code>');
+    if(/can only concatenate str/.test(m))return R('นำข้อความ (str) มา + กับตัวเลขไม่ได้','แปลงตัวเลขเป็นข้อความด้วย <code>str()</code> หรือใช้ f-string หรือถ้าค่ามาจาก input() ให้แปลงเป็นตัวเลขด้วย <code>int()</code> ก่อนคำนวณ');
+    if((k=/unsupported operand type\(s\) for (.+?): '(\w+)' and '(\w+)'/.exec(m)))return R(`ใช้ ${esc(k[1])} กับ ${esc(k[2])} และ ${esc(k[3])} ไม่ได้`,'ตรวจชนิดข้อมูลทั้งสองข้างด้วย <code>type()</code> ถ้าค่ามาจาก input() อย่าลืมแปลงด้วย int()');
+    if((k=/'(\w+)' object is not subscriptable/.exec(m)))return R(`ใช้ [ ] กับค่าชนิด ${esc(k[1])} ไม่ได้`,'เครื่องหมาย [ ] ใช้กับ list หรือข้อความ ตรวจว่าตัวแปรนี้เป็น list จริงหรือไม่');
+    if((k=/'(\w+)' object is not callable/.exec(m)))return R(`ค่าชนิด ${esc(k[1])} ถูกเรียกเหมือนเป็นฟังก์ชัน`,'มักเกิดจากตั้งชื่อตัวแปรทับชื่อคำสั่ง เช่น <code>sum = 0</code> แล้วเรียก <code>sum(nums)</code> อีก หรือใช้ ( ) แทน [ ] เช่น <code>nums(0)</code> ต้องเป็น <code>nums[0]</code>');
+    return R('ใช้ข้อมูลผิดชนิด','ตรวจชนิดข้อมูลที่นำมาคำนวณหรือส่งให้ฟังก์ชัน');
+  }
+  if(t==='IndexError'){
+    if(/pop from empty list/.test(m))return R('pop() จาก list ที่ว่างเปล่า','list ไม่มีสมาชิกเหลือแล้ว ตรวจด้วย <code>if len(nums) &gt; 0:</code> ก่อน');
+    return R('index เกินขอบเขต',`list (หรือข้อความ) ที่มี n ตัว ใช้ index ได้แค่ <b>0 ถึง n-1</b> (หรือ -1 ถึง -n) ถ้าวน loop ให้ใช้ <code>range(len(nums))</code> ไม่ใช่ <code>range(len(nums) + 1)</code>`);
+  }
+  if(t==='AttributeError'){
+    if(/NoneType/.test(m))return R('ค่าเป็น None','มักเกิดจากเขียน <code>nums = nums.append(x)</code> ให้เขียนแค่ <code>nums.append(x)</code> หรือฟังก์ชันไม่มี return');
+    if((k=/'list' object has no attribute '(\w+)'/.exec(m)))return R(`list ไม่มีคำสั่ง .${esc(k[1])}()`,['push','add'].includes(k[1])?'ถ้าต้องการเพิ่มสมาชิกต่อท้าย ให้ใช้ <code>.append()</code>':'คำสั่งที่ใช้บ่อย: append, insert, remove, pop, sort, reverse, index, count');
+    if((k=/'str' object has no attribute '(\w+)'/.exec(m)))return R(`ข้อความไม่มีคำสั่ง .${esc(k[1])}()`,'ข้อความ (str) แก้ไขไม่ได้ ถ้าต้องการเก็บหลายค่าให้ใช้ list');
+    return R('เรียกคำสั่งที่ข้อมูลชนิดนี้ไม่มี','ตรวจการสะกดชื่อคำสั่งหลังจุด และชนิดของข้อมูล');
+  }
+  if(t==='ValueError'){
+    if((k=/invalid literal for int\(\) with base 10: '(.*)'/.exec(m)))return R(`'${esc(k[1])}' ไม่ใช่จำนวนเต็ม`,'int() แปลงได้เฉพาะข้อความที่เป็นจำนวนเต็ม ถ้าเป็นทศนิยมให้ใช้ float() ตรวจข้อมูลที่พิมพ์ให้โปรแกรมด้วย');
+    if(/could not convert string to float/.test(m))return R('ข้อความนี้ไม่ใช่ตัวเลข','float() แปลงได้เฉพาะข้อความที่เป็นตัวเลข');
+    if(/x not in list|is not in list/.test(m))return R('ค่าที่ต้องการลบหรือค้นหาไม่มีอยู่ใน list','ตรวจก่อนด้วย <code>if x in nums:</code> แล้วค่อย <code>nums.remove(x)</code> หรือ <code>nums.index(x)</code>');
+    if(/empty/.test(m))return R('ใช้ max() / min() กับ list ว่าง','list ต้องมีสมาชิกอย่างน้อย 1 ตัว');
+    return R('ค่าที่ให้มาไม่ถูกต้อง','ชนิดถูกแต่ค่าใช้ไม่ได้');
+  }
+  if(t==='ZeroDivisionError')return R('หารด้วยศูนย์ไม่ได้','ตัวหารของ / // % ห้ามเป็น 0 ถ้าหาค่าเฉลี่ยด้วย <code>len(nums)</code> ตรวจก่อนว่า list ไม่ว่าง');
+  if(t==='RecursionError')return R('ฟังก์ชันเรียกตัวเองไม่หยุด','ฟังก์ชันที่เรียกตัวเองต้องมีเงื่อนไขหยุด');
+  if(t==='EOFError')return R('ไม่มีข้อมูลให้ input() อ่าน','พิมพ์ค่าเพิ่มในช่องข้อมูล บรรทัดละ 1 ค่า');
+  return R(`เกิดข้อผิดพลาดชนิด ${esc(t)}`,'อ่านข้อความภาษาอังกฤษด้านล่างประกอบ');
+}
+function errBox(e,names,src){
+  const t=thaiErr(e,names,src);
+  const syn=e.kind==='syntax';
+  let h=`<div class="box err"><b>${syn?'❌ เขียนผิดไวยากรณ์ โปรแกรมยังไม่ได้เริ่มทำงานเลย':'❌ โปรแกรมหยุดทำงานกลางทาง'}</b>${e.line?` · <b>บรรทัดที่ ${e.line}</b>`:''}<br>🧩 <b>${t.h}</b><br>${t.d}`;
+  if(syn&&e.text)h+=`<pre class="show">${esc(e.text)}\n${esc(' '.repeat(Math.max(0,(e.offset||1)-1))+'^')}</pre>`;
+  if(!/^__/.test(e.msg||''))h+=`<div class="eng">Python บอกว่า: <code>${esc(e.type)}: ${esc(e.msg)}</code></div>`;
+  return h+'</div>';
+}
+function lint(src){
+  const w=[];
+  src.split('\n').forEach((l,i)=>{
+    const code=l.replace(/#.*$/,'');
+    if(/==\s*("[^"]*"|'[^']*'|\d+)\s+or\s+("[^"]*"|'[^']*'|\d+)\s*:/.test(code))
+      w.push({line:i+1,msg:'เงื่อนไขแบบ x == "a" or "b" จะเป็นจริงเสมอ! ต้องเขียนเต็มทั้งสองข้าง เช่น x == "a" or x == "b"'});
+    const m=/^\s*(print|input|int|float|str|len|sum|max|min|list|range|type)\s*=[^=]/.exec(code);
+    if(m)w.push({line:i+1,msg:`ตั้งชื่อตัวแปรว่า ${m[1]} ซ้ำกับคำสั่งของ Python ทำให้ใช้ ${m[1]}() ไม่ได้อีก ควรเปลี่ยนชื่อ เช่น total หรือ my_list`});
+    if(/\w+\s*=\s*\w+\.append\s*\(/.test(code))w.push({line:i+1,msg:'append() แก้ไข list เดิมและให้ผลเป็น None ไม่ต้องเก็บผลลัพธ์ใส่ตัวแปร ให้เขียนแค่ nums.append(x)'});
+  });
+  if(/while\s+True\s*:/.test(src)&&!/\bbreak\b/.test(src))w.push({line:0,msg:'มี while True: แต่ไม่มี break เลย loop นี้จะวนไม่รู้จบ'});
+  return w;
+}
+
+/* =====================================================================
+   ส่วนที่ 3: แสดงผลลัพธ์ และดูการทำงานทีละบรรทัด
+   ===================================================================== */
+const fmtOut=raw=>esc(raw||'').replace(/\x01([\s\S]*?)\x02/g,'<i>$1</i>').replace(/[\x03\x04]/g,'');
+const cleanOut=raw=>(raw||'').replace(/\x03[\s\S]*?\x04/g,'').replace(/\x01[\s\S]*?\x02\n?/g,'');
+const norm=s=>s.replace(/\r/g,'').split('\n').map(x=>x.replace(/\s+$/,'')).join('\n').replace(/\n+$/,'');
+
+function showResult(host,r,src,openStep){
+  const names=Object.keys(r.final||{});
+  const syn=r.err&&r.err.kind==='syntax';
+  let h='';
+  if(!syn)h+=`<div class="tlabel">🖥️ หน้าจอผลลัพธ์ (ตัวอักษรสีเหลือง = สิ่งที่ผู้ใช้พิมพ์ให้ input())</div><div class="term mono">${fmtOut(r.out)||'<span style="color:#64748b">(ไม่มีอะไรแสดง)</span>'}</div>`;
+  h+=r.err?errBox(r.err,names,src):'<div class="box good">✅ โปรแกรมทำงานสำเร็จ</div>';
+  const w=lint(src);
+  if(w.length)h+=`<div class="box warn"><b>⚠️ ข้อสังเกต</b><ul>${w.map(x=>`<li>${x.line?'บรรทัดที่ '+x.line+': ':''}${esc(x.msg)}</li>`).join('')}</ul></div>`;
+  if(!syn&&r.steps&&r.steps.length)h+=`<details class="stpwrap" ${openStep?'open':''}><summary>👣 ดูการทำงานทีละบรรทัด ค่าของตัวแปร และจำนวนครั้งที่แต่ละบรรทัดทำงาน</summary><div class="stp"></div></details>`;
+  host.innerHTML=h;
+  const sh=$('.stp',host);
+  if(sh)mkStepper(sh,r,src);
+}
+function varTable(cur,prev,cmp,changes,prefix){
+  const names=Object.keys(cur);
+  if(!names.length)return '<div class="tlabel">(ยังไม่มีตัวแปร)</div>';
+  return `<table class="vt"><tr><th>ชื่อ</th><th>ชนิด</th><th>ค่า</th></tr>${names.map(n=>{
+    const ty=cur[n][0],rep=cur[n][1];let cls='',note='';
+    if(cmp&&!(n in prev)){cls='new';note='<span class="tag newv">ใหม่!</span>';changes.push(`${prefix}สร้าง <code>${esc(n)}</code> = <code>${esc(rep)}</code>`);}
+    else if(cmp&&(prev[n][1]!==rep||prev[n][0]!==ty)){cls='chg';note=` <span class="was">(เดิม ${esc(prev[n][1])})</span>`;changes.push(`${prefix}<code>${esc(n)}</code> เปลี่ยนจาก <code>${esc(prev[n][1])}</code> เป็น <code>${esc(rep)}</code>`);}
+    return `<tr><td class="${cls}"><code>${esc(n)}</code></td><td class="${cls}"><span class="tag ${esc(ty)}">${esc(ty)}</span></td><td class="${cls} mono">${esc(rep)}${note}</td></tr>`;
+  }).join('')}</table>`;
+}
+function mkStepper(host,r,src){
+  const lines=src.split('\n');
+  const outArr=Array.from(r.out||'');
+  const hits=r.hits||{};
+  const views=r.steps.map(s=>({line:s.line,vars:s.vars,out:s.out,fn:s.fn||null,loc:s.loc||null}));
+  views.push({line:null,vars:r.final||{},out:outArr.length,end:true,fn:null,loc:null});
+  const trunc=r.steps.length>=1000;
+  let k=0;
+  host.innerHTML=`<div class="stp-ctl"><button class="btn" data-a="first">⏮ เริ่ม</button><button class="btn" data-a="prev">◀ ย้อน</button><span class="stp-n"></span><button class="btn go" data-a="next">ถัดไป ▶</button><button class="btn" data-a="last">จบ ⏭</button></div>
+  <div class="box warn smsg"></div>
+  <div class="stp-grid"><div><div class="tlabel">โค้ด (➜ = บรรทัดที่กำลังจะทำ · แถบเขียว = เพิ่งทำเสร็จ · ×n = บรรทัดนี้ทำงานทั้งหมดกี่ครั้ง)</div><div class="scode"></div></div>
+  <div><div class="svars"></div><div class="tlabel">🖥️ หน้าจอ ณ ขั้นนี้</div><div class="term mono sout"></div></div></div>`;
+  const draw=()=>{
+    const v=views[k],pv=k>0?views[k-1]:null;
+    const doneL=pv?pv.line:null,nextL=v.end?null:v.line;
+    const badL=(v.end&&r.err)?r.err.line:null;
+    $('.scode',host).innerHTML=lines.map((l,i)=>{
+      const n=i+1;let c='',a='';
+      if(n===badL){c='bad';a='✖';}else if(n===nextL){c='next';a='➜';}else if(n===doneL)c='done';
+      const hc=hits[n]?'×'+hits[n]:'';
+      return `<div class="sl ${c}"><span class="sa">${a}</span><span class="sn">${n}</span><span class="hc">${hc}</span><span>${esc(l)||' '}</span></div>`;
+    }).join('');
+    const changes=[];
+    let vh='';
+    if(v.fn){
+      const prevLoc=(pv&&pv.fn===v.fn&&pv.loc)?pv.loc:{};
+      vh+=`<div class="loc"><div class="tlabel">📦 ตัวแปรภายในฟังก์ชัน <b>${esc(v.fn)}()</b> (local · จะหายไปเมื่อฟังก์ชันจบ)</div>${varTable(v.loc||{},prevLoc,!!pv,changes,'[ใน '+esc(v.fn)+'] ')}</div>`;
+    }
+    vh+=`<div class="tlabel">📦 ตัวแปรของโปรแกรมหลัก (global)</div>${varTable(v.vars,pv?pv.vars:{},!!pv,changes,'')}`;
+    $('.svars',host).innerHTML=vh;
+    $('.sout',host).innerHTML=fmtOut(outArr.slice(0,v.out).join(''))||'<span style="color:#64748b">(ว่าง)</span>';
+    let msg;
+    if(k===0)msg='▶ ยังไม่เริ่มทำงาน ลูกศร ➜ ชี้บรรทัดแรกที่จะทำ กด "ถัดไป" เพื่อให้ Python ทำทีละบรรทัด (ลองทายก่อนกดทุกครั้ง!)';
+    else if(v.end&&r.err)msg=`❌ ระหว่างทำบรรทัดที่ ${r.err.line} เกิดข้อผิดพลาด โปรแกรมจึงหยุดทันที`;
+    else if(v.fn&&pv.fn!==v.fn)msg=`📞 บรรทัดที่ ${doneL} เรียกฟังก์ชัน <code>${esc(v.fn)}()</code> โปรแกรมจึงกระโดดเข้าไปทำในฟังก์ชัน${changes.length?' · '+changes.join(', '):''}`;
+    else{
+      msg=(!v.fn&&pv.fn)?`↩️ ฟังก์ชัน <code>${esc(pv.fn)}()</code> ทำงานจบแล้ว กลับมาทำต่อที่โปรแกรมหลัก (ตัวแปร local ถูกลบทิ้ง)`:`✔ ทำบรรทัดที่ ${doneL} เสร็จแล้ว`;
+      const shown=v.out>pv.out;
+      if(changes.length)msg+=': '+changes.join(', ')+(shown?' และแสดงผลบนหน้าจอ':'');
+      else msg+=shown?' (แสดงผลบนหน้าจอ)':' (ไม่มีตัวแปรเปลี่ยน)';
+      if(v.end)msg+=' · 🏁 จบโปรแกรม';
+    }
+    if(trunc&&v.end)msg+=' (บันทึกทีละขั้นไว้เฉพาะ 1,000 ขั้นแรก แต่ตัวเลข ×n นับครบทุกครั้ง)';
+    $('.smsg',host).innerHTML=msg;
+    $('.stp-n',host).textContent=`ขั้น ${k} / ${views.length-1}`;
+    host.querySelector('[data-a=first]').disabled=k===0;
+    host.querySelector('[data-a=prev]').disabled=k===0;
+    host.querySelector('[data-a=next]').disabled=k===views.length-1;
+    host.querySelector('[data-a=last]').disabled=k===views.length-1;
+  };
+  host.querySelectorAll('.stp-ctl button').forEach(b=>b.onclick=()=>{
+    const a=b.dataset.a;
+    if(a==='first')k=0;else if(a==='prev')k=Math.max(0,k-1);else if(a==='next')k=Math.min(views.length-1,k+1);else k=views.length-1;
+    draw();
+  });
+  draw();
+}
+
+/* =====================================================================
+   ส่วนที่ 4: ส่วนประกอบหน้าเว็บ
+   ===================================================================== */
+let progress={};
+try{progress=JSON.parse(localStorage.getItem('pylab2b')||'{}');}catch(e){}
+const saveP=()=>{try{localStorage.setItem('pylab2b',JSON.stringify(progress));}catch(e){}};
+const notReady='<div class="box warn">⏳ Python ยังโหลดไม่เสร็จ รอสักครู่แล้วกดใหม่ (ดูสถานะที่แถบด้านบนสุด)</div>';
+
+function mkEditor(host,cfg){
+  const hasIn=cfg.input!==undefined;
+  host.innerHTML=`<textarea class="code" spellcheck="false" wrap="off"></textarea>${hasIn?'<label class="lab">⌨️ ข้อมูลที่จะพิมพ์ให้ input() (บรรทัดละ 1 ค่า เรียงตามลำดับที่ input() ถูกเรียก)<textarea class="inbox mono"></textarea></label>':''}<div class="tlabel">💡 กด Enter หลังบรรทัดที่ลงท้ายด้วย : จะย่อหน้าให้อัตโนมัติ · Tab = ย่อหน้า · Shift+Tab = ลดย่อหน้า · Ctrl+Enter = รัน</div><div class="btns"><button class="btn go run">▶ รันโปรแกรม</button><button class="btn rs">↺ เริ่มใหม่</button></div><div class="res"></div>`;
+  const ta=$('textarea.code',host),inp=$('.inbox',host),res=$('.res',host);
+  ta.value=cfg.code;ta.rows=Math.min(26,cfg.code.split('\n').length+1);
+  if(inp){inp.value=cfg.input;inp.rows=Math.max(2,cfg.input.split('\n').length);}
+  const run=()=>{
+    if(!pyReady){res.innerHTML=notReady;return;}
+    const src=ta.value;
+    res.innerHTML='<div class="tlabel">กำลังรัน...</div>';
+    setTimeout(()=>showResult(res,runPy(src,inp?inp.value:''),src,!!cfg.trace),10);
+  };
+  $('.run',host).onclick=run;
+  $('.rs',host).onclick=()=>{ta.value=cfg.code;if(inp)inp.value=cfg.input;res.innerHTML='';};
+  ta.addEventListener('keydown',e=>{
+    if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();run();return;}
+    const s=ta.selectionStart,v=ta.value,ls=v.lastIndexOf('\n',s-1)+1;
+    if(e.key==='Tab'){
+      e.preventDefault();
+      if(e.shiftKey){const m=/^ {1,4}/.exec(v.slice(ls));if(m)ta.setRangeText('',ls,ls+m[0].length,'preserve');}
+      else ta.setRangeText('    ',s,ta.selectionEnd,'end');
+    }else if(e.key==='Enter'&&!e.isComposing){
+      e.preventDefault();
+      const line=v.slice(ls,s);
+      const ind=/^ */.exec(line)[0];
+      const extra=/:\s*(#.*)?$/.test(line)?'    ':'';
+      ta.setRangeText('\n'+ind+extra,s,ta.selectionEnd,'end');
+    }
+  });
+  (cfg.tries||[]).forEach(t=>{
+    const b=document.createElement('button');b.className='btn';b.textContent=t.label;
+    b.onclick=()=>{ta.value=t.fn(cfg.code);if(inp)inp.value=cfg.input;run();};
+    $('.btns',host).appendChild(b);
+  });
+  return{get:()=>ta.value};
+}
+function mkMission(host,cfg,stepId,onDone){
+  const hasIn=cfg.tests.some(t=>t.input!==undefined);
+  host.innerHTML=`<h3 style="margin-top:0">🎯 ภารกิจ: ${cfg.title}</h3>${cfg.task}
+  <div class="tw"><table><tr>${hasIn?'<th>ข้อมูลที่พิมพ์ให้ input()</th>':''}<th>ผลลัพธ์ที่ต้องได้</th></tr>${cfg.tests.map(t=>`<tr>${hasIn?`<td><pre class="mono" style="margin:0">${esc(t.input||'')}</pre></td>`:''}<td><pre class="mono" style="margin:0">${esc(t.expected)}</pre></td></tr>`).join('')}</table></div>
+  ${hasIn?'<p class="tlabel">ℹ️ ข้อความชวนพิมพ์ใน input("...") จะไม่ถูกนำมาตรวจ ใส่หรือไม่ใส่ก็ได้</p>':''}
+  <div class="ed"></div>
+  <div class="btns"><button class="btn ok chk">✔ ตรวจคำตอบ</button><button class="btn hint">💡 ขอคำใบ้</button><button class="btn sol">👀 ดูเฉลย</button></div>
+  <div class="hb"></div><div class="cr"></div>`;
+  const ed=mkEditor($('.ed',host),{code:cfg.code,input:hasIn?cfg.tests[0].input:undefined,trace:true});
+  const cr=$('.cr',host);
+  $('.hint',host).onclick=()=>{$('.hb',host).innerHTML=`<div class="box warn">💡 ${cfg.hint}</div>`;};
+  $('.sol',host).onclick=()=>{$('.hb',host).innerHTML='<div class="box warn">เฉลย (ลองทำเองก่อน แล้วค่อยเทียบนะ)<pre class="show"></pre></div>';$('.hb pre',host).textContent=cfg.solution;};
+  $('.chk',host).onclick=()=>{
+    if(!pyReady){cr.innerHTML=notReady;return;}
+    const code=ed.get();let all=true,h='<ul>';
+    (cfg.requires||[]).forEach(q=>{const ok=q.re.test(code);if(!ok)all=false;h+=`<li>${ok?'✅':'❌'} ${q.msg}</li>`;});
+    cfg.tests.forEach((t,i)=>{
+      const r=runPy(code,t.input||'');
+      const lbl=`ชุดทดสอบที่ ${i+1}${t.input!==undefined?` (พิมพ์ <code>${esc(t.input).replace(/\n/g,' ⏎ ')}</code>)`:''}`;
+      if(r.err){all=false;const te=thaiErr(r.err,Object.keys(r.final||{}),code);h+=`<li>❌ ${lbl}: ${r.err.kind==='syntax'?'เขียนผิดไวยากรณ์':'โปรแกรมหยุดทำงาน'}${r.err.line?' (บรรทัด '+r.err.line+')':''} · ${te.h}</li>`;return;}
+      const got=cleanOut(r.out);const ok=norm(got)===norm(t.expected);if(!ok)all=false;
+      h+=`<li>${ok?'✅':'❌'} ${lbl}`;
+      if(!ok)h+=`<br>ต้องได้:<pre class="show">${esc(t.expected)}</pre>แต่ได้:<pre class="show">${esc(got)||'(ว่างเปล่า)'}</pre>`;
+      h+='</li>';
+    });
+    h+='</ul>';
+    if(all){progress[stepId]=true;saveP();onDone();h='<div class="box good"><b>🎉 ผ่านแล้ว เก่งมาก!</b></div>'+h;}
+    else h='<div class="box err"><b>ยังไม่ผ่าน ไม่เป็นไร ลองดูผลเปรียบเทียบแล้วแก้อีกนิด</b></div>'+h;
+    cr.innerHTML=h;
+  };
+  if(progress[stepId])cr.innerHTML='<div class="box good">✅ คุณเคยทำภารกิจนี้ผ่านแล้ว</div>';
+}
+function mkQuiz(host,list){
+  host.innerHTML='<h3 style="margin-top:0">🤔 ถามเล็กๆ</h3>'+list.map((q,qi)=>`<div class="q" data-q="${qi}"><div class="qq"><b>ข้อ ${qi+1}.</b> ${q.q}</div>${q.c.map((c,i)=>`<button class="choice" data-i="${i}">${esc(c)}</button>`).join('')}<div class="fb"></div></div>`).join('');
+  list.forEach((q,qi)=>{
+    const box=host.querySelector(`.q[data-q="${qi}"]`);
+    box.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i,fb=$('.fb',box);
+      if(i===q.a){b.classList.remove('wrong');b.classList.add('right');fb.innerHTML=`<div class="box good">✅ ถูกต้อง! ${q.e}</div>`;}
+      else{b.classList.add('wrong');fb.innerHTML='<div class="box err">ยังไม่ใช่ ลองเลือกใหม่ได้เลย</div>';}
+    });
+  });
+}
+function mkAnnot(host,cfg){
+  host.innerHTML=`<div class="acode">${cfg.map((l,i)=>`<button class="aline" data-i="${i}"><span class="n">${i+1}</span><span>${esc(l.c)||' '}</span></button>`).join('')}</div><div class="aexp">👆 คลิกที่บรรทัดของโปรแกรม เพื่ออ่านว่าบรรทัดนั้นทำอะไร</div>`;
+  host.querySelectorAll('.aline').forEach(b=>b.onclick=()=>{
+    host.querySelectorAll('.aline').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
+    $('.aexp',host).innerHTML=cfg[+b.dataset.i].e;
+  });
+}
+function mkShell(host,cfg){
+  host.innerHTML=`<h3 style="margin-top:0">🐍 ลองเล่น: Python Shell</h3><p>${cfg.tip}</p>
+  <div class="shell"><div class="sh-log"></div><div class="sh-in"><span>&gt;&gt;&gt;</span><input class="sh-inp" spellcheck="false" autocomplete="off" placeholder="พิมพ์คำสั่งแล้วกด Enter"></div></div>
+  <div class="tlabel">กดปุ่มด้านล่างเพื่อลองคำสั่งตัวอย่าง (ทายผลก่อนกดนะ! ปุ่มลูกศรขึ้น ↑ เรียกคำสั่งเดิมได้)</div><div class="btns sm"></div>`;
+  const log=$('.sh-log',host),inp=$('.sh-inp',host),hist=[];let hp=0;
+  const add=(cls,html)=>{const d=document.createElement('div');d.className=cls;d.innerHTML=html;log.appendChild(d);log.scrollTop=log.scrollHeight;};
+  const run=line=>{
+    if(!line.trim())return;
+    add('p','&gt;&gt;&gt; '+esc(line));hist.push(line);hp=hist.length;
+    if(!pyReady){add('e','⏳ รอให้ Python โหลดเสร็จก่อนนะ');return;}
+    let r;
+    try{r=JSON.parse(pyShell(cfg.id,line));}catch(e){add('e',esc(String(e)));return;}
+    if(r.out)add('o',esc(r.out.replace(/\n$/,'')));
+    if(r.err){const t=thaiErr(r.err,[],'');add('e',`${/^__/.test(r.err.msg)?'':esc(r.err.type)+': '+esc(r.err.msg)+'<br>'}💡 ${t.h}`);}
+  };
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){run(inp.value);inp.value='';}
+    else if(e.key==='ArrowUp'){if(hp>0){hp--;inp.value=hist[hp];}e.preventDefault();}
+    else if(e.key==='ArrowDown'){if(hp<hist.length-1){hp++;inp.value=hist[hp];}else{hp=hist.length;inp.value='';}e.preventDefault();}
+  });
+  const bar=$('.sm',host);
+  cfg.samples.forEach(s=>{const b=document.createElement('button');b.className='btn mono';b.textContent=s;b.onclick=()=>run(s);bar.appendChild(b);});
+  const rb=document.createElement('button');rb.className='btn';rb.textContent='🧹 ล้าง Shell';
+  rb.onclick=()=>{log.innerHTML='';if(pyReady)pyShellReset(cfg.id);};bar.appendChild(rb);
+}
+
+/* ---------- ตัวทดลองเฉพาะเรื่อง ---------- */
+function mkLogic(host){
+  host.innerHTML=`<h3 style="margin-top:0">🧪 ลองเล่น: รวมเงื่อนไขด้วย and / or / not</h3><p>เปลี่ยนค่า a และ b แล้วดูว่าแต่ละเงื่อนไขเป็น True หรือ False <b>ทายในใจก่อนดูคำตอบทุกครั้ง!</b></p>
+  <div class="row"><label>a =<input class="txt a" value="7"></label><label>b =<input class="txt b" value="-3"></label></div><div class="out"></div>`;
+  const pm=(x,m)=>((x%m)+m)%m;
+  const rows=[
+    ['a > 0 and b > 0','บวกทั้งคู่',(a,b)=>a>0&&b>0],
+    ['a > 0 or b > 0','มีบวกอย่างน้อย 1 ตัว',(a,b)=>a>0||b>0],
+    ['not (a > b)','a ไม่มากกว่า b',(a,b)=>!(a>b)],
+    ['0 <= a <= 10','a อยู่ในช่วง 0 ถึง 10 (เขียนแบบ Python)',(a,b)=>0<=a&&a<=10],
+    ['a < 0 or a > 100','a อยู่นอกช่วง 0 ถึง 100',(a,b)=>a<0||a>100],
+    ['a == b','a เท่ากับ b',(a,b)=>a===b],
+    ['a != b','a ไม่เท่ากับ b',(a,b)=>a!==b],
+    ['a % 2 == 0 and b % 2 == 0','เป็นเลขคู่ทั้งคู่',(a,b)=>pm(a,2)===0&&pm(b,2)===0]
+  ];
+  const upd=()=>{
+    const sa=$('.a',host).value.trim(),sb=$('.b',host).value.trim(),A=Number(sa),B=Number(sb),o=$('.out',host);
+    if(sa===''||sb===''||!isFinite(A)||!isFinite(B)){o.innerHTML='<div class="box warn">กรอก a และ b เป็นตัวเลข</div>';return;}
+    o.innerHTML=`<div class="tw"><table><tr><th>เงื่อนไขใน Python</th><th>อ่านว่า</th><th>ผล</th></tr>${rows.map(r=>{const v=r[2](A,B);return `<tr><td><code>${esc(r[0])}</code></td><td>${r[1]}</td><td class="${v?'t':'f'}">${v?'True':'False'}</td></tr>`;}).join('')}</table></div>`;
+  };
+  host.querySelectorAll('input').forEach(x=>x.oninput=upd);upd();
+}
+function mkRange(host){
+  host.innerHTML=`<h3 style="margin-top:0">🧪 ลองเล่น: range() สร้างตัวเลขอะไรบ้าง?</h3><p>ตั้งค่า start, stop, step แล้วดูว่า loop จะวนกี่รอบ ลองให้ step ติดลบ หรือให้ start มากกว่า stop ดู</p>
+  <div class="row"><label>start (เริ่ม)<input class="txt s" value="1"></label><label>stop (หยุดก่อนถึง)<input class="txt e" value="6"></label><label>step (เพิ่มทีละ)<input class="txt p" value="1"></label></div><div class="out"></div>`;
+  const upd=()=>{
+    const o=$('.out',host);const vs=['.s','.e','.p'].map(c=>$(c,host).value.trim());
+    if(vs.some(v=>!/^[-+]?\d+$/.test(v))){o.innerHTML='<div class="box err">range() รับเฉพาะ<b>จำนวนเต็ม</b> (ใส่ทศนิยมหรือตัวอักษรจะเกิด TypeError)</div>';return;}
+    const [s,e,p]=vs.map(Number);
+    if(p===0){o.innerHTML='<div class="box err">❌ step เป็น 0 ไม่ได้ (ValueError) เพราะตัวเลขจะไม่ขยับเลย</div>';return;}
+    const cnt=p>0?Math.max(0,Math.ceil((e-s)/p)):Math.max(0,Math.ceil((s-e)/(-p)));
+    const vals=[];for(let i=0;i<Math.min(cnt,40);i++)vals.push(s+i*p);
+    const call=p===1?(s===0?`range(${e})`:`range(${s}, ${e})`):`range(${s}, ${e}, ${p})`;
+    let h=`<pre class="show">for i in ${esc(call)}:\n    print(i, end=" ")</pre>`;
+    if(!cnt)h+=`<div class="box warn">⚠️ ได้ลำดับว่างเปล่า loop จึง<b>ไม่ทำงานเลยสักรอบ</b> (${p>0?'step เป็นบวก แต่ start ไม่น้อยกว่า stop':'step เป็นลบ แต่ start ไม่มากกว่า stop'})</div>`;
+    else{
+      h+=`<div class="tw"><div class="mrow">${vals.map((v,i)=>`<div class="mc"><div class="mi">รอบ ${i+1}</div><div class="mb">${v}</div></div>`).join('')}${cnt>40?'<div class="mc"><div class="mb">…</div></div>':''}</div></div>`;
+      h+=`<div class="box good">วนทั้งหมด <b>${cnt}</b> รอบ · ค่าแรก <b>${s}</b> · ค่าสุดท้าย <b>${s+(cnt-1)*p}</b> · ค่า stop (${e}) <b>ไม่ถูกนับรวม</b></div>`;
+    }
+    o.innerHTML=h;
+  };
+  host.querySelectorAll('input').forEach(x=>x.oninput=upd);upd();
+}
+function mkWhileSim(host){
+  host.innerHTML=`<h3 style="margin-top:0">🧪 ลองเล่น: จำลอง while loop</h3><p>loop ที่ดีต้องมีครบ 3 ส่วน: ① ค่าเริ่มต้น ② เงื่อนไข ③ การเปลี่ยนค่า ลองปรับแต่ละส่วนแล้วดูว่าวนกี่รอบ หรือวนไม่จบ!</p>
+  <div class="row"><label>① ค่าเริ่มต้น x =<input class="txt a" value="1"></label><label>② เงื่อนไข x …<select class="txt o"><option>&lt;</option><option>&lt;=</option><option>&gt;</option><option>&gt;=</option><option>!=</option></select></label><label>ค่าเทียบ<input class="txt b" value="20"></label><label>③ เปลี่ยนค่า x …<select class="txt u"><option>+=</option><option>-=</option><option selected>*=</option></select></label><label>ทีละ<input class="txt c" value="2"></label></div><div class="out"></div>`;
+  const upd=()=>{
+    const q=s=>$(s,host);const o=q('.out');
+    const raw=[q('.a').value,q('.b').value,q('.c').value].map(x=>x.trim());
+    if(raw.some(x=>x===''||!isFinite(Number(x)))){o.innerHTML='<div class="box warn">กรอกตัวเลขให้ครบทุกช่อง</div>';return;}
+    const [A,B,Cc]=raw.map(Number),op=q('.o').value,u=q('.u').value;
+    const test=x=>op==='<'?x<B:op==='<='?x<=B:op==='>'?x>B:op==='>='?x>=B:x!==B;
+    const step=x=>u==='+='?x+Cc:u==='-='?x-Cc:x*Cc;
+    let x=A;const rows=[];
+    while(test(x)&&rows.length<30){rows.push(x);x=step(x);}
+    const inf=rows.length>=30&&test(x);
+    let h=`<pre class="show">${esc(`x = ${A}\nwhile x ${op} ${B}:\n    print(x)\n    x ${u} ${Cc}`)}</pre>`;
+    if(!rows.length)h+=`<div class="box warn">⚠️ ตอนเริ่ม ${esc(A+' '+op+' '+B)} เป็น False ตั้งแต่แรก loop จึง<b>ไม่ทำงานเลย</b></div>`;
+    else{
+      h+=`<div class="tw"><table><tr><th>รอบที่</th><th>x ตอนตรวจ</th><th>เงื่อนไข</th></tr>${rows.map((v,i)=>`<tr><td>${i+1}</td><td>${v}</td><td class="t">${esc(v+' '+op+' '+B)} → True ทำต่อ</td></tr>`).join('')}${inf?'':`<tr><td>-</td><td>${x}</td><td class="f">${esc(x+' '+op+' '+B)} → False ออกจาก loop</td></tr>`}</table></div>`;
+      h+=inf?'<div class="box err">❌ วนเกิน 30 รอบแล้วยังไม่จบ = <b>infinite loop</b> ตรวจว่าการเปลี่ยนค่า (③) ทำให้ x เข้าใกล้จุดที่เงื่อนไขเป็น False จริงหรือไม่</div>':`<div class="box good">วนทั้งหมด <b>${rows.length}</b> รอบ หลังจบ loop x = <b>${x}</b></div>`;
+    }
+    o.innerHTML=h;
+  };
+  host.querySelectorAll('input,select').forEach(x=>x.oninput=upd);upd();
+}
+function mkListBox(host){
+  host.innerHTML=`<h3 style="margin-top:0">🧪 ลองเล่น: index และการตัดช่วง (slice) ของ list</h3><p>พิมพ์สมาชิกของ list (คั่นด้วยเว้นวรรค ไม่เกิน 10 ตัว) แล้วลองพิมพ์สิ่งที่อยู่ใน <code>a[ ]</code> เช่น <code>0</code> <code>2</code> <code>-1</code> <code>-2</code> <code>1:3</code> <code>:2</code> <code>2:</code> <code>10</code></p>
+  <div class="row"><label>สมาชิกใน list<input class="txt v" style="width:290px" value="apple banana cherry durian egg"></label><label>a[ ... ]<input class="txt x" value="1"></label></div><div class="out"></div>`;
+  const rep=s=>/^-?\d+(\.\d+)?$/.test(s)?s:`'${s}'`;
+  const upd=()=>{
+    const items=$('.v',host).value.trim().split(/\s+/).filter(Boolean).slice(0,10);
+    const ex=$('.x',host).value.trim(),o=$('.out',host),n=items.length;
+    if(!n){o.innerHTML='<div class="box warn">พิมพ์สมาชิกอย่างน้อย 1 ตัว</div>';return;}
+    const sel=new Set();let res='',bad='',kind='',m;
+    if((m=/^(-?\d+)?\s*:\s*(-?\d+)?$/.exec(ex))){
+      const fix=(v,d)=>{if(v===undefined)return d;let x=+v;if(x<0)x+=n;return Math.min(Math.max(x,0),n);};
+      const st=fix(m[1],0),en=fix(m[2],n),part=[];
+      for(let i=st;i<en;i++){sel.add(i);part.push(rep(items[i]));}
+      res='['+part.join(', ')+']';kind='slice';
+    }else if(/^-?\d+$/.test(ex)){
+      const i=+ex;
+      if(i<-n||i>=n)bad=`❌ IndexError: list index out of range<br>list นี้มี ${n} ตัว ใช้ index ได้แค่ 0 ถึง ${n-1} (หรือ -1 ถึง -${n})`;
+      else{const r=i<0?i+n:i;sel.add(r);res=rep(items[r]);kind='index';}
+    }else bad='ใส่ได้เฉพาะเลข index เช่น 2 หรือ -1 หรือช่วง เช่น 1:3';
+    let h=`<pre class="show">a = [${esc(items.map(rep).join(', '))}]</pre><div class="tw"><div class="mrow">${items.map((v,i)=>`<div class="mc ${sel.has(i)?'hl':''}"><div class="mi">[${i}]</div><div class="mb">${esc(rep(v))}</div><div class="mn">[${i-n}]</div></div>`).join('')}</div></div><div class="tlabel">ตัวเลขสีน้ำเงิน = index ปกติ (นับจาก 0) · ตัวเลขสีม่วง = index ติดลบ (นับจากท้าย) · len(a) = ${n}</div>`;
+    if(bad)h+=`<div class="box err">${bad}</div>`;
+    else h+=`<div class="box good"><code>a[${esc(ex)}]</code> → <b>${esc(res)}</b>${kind==='slice'?'<br>slice <code>a[เริ่ม:หยุด]</code> เอาตั้งแต่ index เริ่ม ถึง<b>ก่อน</b> index หยุด (เหมือน range) ได้ผลเป็น list ใหม่เสมอ และถ้าเกินขอบจะไม่ error':''}</div>`;
+    o.innerHTML=h;
+  };
+  host.querySelectorAll('input').forEach(x=>x.oninput=upd);upd();
+}
+
+/* =====================================================================
+   ส่วนที่ 5: เนื้อหา 8 ขั้น
+   ===================================================================== */
+const STEPS=[
+/* ---------------- ขั้นที่ 1 ---------------- */
+{name:'1 if-else',title:'ขั้นที่ 1: if / else ให้โปรแกรมตัดสินใจ',
+ widgets:[{type:'shell',id:'s1',tip:'การเปรียบเทียบให้ผลเป็น <b>True</b> (จริง) หรือ <b>False</b> (เท็จ) เสมอ ลองกดตัวอย่างดู (ทายก่อนกดนะ)',
+  samples:['7 > 3','7 < 3','5 == 5.0','5 != 5','x = 12','x >= 10','x % 2 == 0','"cat" == "Cat"','type(7 > 3)']}],
+ learn:C`<p>ในภาค 1 โปรแกรมทำงาน<b>ทุกบรรทัดจากบนลงล่าง</b> แต่โปรแกรมจริงต้อง<b>เลือกทาง</b>ได้ เช่น "ถ้าคะแนนถึง 50 ให้แสดงว่าผ่าน ถ้าไม่ถึงให้แสดงว่าไม่ผ่าน" 🚦</p>
+ <h3>เครื่องหมายเปรียบเทียบ (ผลเป็น True หรือ False)</h3>
+ <div class="tw"><table><tr><th>เครื่องหมาย</th><th>ความหมาย</th><th>ตัวอย่าง</th><th>ผล</th></tr>
+ <tr><td><code>==</code></td><td>เท่ากับ</td><td><code>5 == 5</code></td><td>True</td></tr>
+ <tr><td><code>!=</code></td><td>ไม่เท่ากับ</td><td><code>5 != 3</code></td><td>True</td></tr>
+ <tr><td><code>&gt;</code> <code>&lt;</code></td><td>มากกว่า / น้อยกว่า</td><td><code>3 &gt; 7</code></td><td>False</td></tr>
+ <tr><td><code>&gt;=</code> <code>&lt;=</code></td><td>มากกว่าหรือเท่ากับ / น้อยกว่าหรือเท่ากับ</td><td><code>50 &gt;= 50</code></td><td>True</td></tr></table></div>
+ <h3>รูปแบบคำสั่ง</h3>
+ <pre class="show">if เงื่อนไข:
+    คำสั่งเมื่อเงื่อนไขเป็น True      ← ย่อหน้า 4 ช่อง
+else:
+    คำสั่งเมื่อเงื่อนไขเป็น False     ← ย่อหน้า 4 ช่อง
+คำสั่งที่ทำต่อเสมอ                  ← ชิดซ้าย = อยู่นอก if</pre>
+ <div class="box warn"><b>กฎเหล็ก 3 ข้อของ Python</b><ul>
+ <li>ท้ายบรรทัด <code>if ...</code> และ <code>else</code> ต้องมี <b>โคลอน <code>:</code></b></li>
+ <li>คำสั่งข้างใน<b>ต้องย่อหน้า</b> (indent) 4 ช่องเท่ากันทุกบรรทัด Python ใช้การย่อหน้าแทน <code>{ }</code> ของภาษาซี ย่อหน้าต่างกัน ความหมายก็ต่างกัน!</li>
+ <li><code>=</code> คือเก็บค่า ส่วน <code>==</code> คือเปรียบเทียบ ในเงื่อนไขต้องใช้ <code>==</code></li></ul></div>
+ <p>คลิกแต่ละบรรทัดด้านล่าง เพื่ออ่านว่าทำอะไร</p>`,
+ annot:[
+  {c:'score = int(input("Score: "))',e:'รับคะแนนจากผู้ใช้ แล้วแปลงเป็นจำนวนเต็มด้วย <code>int()</code> (ถ้าไม่แปลง จะนำไปเปรียบเทียบกับตัวเลขไม่ได้)'},
+  {c:'if score >= 50:',e:'<b>ตรวจเงื่อนไข</b> <code>score &gt;= 50</code> ได้ผลเป็น True หรือ False ถ้า True ทำบล็อกที่ย่อหน้าข้างล่าง ถ้า False กระโดดไปที่ <code>else</code> · <b>อย่าลืม : ท้ายบรรทัด</b>'},
+  {c:'    print("Pass!")',e:'<b>ย่อหน้า 4 ช่อง</b> = อยู่ในบล็อกของ if ทำงานเฉพาะเมื่อเงื่อนไขเป็น True'},
+  {c:'    print("Well done")',e:'ย่อหน้าเท่ากับบรรทัดบน = <b>บล็อกเดียวกัน</b> ทำงานพร้อมกันเมื่อเงื่อนไขเป็น True'},
+  {c:'else:',e:'<b>ชิดซ้ายตรงกับ if</b> แปลว่า "ไม่อย่างนั้น" ไม่ต้องมีเงื่อนไข แต่ต้องมี <code>:</code>'},
+  {c:'    print("Fail")',e:'ทำงานเฉพาะเมื่อเงื่อนไขของ if เป็น False'},
+  {c:'print("Program finished")',e:'<b>ชิดซ้าย</b> = อยู่นอก if-else จึงทำงาน<b>เสมอ</b> ไม่ว่าคะแนนจะเท่าไร'}],
+ labs:[{tip:'ลองรันด้วยคะแนน 65 แล้วเปลี่ยนเป็น 40 ดูใน 👣 ว่าบรรทัดไหนทำงาน (×1) บรรทัดไหนถูกข้าม จากนั้นกด 😈 ทีละปุ่ม ปุ่มสุดท้ายไม่มี error แต่ผลลัพธ์จะเปลี่ยนไป ลองหาดูว่าเปลี่ยนตรงไหน!',trace:true,input:'65',
+  code:C`score = int(input("Score: "))
+
+if score >= 50:
+    print("Pass!")
+    print("Well done")
+else:
+    print("Fail")
+    print("Try again")
+
+print("Program finished")`,
+  tries:[
+   {label:'😈 ลืม : หลัง if',fn:c=>c.replace('if score >= 50:','if score >= 50')},
+   {label:'😈 ลืมย่อหน้า',fn:c=>c.replace('    print("Pass!")','print("Pass!")')},
+   {label:'😈 ใช้ = แทน ==',fn:c=>c.replace('if score >= 50:','if score = 50:')},
+   {label:'😈 ย่อหน้าบรรทัดสุดท้ายเข้าไป',fn:c=>c.replace('\nprint("Program finished")','\n    print("Program finished")')}]}],
+ mission:{title:'เลขคู่หรือเลขคี่',task:C`<p>รับจำนวนเต็ม <code>n</code> ถ้าหาร 2 ลงตัว (เศษเป็น 0) ให้แสดง <code>Even</code> ถ้าไม่ลงตัวให้แสดง <code>Odd</code></p>`,
+  hint:'ใช้ % หาเศษ: if n % 2 == 0: แล้วย่อหน้า print("Even") จากนั้น else: และย่อหน้า print("Odd")',
+  code:C`n = int(input())
+
+# ถ้า n หารด้วย 2 ลงตัว ให้แสดง Even ถ้าไม่ลงตัวให้แสดง Odd
+`,tests:[{input:'4',expected:'Even\n'},{input:'7',expected:'Odd\n'},{input:'0',expected:'Even\n'},{input:'-3',expected:'Odd\n'}],
+  requires:[{re:/\bif\b[^\n]*:/,msg:'ใช้ if พร้อม :'},{re:/\belse\s*:/,msg:'ใช้ else:'}],
+  solution:C`n = int(input())
+if n % 2 == 0:
+    print("Even")
+else:
+    print("Odd")`},
+ quiz:[
+  {q:C`โปรแกรมนี้แสดงผลอะไร<pre class="show">x = 5
+if x &gt; 3:
+    print("A")
+else:
+    print("B")
+print("C")</pre>`,c:['A','A แล้วตามด้วย C','B แล้วตามด้วย C','A B C'],a:1,e:'x &gt; 3 เป็นจริงจึงแสดง A ส่วน C อยู่นอก if-else จึงแสดงเสมอ'},
+  {q:'ข้อใดเขียนเงื่อนไขได้ถูกต้อง',c:['if x = 10:','if x == 10','if x == 10:','if x == 10;'],a:2,e:'ใช้ == เปรียบเทียบ และต้องมี : ท้ายบรรทัด'},
+  {q:C`<code>print(10 &gt;= 10)</code> แสดงผลอะไร`,c:['True','False','10','เกิดข้อผิดพลาด'],a:0,e:'10 มากกว่าหรือเท่ากับ 10 เป็นจริง'}]},
+
+/* ---------------- ขั้นที่ 2 ---------------- */
+{name:'2 elif',title:'ขั้นที่ 2: elif หลายทางเลือก และ and / or / not',
+ widgets:[{type:'logic'}],
+ learn:C`<p>ถ้ามีมากกว่า 2 ทางเลือก ใช้ <code>elif</code> (ย่อมาจาก else if) ต่อกันได้หลายชั้น</p>
+ <pre class="show">if score &gt;= 80:
+    print("A")
+elif score &gt;= 70:      ← ตรวจเมื่อเงื่อนไขก่อนหน้าเป็น False
+    print("B")
+else:                   ← ไม่มีเงื่อนไขใดเป็นจริงเลย
+    print("F")</pre>
+ <div class="box warn"><b>สำคัญมาก:</b> Python ตรวจ<b>จากบนลงล่าง</b> ทำ<b>เฉพาะทางแรกที่เป็นจริง</b> แล้วข้ามส่วนที่เหลือทั้งหมด จึงทำงานอย่างมาก 1 ทางเท่านั้น <b>ลำดับของเงื่อนไขจึงสำคัญ</b> (ต้องเรียงจากเงื่อนไขที่แคบที่สุดก่อน)</div>
+ <h3>เชื่อมหลายเงื่อนไข</h3>
+ <div class="tw"><table><tr><th>คำ</th><th>ความหมาย</th><th>เป็น True เมื่อ</th><th>ตัวอย่าง</th></tr>
+ <tr><td><code>and</code></td><td>และ</td><td>จริงทั้งสองข้าง</td><td><code>age &gt;= 13 and age &lt;= 19</code></td></tr>
+ <tr><td><code>or</code></td><td>หรือ</td><td>จริงอย่างน้อยหนึ่งข้าง</td><td><code>day == "Sat" or day == "Sun"</code></td></tr>
+ <tr><td><code>not</code></td><td>ไม่</td><td>กลับค่า True ↔ False</td><td><code>not (x &gt; 5)</code></td></tr></table></div>
+ <p>💡 Python เขียนช่วงได้แบบคณิตศาสตร์ <code>13 &lt;= age &lt;= 19</code> (ภาษาซีทำแบบนี้ไม่ได้)</p>
+ <div class="box err"><b>กับดักยอดฮิต:</b> <code>if ans == "y" or "Y":</code> เป็นจริง<b>เสมอ</b>! เพราะ Python อ่านเป็น <code>(ans == "y") or ("Y")</code> และข้อความที่ไม่ว่างถือว่าเป็นจริง ต้องเขียน <code>ans == "y" or ans == "Y"</code></div>
+ <h3>if ซ้อน if</h3>
+ <pre class="show">if age &gt;= 18:
+    if has_id == "y":
+        print("Enter")      ← ย่อหน้า 2 ชั้น = 8 ช่อง
+    else:
+        print("Show your ID")
+else:
+    print("Too young")</pre>`,
+ labs:[
+  {tip:'ลองใส่ 85, 72, 55, 30 และ 150 แล้วกด 😈 สลับลำดับเงื่อนไข ปุ่มนี้ไม่มี error แต่เกรดจะผิด ลองหาดูว่าผิดตรงไหน',trace:true,input:'72',
+   code:C`score = int(input("Score: "))
+
+if score < 0 or score > 100:
+    print("Invalid score")
+elif score >= 80:
+    print("Grade A")
+elif score >= 70:
+    print("Grade B")
+elif score >= 60:
+    print("Grade C")
+elif score >= 50:
+    print("Grade D")
+else:
+    print("Grade F")`,
+   tries:[
+    {label:'😈 สลับลำดับเงื่อนไข (>= 50 มาก่อน)',fn:c=>c.replace('elif score >= 80:\n    print("Grade A")','elif score >= 50:\n    print("Grade A")')},
+    {label:'😈 ลืม : หลัง else',fn:c=>c.replace('else:','else')},
+    {label:'😈 else ย่อหน้าไม่ตรงกับ if',fn:c=>c.replace('\nelse:','\n  else:')}]},
+  {tip:'ราคาตั๋ว: เด็ก (ต่ำกว่า 12) หรือผู้สูงอายุ (60 ขึ้นไป) ลดราคา และสมาชิกลดเพิ่ม ลองเปลี่ยนอายุและคำตอบ y / n',trace:true,input:'15\ny',
+   code:C`age = int(input("Age: "))
+member = input("Member? (y/n): ")
+
+if age < 12 or age >= 60:
+    price = 50
+else:
+    price = 100
+
+if member == "y" and price > 50:
+    price = price - 20
+
+print(f"Ticket price: {price} baht")`,
+   tries:[{label:'😈 เขียน or แบบผิด',fn:c=>c.replace('if member == "y" and price > 50:','if member == "y" or "Y":')}]}],
+ mission:{title:'ชนิดของสามเหลี่ยม',task:C`<p>รับความยาวด้าน 3 ด้าน (a, b, c บรรทัดละค่า) แล้วบอกชนิดของสามเหลี่ยม</p><ul><li>ยาวเท่ากันทั้ง 3 ด้าน → <code>Equilateral</code></li><li>มีด้านยาวเท่ากันอย่างน้อย 1 คู่ → <code>Isosceles</code></li><li>ยาวไม่เท่ากันเลย → <code>Scalene</code></li></ul>`,
+  hint:'ตรวจกรณีเท่ากันทั้ง 3 ด้านก่อน: if a == b and b == c: จากนั้น elif a == b or b == c or a == c: แล้วจบด้วย else:',
+  code:C`a = int(input())
+b = int(input())
+c = int(input())
+
+# ใช้ if / elif / else ตรวจชนิดของสามเหลี่ยม
+`,tests:[{input:'3\n3\n3',expected:'Equilateral\n'},{input:'3\n3\n5',expected:'Isosceles\n'},{input:'5\n3\n5',expected:'Isosceles\n'},{input:'3\n4\n5',expected:'Scalene\n'}],
+  requires:[{re:/\belif\b/,msg:'ใช้ elif'},{re:/\b(and|or)\b/,msg:'ใช้ and หรือ or'}],
+  solution:C`a = int(input())
+b = int(input())
+c = int(input())
+
+if a == b and b == c:
+    print("Equilateral")
+elif a == b or b == c or a == c:
+    print("Isosceles")
+else:
+    print("Scalene")`},
+ quiz:[
+  {q:C`เมื่อ <code>s = 85</code> โปรแกรมนี้แสดงผลอะไร<pre class="show">if s &gt;= 50:
+    print("D")
+elif s &gt;= 80:
+    print("A")</pre>`,c:['A','D','A และ D','ไม่แสดงอะไร'],a:1,e:'เงื่อนไขแรก s &gt;= 50 เป็นจริงก่อน จึงแสดง D แล้วข้าม elif ทั้งหมด (ลำดับเงื่อนไขผิด)'},
+  {q:C`เมื่อ <code>x = 7</code> ข้อใดเป็น False`,c:['x > 5 and x < 10','x > 5 or x > 100','not (x > 5)','5 < x < 10'],a:2,e:'x &gt; 5 เป็น True เมื่อใส่ not จึงได้ False'},
+  {q:'ในชุด if / elif / elif / else จะมีบล็อกทำงานได้มากที่สุดกี่บล็อก',c:['ทุกบล็อกที่เงื่อนไขเป็นจริง','1 บล็อก','2 บล็อก','ขึ้นกับจำนวน elif'],a:1,e:'ทำเฉพาะทางแรกที่เป็นจริงแล้วข้ามที่เหลือทั้งหมด'}]},
+
+/* ---------------- ขั้นที่ 3 ---------------- */
+{name:'3 for',title:'ขั้นที่ 3: for loop และ range()',
+ widgets:[{type:'range'}],
+ learn:C`<p>ถ้าต้องพิมพ์ <code>print</code> ซ้ำ 100 ครั้ง ไม่ต้องเขียน 100 บรรทัด ใช้ <b>loop (การวนซ้ำ)</b> แทน 🔁</p>
+ <pre class="show">for ตัวแปร in ลำดับ:
+    คำสั่งที่ทำซ้ำ          ← ย่อหน้า = อยู่ใน loop</pre>
+ <p>รอบแรก <code>ตัวแปร</code> จะเป็นค่าแรกของลำดับ รอบถัดไปเป็นค่าถัดไป ไปเรื่อยๆ จนหมด</p>
+ <h3>range() สร้างลำดับตัวเลข</h3>
+ <div class="tw"><table><tr><th>เขียน</th><th>ได้ตัวเลข</th><th>จำนวนรอบ</th></tr>
+ <tr><td><code>range(5)</code></td><td>0, 1, 2, 3, 4</td><td>5</td></tr>
+ <tr><td><code>range(1, 6)</code></td><td>1, 2, 3, 4, 5</td><td>5</td></tr>
+ <tr><td><code>range(0, 11, 2)</code></td><td>0, 2, 4, 6, 8, 10</td><td>6</td></tr>
+ <tr><td><code>range(10, 0, -1)</code></td><td>10, 9, 8, …, 1</td><td>10</td></tr></table></div>
+ <div class="box warn"><b>กฎทอง:</b> range <b>ไม่รวมค่า stop</b> ถ้าต้องการ 1 ถึง n ต้องเขียน <code>range(1, n + 1)</code></div>
+ <h3>วนตามตัวอักษรในข้อความก็ได้</h3>
+ <pre class="show">for ch in "HELLO":
+    print(ch)            # H, E, L, L, O ทีละบรรทัด</pre>
+ <h3>รูปแบบ "สะสมค่า" (accumulator) ใช้บ่อยที่สุด</h3>
+ <pre class="show">total = 0                 ← ① ตั้งค่าเริ่มต้นไว้ "นอก" loop
+for i in range(1, 6):
+    total = total + i     ← ② สะสมค่าทีละรอบ
+print(total)              ← ③ แสดงผล "หลัง" loop จบ (ชิดซ้าย)</pre>
+ <p>💡 เทียบกับภาษาซี: <code>for (i = 1; i &lt;= 5; i++)</code> เขียนใน Python เป็น <code>for i in range(1, 6):</code></p>`,
+ labs:[
+  {tip:'ตารางสูตรคูณ ดูใน 👣 ว่าบรรทัด print ทำงาน ×12 แล้วกด 😈 ทั้งสองปุ่ม',trace:true,input:'7',
+   code:C`n = int(input("Table of: "))
+
+for i in range(1, 13):
+    print(f"{n} x {i} = {n * i}")
+
+print("Done!")`,
+   tries:[
+    {label:'😈 range(1, 12) ขาดไป 1 รอบ',fn:c=>c.replace('range(1, 13)','range(1, 12)')},
+    {label:'😈 ย่อหน้า Done! เข้าไปใน loop',fn:c=>c.replace('print("Done!")','    print("Done!")')}]},
+  {tip:'สะสมผลรวม 1 ถึง 5 กด "ถัดไป ▶" ดู total เพิ่มขึ้นทีละรอบ แล้วกด 😈 ย้าย total = 0 เข้าไปใน loop จะไม่มี error แต่ผลรวมผิด',trace:true,
+   code:C`total = 0
+for i in range(1, 6):
+    total = total + i
+    print(f"i = {i}   total = {total}")
+print("Sum =", total)
+
+for ch in "PYTHON":
+    print(ch, end=" ")
+print()`,
+   tries:[{label:'😈 ย้าย total = 0 เข้าไปใน loop',fn:c=>c.replace('total = 0\nfor i in range(1, 6):\n','for i in range(1, 6):\n    total = 0\n')}]}],
+ mission:{title:'บันไดดอกจัน',task:C`<p>รับจำนวนเต็ม <code>n</code> แล้วแสดงบันไดดอกจัน n ขั้น บรรทัดที่ i มีดอกจัน i ดวง (ตัวอย่างในตารางคือ n = 3 และ n = 5)</p>`,
+  hint:'วน i จาก 1 ถึง n ด้วย range(1, n + 1) แล้วใช้ "*" * i สร้างดอกจัน i ดวง (จำได้ไหม ข้อความ * ตัวเลข = ทำซ้ำ)',
+  code:C`n = int(input())
+
+# ใช้ for กับ range() ให้บรรทัดที่ i มีดอกจัน i ดวง
+`,tests:[{input:'3',expected:'*\n**\n***\n'},{input:'1',expected:'*\n'},{input:'5',expected:'*\n**\n***\n****\n*****\n'}],
+  requires:[{re:/for\s+\w+\s+in\s+range\s*\(/,msg:'ใช้ for กับ range()'}],
+  solution:C`n = int(input())
+for i in range(1, n + 1):
+    print("*" * i)`},
+ quiz:[
+  {q:C`<code>range(2, 8, 2)</code> ได้ตัวเลขอะไรบ้าง`,c:['2, 4, 6, 8','2, 4, 6','2, 3, 4, 5, 6, 7','4, 6, 8'],a:1,e:'เริ่มที่ 2 เพิ่มทีละ 2 และไม่รวม stop (8)'},
+  {q:C`<code>for i in range(3): print(i)</code> แสดงอะไรบ้าง`,c:['1 2 3','0 1 2','0 1 2 3','3'],a:1,e:'range(3) เริ่มที่ 0 ได้ 0, 1, 2'},
+  {q:C`โปรแกรมนี้แสดงผลอะไร<pre class="show">total = 0
+for i in range(1, 4):
+    total += i * 2
+print(total)</pre>`,c:['6','12','8','24'],a:1,e:'2 + 4 + 6 = 12'}]},
+
+/* ---------------- ขั้นที่ 4 ---------------- */
+{name:'4 while',title:'ขั้นที่ 4: while loop, break และ continue',
+ widgets:[{type:'while'}],
+ learn:C`<p><code>while</code> วนซ้ำ<b>ตราบเท่าที่เงื่อนไขยังเป็น True</b> เหมาะกับงานที่<b>ไม่รู้จำนวนรอบล่วงหน้า</b> เช่น วนถามรหัสผ่านจนกว่าจะถูก</p>
+ <pre class="show">i = 1                 ← ① ค่าเริ่มต้น
+while i &lt;= 5:         ← ② เงื่อนไข (ตรวจก่อนทำทุกรอบ)
+    print(i)
+    i += 1            ← ③ เปลี่ยนค่า ไม่งั้นวนไม่จบ!</pre>
+ <div class="box err"><b>Infinite loop (วนไม่รู้จบ):</b> ถ้าลืมข้อ ③ หรือเปลี่ยนค่าผิดทิศ เงื่อนไขจะเป็น True ตลอดไป ในเว็บนี้โปรแกรมจะถูกหยุดให้อัตโนมัติ แต่ในเครื่องจริงต้องกด <b>Ctrl+C</b> เพื่อหยุดเอง</div>
+ <div class="tw"><table><tr><th></th><th><code>for</code></th><th><code>while</code></th></tr>
+ <tr><td>เหมาะกับ</td><td>รู้จำนวนรอบ หรือวนตามสมาชิกของ list / ข้อความ</td><td>ไม่รู้จำนวนรอบ วนจนกว่าเงื่อนไขจะเปลี่ยน</td></tr>
+ <tr><td>ตัวอย่าง</td><td>สูตรคูณแม่ 1 ถึง 12</td><td>เกมทายเลข, ถามรหัสผ่าน, รับค่าจนกว่าจะพิมพ์ 0</td></tr></table></div>
+ <h3>break และ continue</h3>
+ <div class="tw"><table><tr><th>คำสั่ง</th><th>ผล</th></tr>
+ <tr><td><code>break</code></td><td>ออกจาก loop ทันที</td></tr>
+ <tr><td><code>continue</code></td><td>ข้ามคำสั่งที่เหลือของรอบนี้ แล้วไปเริ่มรอบถัดไป</td></tr></table></div>
+ <h3>รูปแบบ while True + break</h3>
+ <pre class="show">while True:                 ← วนไปเรื่อยๆ
+    x = int(input())
+    if x == 0:
+        break               ← ทางออกเดียวของ loop
+    ...</pre>
+ <p>💡 Python ไม่มี <code>do-while</code> แบบภาษาซี ใช้ <code>while True:</code> + <code>break</code> แทน</p>`,
+ labs:[
+  {tip:'เก็บเงินสัปดาห์ละ 120 บาท กี่สัปดาห์จะถึง 500 บาท? ดูใน 👣 ว่า loop วนกี่รอบ แล้วกด 😈 ทั้งสองปุ่ม',trace:true,
+   code:C`money = 0
+week = 0
+
+while money < 500:
+    week += 1
+    money += 120
+    print(f"Week {week}: {money} baht")
+
+print(f"Reached 500 baht in {week} weeks")`,
+   tries:[
+    {label:'😈 ลืมเพิ่มค่า money (infinite loop)',fn:c=>c.replace('    money += 120\n','')},
+    {label:'😈 เปลี่ยน < เป็น >',fn:c=>c.replace('while money < 500:','while money > 500:')}]},
+  {tip:'รับตัวเลขไปเรื่อยๆ จนกว่าจะพิมพ์ 0 ถ้าเป็นเลขติดลบให้ข้ามด้วย continue ลองเพิ่มตัวเลขในช่องข้อมูลดู (บรรทัดสุดท้ายต้องเป็น 0)',trace:true,input:'5\n-3\n10\n0',
+   code:C`total = 0
+count = 0
+
+while True:
+    x = int(input("Number (0 = stop): "))
+    if x == 0:
+        break
+    if x < 0:
+        print("  skip negative number")
+        continue
+    total += x
+    count += 1
+
+print(f"Count = {count}, Total = {total}")`,
+   tries:[{label:'😈 ลบ break ทิ้ง',fn:c=>c.replace('        break\n','        pass\n')}]}],
+ mission:{title:'นับหลักและหาผลรวมของหลัก',task:C`<p>รับจำนวนเต็มบวก <code>n</code> แล้วใช้ <code>while</code> นับว่ามีกี่หลัก และหาผลรวมของทุกหลัก (เช่น 1234 มี 4 หลัก ผลรวม 1 + 2 + 3 + 4 = 10)</p>`,
+  hint:'วนตราบที่ n > 0: หลักขวาสุดคือ n % 10 ให้บวกเข้า total แล้วตัดหลักนั้นทิ้งด้วย n = n // 10 และเพิ่ม digits ทีละ 1',
+  code:C`n = int(input())
+digits = 0
+total = 0
+
+# ใช้ while วนตราบที่ n > 0
+#   หลักขวาสุดคือ n % 10 และตัดหลักนั้นทิ้งด้วย n // 10
+
+print("Digits:", digits)
+print("Sum:", total)`,
+  tests:[{input:'1234',expected:'Digits: 4\nSum: 10\n'},{input:'7',expected:'Digits: 1\nSum: 7\n'},{input:'90501',expected:'Digits: 5\nSum: 15\n'}],
+  requires:[{re:/\bwhile\b/,msg:'ใช้ while'}],
+  solution:C`n = int(input())
+digits = 0
+total = 0
+
+while n > 0:
+    total += n % 10
+    n = n // 10
+    digits += 1
+
+print("Digits:", digits)
+print("Sum:", total)`},
+ quiz:[
+  {q:C`เมื่อจบ loop นี้ i มีค่าเท่าใด<pre class="show">i = 10
+while i &gt; 0:
+    i -= 3</pre>`,c:['1','0','-2','-3'],a:2,e:'i เป็น 10 → 7 → 4 → 1 → -2 พอ i = -2 เงื่อนไขเป็น False จึงหยุด'},
+  {q:C`<code>continue</code> ทำอะไร`,c:['ออกจาก loop ทันที','ข้ามส่วนที่เหลือของรอบนี้ ไปเริ่มรอบถัดไป','จบโปรแกรม','เริ่ม loop ใหม่ตั้งแต่ต้น'],a:1,e:'continue ข้ามไปรอบถัดไป ส่วน break ออกจาก loop'},
+  {q:C`โปรแกรมนี้แสดงผลอะไร<pre class="show">for i in range(1, 10):
+    if i == 4:
+        break
+    print(i, end=" ")</pre>`,c:['1 2 3','1 2 3 4','1 2 3 5 6 7 8 9','4'],a:0,e:'พอ i = 4 คำสั่ง break ทำงานก่อนถึง print จึงแสดงแค่ 1 2 3'}]},
+
+/* ---------------- ขั้นที่ 5 ---------------- */
+{name:'5 list',title:'ขั้นที่ 5: list เก็บข้อมูลหลายค่าในตัวแปรเดียว',
+ widgets:[{type:'list'},{type:'shell',id:'s5',tip:'ลองคำสั่งของ list ทีละปุ่มตามลำดับ (ปุ่มเรียงต่อกันเป็นเรื่องราว ลองทายผลก่อนกด!)',
+  samples:['fruits = ["apple", "banana", "cherry"]','fruits[0]','fruits[-1]','len(fruits)','fruits.append("durian")','fruits','"banana" in fruits','fruits.remove("apple")','fruits','fruits[1:3]','fruits[5]']}],
+ learn:C`<p>ถ้าต้องเก็บคะแนนของเพื่อน 40 คน การสร้างตัวแปร 40 ตัวไม่ไหวแน่ 😵 ใช้ <b>list</b> คือตัวแปรเดียวที่เก็บได้หลายค่าเรียงกัน (คล้ายอาร์เรย์ในภาษาซี)</p>
+ <pre class="show">scores = [80, 65, 90, 72]
+index:     0   1   2   3       ← เริ่มนับจาก 0
+          -4  -3  -2  -1       ← นับจากท้ายด้วยเลขติดลบ</pre>
+ <div class="tw"><table><tr><th>เขียน</th><th>ผล / ความหมาย</th></tr>
+ <tr><td><code>scores[0]</code></td><td>80 (ตัวแรก)</td></tr>
+ <tr><td><code>scores[-1]</code></td><td>72 (ตัวสุดท้าย)</td></tr>
+ <tr><td><code>scores[1] = 70</code></td><td>แก้ค่าตัวที่ index 1</td></tr>
+ <tr><td><code>len(scores)</code></td><td>4 (จำนวนสมาชิก)</td></tr>
+ <tr><td><code>scores[1:3]</code></td><td>[65, 90] (ตัดช่วง ไม่รวมตัวท้าย)</td></tr>
+ <tr><td><code>empty = []</code></td><td>list ว่าง ไว้เติมทีหลัง</td></tr></table></div>
+ <h3>คำสั่งของ list ที่ใช้บ่อย</h3>
+ <div class="tw"><table><tr><th>คำสั่ง</th><th>ทำอะไร</th></tr>
+ <tr><td><code>a.append(x)</code></td><td>เพิ่ม x ต่อท้าย</td></tr>
+ <tr><td><code>a.insert(i, x)</code></td><td>แทรก x ที่ตำแหน่ง i</td></tr>
+ <tr><td><code>a.remove(x)</code></td><td>ลบค่า x (ตัวแรกที่เจอ)</td></tr>
+ <tr><td><code>a.pop()</code></td><td>ดึงตัวสุดท้ายออกมา</td></tr>
+ <tr><td><code>a.sort()</code> / <code>a.reverse()</code></td><td>เรียงน้อยไปมาก / กลับลำดับ</td></tr>
+ <tr><td><code>x in a</code></td><td>True ถ้ามี x อยู่ใน list</td></tr>
+ <tr><td><code>sum(a)</code> <code>max(a)</code> <code>min(a)</code></td><td>ผลรวม ค่ามากสุด ค่าน้อยสุด</td></tr></table></div>
+ <div class="box warn"><b>ระวัง:</b> list ที่มี n ตัว ใช้ index ได้แค่ <b>0 ถึง n-1</b> ถ้าเกินจะเกิด <code>IndexError</code> และอย่าเขียน <code>a = a.append(x)</code> เพราะ append แก้ list เดิมโดยตรงและให้ผลเป็น <code>None</code></div>
+ <p>💡 ต่างจากอาร์เรย์ภาษาซี: list <b>ยืด-หดได้</b> (append, remove), รู้ความยาวตัวเองด้วย <code>len()</code> และเก็บข้อมูลต่างชนิดปนกันได้</p>`,
+ labs:[{tip:'ดูใน 👣 ว่า list scores เปลี่ยนไปทีละคำสั่ง (ช่องสีเหลือง = เปลี่ยนค่า) แล้วกด 😈 ทั้งสองปุ่ม',trace:true,
+  code:C`scores = [72, 85, 64, 90]
+print("All:", scores)
+print("First:", scores[0])
+print("Last:", scores[-1])
+print("Count:", len(scores))
+
+scores.append(78)
+scores[2] = 70
+print("After change:", scores)
+
+scores.sort()
+print("Sorted:", scores)
+print("Max:", max(scores), "Min:", min(scores), "Sum:", sum(scores))`,
+  tries:[
+   {label:'😈 เรียก scores[4] (เกินขอบ)',fn:c=>c.replace('print("First:", scores[0])','print("First:", scores[4])')},
+   {label:'😈 ใช้ push แทน append',fn:c=>c.replace('scores.append(78)','scores.push(78)')},
+   {label:'😈 scores = scores.append(78)',fn:c=>c.replace('scores.append(78)','scores = scores.append(78)')}]}],
+ mission:{title:'ตะกร้าสินค้า',task:C`<p>ตะกร้าเริ่มต้นมี <code>["egg", "milk"]</code> ให้ ① รับชื่อสินค้า 2 ชิ้น (บรรทัดละชิ้น) แล้วเพิ่มต่อท้ายด้วย <code>append()</code> ② ลบ <code>"milk"</code> ออกด้วย <code>remove()</code> (สังเกตชุดทดสอบที่ 2 ดีๆ นะ 😉)</p>`,
+  hint:'cart.append(input()) สองครั้ง แล้ว cart.remove("milk") · remove() ลบเฉพาะตัวแรกที่เจอ',
+  code:C`cart = ["egg", "milk"]
+
+# 1) รับชื่อสินค้า 2 ชิ้น แล้วเพิ่มต่อท้าย cart ด้วย append()
+
+# 2) ลบ "milk" ออกจาก cart ด้วย remove()
+
+print(cart)
+print(len(cart))`,
+  tests:[{input:'bread\nrice',expected:"['egg', 'bread', 'rice']\n3\n"},{input:'apple\nmilk',expected:"['egg', 'apple', 'milk']\n3\n"},{input:'tea\ncoffee',expected:"['egg', 'tea', 'coffee']\n3\n"}],
+  requires:[{re:/\.append\s*\(/,msg:'ใช้ append()'},{re:/\.remove\s*\(/,msg:'ใช้ remove()'}],
+  solution:C`cart = ["egg", "milk"]
+
+cart.append(input())
+cart.append(input())
+cart.remove("milk")
+
+print(cart)
+print(len(cart))`},
+ quiz:[
+  {q:C`<code>a = [3, 6, 9, 12]</code> แล้ว <code>a[-2]</code> คือค่าใด`,c:['6','9','12','-2'],a:1,e:'-1 คือตัวสุดท้าย (12) ดังนั้น -2 คือ 9'},
+  {q:C`<code>a = [10, 20, 30, 40, 50]</code> แล้ว <code>a[1:4]</code> ได้อะไร`,c:['[10, 20, 30, 40]','[20, 30, 40]','[20, 30, 40, 50]','[20, 40]'],a:1,e:'เอา index 1 ถึง 3 (ไม่รวม 4)'},
+  {q:C`<code>a = [1, 2, 3]</code> แล้ว <code>a.append(4)</code> แล้ว <code>len(a)</code> ได้เท่าใด`,c:['3','4','5','[1, 2, 3, 4]'],a:1,e:'append เพิ่มสมาชิก 1 ตัว จึงมี 4 ตัว'}]},
+
+/* ---------------- ขั้นที่ 6 ---------------- */
+{name:'6 list+loop',title:'ขั้นที่ 6: ใช้ list คู่กับ loop',
+ learn:C`<p>พลังที่แท้จริงของ list ออกมาเมื่อใช้คู่กับ loop ✨ วนได้ 2 แบบ</p>
+ <div class="tw"><table><tr><th>แบบที่ 1: วนตามค่า</th><th>แบบที่ 2: วนตาม index</th></tr>
+ <tr><td><pre class="show" style="margin:0">for x in nums:
+    print(x)</pre></td><td><pre class="show" style="margin:0">for i in range(len(nums)):
+    print(i, nums[i])</pre></td></tr>
+ <tr><td>อ่านง่าย ใช้เมื่อต้องการแค่ค่า</td><td>ใช้เมื่อต้องรู้<b>ตำแหน่ง</b> หรือต้อง<b>แก้ค่าใน list</b></td></tr></table></div>
+ <div class="box warn"><b>กับดัก:</b> <code>for x in nums: x = x * 2</code> <b>ไม่ได้แก้ list</b> เพราะ x เป็นแค่สำเนาของค่า ถ้าจะแก้ต้องใช้ index: <code>nums[i] = nums[i] * 2</code> (ลองกด 😈 ในตัวอย่างที่ 2)</div>
+ <h3>สูตรสำเร็จที่ใช้บ่อย</h3>
+ <div class="tw"><table><tr><th>งาน</th><th>แนวคิด</th></tr>
+ <tr><td>รับค่า n ตัวใส่ list</td><td><code>nums = []</code> แล้ววน n รอบ <code>nums.append(int(input()))</code></td></tr>
+ <tr><td>หาผลรวม</td><td><code>total = 0</code> แล้ว <code>total += x</code> ทุกรอบ (หรือใช้ <code>sum(nums)</code>)</td></tr>
+ <tr><td>นับตามเงื่อนไข</td><td><code>if x &gt;= 50: count += 1</code></td></tr>
+ <tr><td>กรองค่าลง list ใหม่</td><td><code>high = []</code> แล้ว <code>if x &gt;= 70: high.append(x)</code></td></tr>
+ <tr><td>หาค่ามากสุดเอง</td><td>ให้ <code>best = nums[0]</code> ก่อน แล้วเทียบกับตัวอื่น เจอที่มากกว่าก็แทนที่</td></tr></table></div>
+ <p>💡 <code>enumerate()</code> ให้ทั้ง index และค่าพร้อมกัน: <code>for i, x in enumerate(nums):</code></p>`,
+ labs:[
+  {tip:'สถิติคะแนน: ผลรวม จำนวนคนผ่าน และกรองคนได้ 70 ขึ้นไป ดูใน 👣 ว่า list high ค่อยๆ ยาวขึ้น',trace:true,
+   code:C`scores = [72, 85, 45, 90, 38, 66]
+
+total = 0
+passed = 0
+for s in scores:
+    total += s
+    if s >= 50:
+        passed += 1
+
+print("Average:", total / len(scores))
+print("Passed:", passed, "of", len(scores))
+
+high = []
+for s in scores:
+    if s >= 70:
+        high.append(s)
+print("70 or more:", high)`},
+  {tip:'รับตัวเลข n ตัวใส่ list แล้วคูณ 2 ทุกตัวผ่าน index ลองกด 😈 ทั้งสองปุ่ม ปุ่มที่ 2 ไม่มี error แต่ list ไม่เปลี่ยนเลย!',trace:true,input:'3\n4\n7\n1',
+   code:C`n = int(input("How many? "))
+nums = []
+for i in range(n):
+    x = int(input(f"Number {i + 1}: "))
+    nums.append(x)
+print("Original:", nums)
+
+for i in range(len(nums)):
+    nums[i] = nums[i] * 2
+print("Doubled:", nums)
+
+for i, x in enumerate(nums):
+    print(f"index {i} -> {x}")`,
+   tries:[
+    {label:'😈 range(len(nums) + 1)',fn:c=>c.replace('for i in range(len(nums)):','for i in range(len(nums) + 1):')},
+    {label:'😈 แก้ค่าผ่าน for x in nums',fn:c=>c.replace('for i in range(len(nums)):\n    nums[i] = nums[i] * 2','for x in nums:\n    x = x * 2')}]}],
+ mission:{title:'ค่ามากสุดอยู่ตำแหน่งไหน',task:C`<p>รับจำนวน <code>n</code> แล้วรับตัวเลขอีก n ค่า (บรรทัดละค่า) ใส่ list จากนั้นหา<b>ค่ามากสุด</b>และ <b>index</b> ของมัน ถ้าค่ามากสุดซ้ำกันให้ตอบ index แรก <b>ห้ามใช้ max()</b> (ฝึกหาเอง)</p>`,
+  hint:'best = nums[0]; pos = 0 แล้ว for i in range(1, len(nums)): ถ้า nums[i] > best (ใช้ > ไม่ใช่ >= เพื่อให้ได้ index แรก) ให้ best = nums[i] และ pos = i',
+  code:C`n = int(input())
+nums = []
+
+# 1) รับตัวเลข n ค่า ใส่ลงใน nums
+
+# 2) หาค่ามากสุดและ index ของมัน (ห้ามใช้ max())
+#    เริ่มจาก best = nums[0] และ pos = 0
+
+print(f"Max = {best} at index {pos}")`,
+  tests:[{input:'5\n4\n9\n2\n9\n1',expected:'Max = 9 at index 1\n'},{input:'3\n-5\n-2\n-8',expected:'Max = -2 at index 1\n'},{input:'1\n42',expected:'Max = 42 at index 0\n'}],
+  requires:[{re:/\.append\s*\(/,msg:'ใช้ append() เก็บค่าลง list'},{re:/\bfor\b/,msg:'ใช้ for loop'},{re:/^(?![\s\S]*\bmax\s*\()/,msg:'ไม่ใช้ max() (หาค่ามากสุดเอง)'}],
+  solution:C`n = int(input())
+nums = []
+for i in range(n):
+    nums.append(int(input()))
+
+best = nums[0]
+pos = 0
+for i in range(1, len(nums)):
+    if nums[i] > best:
+        best = nums[i]
+        pos = i
+
+print(f"Max = {best} at index {pos}")`},
+ quiz:[
+  {q:C`หลังรันโค้ดนี้ list <code>nums</code> เป็นอะไร<pre class="show">nums = [5, 10]
+for x in nums:
+    x = 0</pre>`,c:['[0, 0]','[5, 10]','[]','เกิดข้อผิดพลาด'],a:1,e:'x เป็นแค่สำเนาของค่า การเปลี่ยน x ไม่กระทบ list'},
+  {q:C`โปรแกรมนี้แสดงผลอะไร<pre class="show">nums = [3, 8, 1, 9]
+c = 0
+for x in nums:
+    if x &gt; 5:
+        c += 1
+print(c)</pre>`,c:['1','2','17','4'],a:1,e:'มี 8 และ 9 ที่มากกว่า 5 จึงได้ 2'},
+  {q:C`ถ้า <code>a</code> มีสมาชิก 4 ตัว แล้ว <code>range(len(a))</code> ได้ตัวเลขอะไรบ้าง`,c:['1, 2, 3, 4','0, 1, 2, 3','0, 1, 2, 3, 4','4'],a:1,e:'len(a) = 4 จึงเป็น range(4) ได้ index 0 ถึง 3 พอดี'}]},
+
+/* ---------------- ขั้นที่ 7 ---------------- */
+{name:'7 def',title:'ขั้นที่ 7: สร้างฟังก์ชันเองด้วย def',
+ learn:C`<p>คุณใช้ฟังก์ชันมาตลอดแล้ว เช่น <code>print()</code> <code>len()</code> <code>input()</code> ตอนนี้ถึงเวลา<b>สร้างเอง</b> 🛠️</p>
+ <p><b>ฟังก์ชัน</b> คือชุดคำสั่งที่ตั้งชื่อไว้ แล้วเรียกใช้ซ้ำกี่ครั้งก็ได้ เหมือน<b>สูตรอาหาร</b>: เขียนสูตรครั้งเดียว ทำกี่จานก็ได้ แค่เปลี่ยนวัตถุดิบ (ค่าที่ส่งเข้าไป)</p>
+ <ul><li>ไม่ต้องเขียนโค้ดเดิมซ้ำหลายที่ ถ้าจะแก้ ก็แก้ที่เดียว</li><li>แบ่งงานใหญ่เป็นชิ้นเล็กๆ อ่านง่าย ทดสอบง่าย</li></ul>
+ <p>คลิกแต่ละบรรทัดด้านล่าง เพื่อดูว่าเกิดอะไรขึ้น</p>`,
+ annot:[
+  {c:'def area_rect(width, height):',e:'<b>สร้างฟังก์ชัน</b> ด้วยคำว่า <code>def</code> + ชื่อฟังก์ชัน + <b>พารามิเตอร์</b> (ช่องรับค่า) ในวงเล็บ + <code>:</code><br>⚠️ ตอนนี้แค่<b>สร้าง</b>ไว้ ยัง<b>ไม่ทำงาน</b>จนกว่าจะถูกเรียกใช้'},
+  {c:'    area = width * height',e:'ย่อหน้า = เนื้อหาของฟังก์ชัน <code>area</code> เป็น<b>ตัวแปรภายใน (local)</b> ใช้ได้เฉพาะในฟังก์ชันนี้ พอฟังก์ชันจบก็หายไป'},
+  {c:'    return area',e:'<b>ส่งค่ากลับ</b> ไปให้ผู้เรียก และ<b>จบฟังก์ชันทันที</b> (บรรทัดที่อยู่หลัง return จะไม่ทำงาน)'},
+  {c:'',e:'บรรทัดว่างคั่นให้อ่านง่าย'},
+  {c:'a = area_rect(4, 5)',e:'<b>เรียกใช้ฟังก์ชัน</b> ค่า 4 และ 5 คือ<b>อาร์กิวเมนต์</b> จะถูกส่งไปเป็น width = 4 และ height = 5 โปรแกรมกระโดดไปทำบรรทัด 2-3 แล้วนำค่า 20 ที่ return กลับมาเก็บใน <code>a</code>'},
+  {c:'print(a)',e:'แสดงผล <b>20</b>'},
+  {c:'print(area_rect(2, 3) + 10)',e:'ค่าที่ return นำไปคำนวณต่อได้เลย: area_rect(2, 3) ได้ 6 แล้ว + 10 แสดงผล <b>16</b>'}],
+ learn2:C`<h3>return กับ print ต่างกันอย่างไร (สำคัญมาก!)</h3>
+ <div class="tw"><table><tr><th></th><th><code>return x</code></th><th><code>print(x)</code></th></tr>
+ <tr><td>ทำอะไร</td><td>ส่งค่ากลับไปให้ผู้เรียก<b>นำไปใช้ต่อ</b></td><td>แค่แสดงบนหน้าจอ</td></tr>
+ <tr><td>นำผลไปคำนวณต่อ</td><td>✅ ได้ เช่น <code>square(3) + 1</code></td><td>❌ ไม่ได้ ฟังก์ชันจะได้ค่า <code>None</code></td></tr>
+ <tr><td>เปรียบเทียบ</td><td>พ่อครัวส่งอาหารให้ลูกค้า</td><td>พ่อครัวตะโกนบอกว่าทำเสร็จแล้ว แต่ไม่ส่งอาหาร</td></tr></table></div>
+ <div class="box warn"><b>กฎ 3 ข้อ</b><ul>
+ <li>ต้อง <code>def</code> ไว้<b>เหนือ</b>บรรทัดที่เรียกใช้ (Python อ่านจากบนลงล่าง)</li>
+ <li>จำนวนอาร์กิวเมนต์ตอนเรียก ต้องเท่ากับจำนวนพารามิเตอร์ตอน def</li>
+ <li>ตัวแปรที่สร้างในฟังก์ชันเป็น <b>local</b> ข้างนอกมองไม่เห็น ถ้าต้องการค่าออกมาให้ใช้ <code>return</code></li></ul></div>
+ <p>💡 เทียบกับภาษาซี: ไม่ต้องบอกชนิดข้อมูล เขียนแค่ <code>def add(a, b):</code> แทน <code>int add(int a, int b)</code></p>`,
+ labs:[
+  {tip:'กด "ถัดไป ▶" ใน 👣 สังเกตตอนที่โปรแกรม 📞 กระโดดเข้าไปในฟังก์ชัน และตาราง local สีม่วง แล้วกด 😈 ทั้ง 3 ปุ่ม',trace:true,
+   code:C`def greet(name):
+    print(f"Hello, {name}!")
+
+def square(x):
+    return x * x
+
+greet("Mali")
+greet("Somchai")
+
+result = square(5)
+print("square(5) =", result)
+print("square(3) + square(4) =", square(3) + square(4))`,
+   tries:[
+    {label:'😈 ใช้ print แทน return',fn:c=>c.replace('return x * x','print(x * x)')},
+    {label:'😈 เรียกใช้ก่อน def',fn:c=>'greet("Mali")\n'+c.replace('greet("Mali")\n','')},
+    {label:'😈 ส่งอาร์กิวเมนต์ไม่ครบ',fn:c=>c.replace('result = square(5)','result = square()')}]},
+  {tip:'ตัวแปร local กับ global: ดูใน 👣 ว่าตัวแปร score และ bonus ในฟังก์ชันหายไปตอนไหน และ my_score ข้างนอกเปลี่ยนหรือไม่ (ลองทายก่อน!)',trace:true,
+   code:C`def add_bonus(score):
+    bonus = 10
+    score = score + bonus
+    print("inside function: score =", score)
+    return score
+
+my_score = 75
+new_score = add_bonus(my_score)
+print("my_score =", my_score)
+print("new_score =", new_score)`,
+   tries:[{label:'😈 ใช้ bonus นอกฟังก์ชัน',fn:c=>c+'\nprint("bonus =", bonus)'}]}],
+ mission:{title:'ฟังก์ชันตัดเกรด',task:C`<p>เขียนเนื้อหาฟังก์ชัน <code>grade(score)</code> ให้ <b>return</b> เกรดเป็นข้อความ: 80 ขึ้นไป → <code>"A"</code>, 70 ขึ้นไป → <code>"B"</code>, 60 ขึ้นไป → <code>"C"</code>, 50 ขึ้นไป → <code>"D"</code>, ต่ำกว่า 50 → <code>"F"</code> (ส่วนที่รับค่าและแสดงผลเขียนไว้ให้แล้ว)</p>`,
+  hint:'ในฟังก์ชันใช้ if / elif / else และแต่ละทางให้ return "A", return "B" ... (ใช้ return ไม่ใช่ print)',
+  code:C`def grade(score):
+    # คืนค่า "A" ถ้า >= 80, "B" ถ้า >= 70, "C" ถ้า >= 60, "D" ถ้า >= 50 นอกนั้น "F"
+    pass
+
+score = int(input())
+print(f"{score} -> {grade(score)}")`,
+  tests:[{input:'85',expected:'85 -> A\n'},{input:'70',expected:'70 -> B\n'},{input:'64',expected:'64 -> C\n'},{input:'50',expected:'50 -> D\n'},{input:'12',expected:'12 -> F\n'}],
+  requires:[{re:/def\s+grade\s*\(/,msg:'มีฟังก์ชัน grade'},{re:/\breturn\b/,msg:'ใช้ return ส่งค่ากลับ'}],
+  solution:C`def grade(score):
+    if score >= 80:
+        return "A"
+    elif score >= 70:
+        return "B"
+    elif score >= 60:
+        return "C"
+    elif score >= 50:
+        return "D"
+    else:
+        return "F"
+
+score = int(input())
+print(f"{score} -> {grade(score)}")`},
+ quiz:[
+  {q:C`โปรแกรมนี้แสดงผลอะไร<pre class="show">def double(x):
+    x * 2
+
+print(double(3))</pre>`,c:['6','3','None','เกิดข้อผิดพลาด'],a:2,e:'ฟังก์ชันคำนวณแต่ไม่มี return จึงส่งค่า None กลับมา'},
+  {q:C`<pre class="show">def diff(a, b):
+    return a - b</pre><code>print(diff(3, 10))</code> แสดงผลอะไร`,c:['7','-7','13','3 - 10'],a:1,e:'ค่าถูกส่งตามลำดับ a = 3, b = 10 จึงได้ 3 - 10 = -7'},
+  {q:'ข้อใดกล่าวถึงตัวแปรที่สร้างภายในฟังก์ชันได้ถูกต้อง',c:['ใช้ได้ทุกที่ในโปรแกรม','ใช้ได้เฉพาะในฟังก์ชันนั้น และหายไปเมื่อฟังก์ชันจบ','ต้องประกาศชนิดก่อนเสมอ','จะกลายเป็นค่า None'],a:1,e:'เรียกว่าตัวแปร local'}]},
+
+/* ---------------- ขั้นที่ 8 ---------------- */
+{name:'8 โจทย์รวม',title:'ขั้นที่ 8: รวมพลัง เงื่อนไข + ลูป + ลิสต์ + ฟังก์ชัน',last:true,
+ learn:C`<p>มาถึงขั้นสุดท้ายแล้ว 🎉 ตอนนี้คุณมีเครื่องมือครบ ลองเลือกใช้ให้เหมาะกับงาน</p>
+ <div class="tw"><table><tr><th>ต้องการ</th><th>ใช้</th></tr>
+ <tr><td>เลือกทำอย่างใดอย่างหนึ่ง</td><td><code>if</code> / <code>elif</code> / <code>else</code></td></tr>
+ <tr><td>ทำซ้ำตามจำนวนรอบ หรือตามสมาชิกใน list</td><td><code>for ... in range()</code> / <code>for x in nums</code></td></tr>
+ <tr><td>ทำซ้ำจนกว่าเงื่อนไขจะเปลี่ยน</td><td><code>while</code> หรือ <code>while True</code> + <code>break</code></td></tr>
+ <tr><td>เก็บข้อมูลหลายค่า</td><td><code>list</code></td></tr>
+ <tr><td>งานที่ทำซ้ำหลายจุด หรืออยากแยกให้อ่านง่าย</td><td><code>def</code> + <code>return</code></td></tr></table></div>
+ <div class="box good"><b>เช็กลิสต์ก่อนส่งงาน ✅</b><ul>
+ <li>ทุกบรรทัด if / elif / else / for / while / def มี <code>:</code></li>
+ <li>ย่อหน้าถูกระดับ (คำสั่งที่ต้องทำ "หลัง loop" ต้องชิดออกมา)</li>
+ <li>เปรียบเทียบใช้ <code>==</code> ไม่ใช่ <code>=</code></li>
+ <li><code>range()</code> ไม่รวมค่า stop</li>
+ <li>while มีการเปลี่ยนค่าตัวแปรในเงื่อนไข หรือมี break</li>
+ <li>ฟังก์ชันที่ต้องให้ผลลัพธ์ใช้ <code>return</code></li>
+ <li>ทดสอบหลายค่า รวมถึงค่าขอบ เช่น 0, 1, ค่าติดลบ</li></ul></div>`,
+ labs:[
+  {tip:'เกมทายเลข (เลขลับคือ 37) ใช้ while True + if / elif / else ลองเปลี่ยนคำทายในช่องข้อมูล (บรรทัดสุดท้ายต้องเป็น 37)',trace:true,input:'50\n25\n37',
+   code:C`secret = 37
+tries = 0
+
+while True:
+    guess = int(input("Guess (1-100): "))
+    tries += 1
+    if guess > secret:
+        print("Too high")
+    elif guess < secret:
+        print("Too low")
+    else:
+        print(f"Correct! You used {tries} tries")
+        break`},
+  {tip:'หาจำนวนเฉพาะ 1 ถึง 30 ด้วยฟังก์ชัน + loop + list ดูใน 👣 ว่าบรรทัด n % d == 0 ทำงานกี่ครั้ง',trace:true,
+   code:C`def is_prime(n):
+    if n < 2:
+        return False
+    for d in range(2, n):
+        if n % d == 0:
+            return False
+    return True
+
+primes = []
+for k in range(1, 31):
+    if is_prime(k):
+        primes.append(k)
+
+print("Primes up to 30:", primes)
+print("How many:", len(primes))`},
+  {tip:'รายงานคะแนนแบบแยกเป็นฟังก์ชัน: ฟังก์ชันเดียว count_pass ใช้ซ้ำได้กับเกณฑ์ต่างกัน',trace:true,
+   code:C`def average(nums):
+    return sum(nums) / len(nums)
+
+def count_pass(nums, limit):
+    c = 0
+    for x in nums:
+        if x >= limit:
+            c += 1
+    return c
+
+scores = [55, 78, 92, 41, 66, 83]
+print(f"Average: {average(scores):.2f}")
+print("Passed (50+):", count_pass(scores, 50))
+print("Excellent (80+):", count_pass(scores, 80))`}],
+ mission:{title:'สถิติคะแนนทั้งห้อง',task:C`<p>รับจำนวนนักเรียน <code>n</code> แล้วรับคะแนน n ค่าใส่ list จากนั้นแสดงค่าเฉลี่ย (ทศนิยม 2 ตำแหน่ง) ค่ามากสุด ค่าน้อยสุด และ<b>จำนวนคนที่ได้คะแนนมากกว่าค่าเฉลี่ย</b> โดยเขียนฟังก์ชัน <code>above(nums, value)</code> ให้ return จำนวนสมาชิกที่มากกว่า value (โครงโปรแกรมเขียนไว้ให้แล้ว)</p>`,
+  hint:'ในฟังก์ชัน: count = 0 แล้ว for x in nums: if x > value: count += 1 แล้ว return count · ส่วนรับคะแนน: for i in range(n): scores.append(int(input()))',
+  code:C`def above(nums, value):
+    # คืนค่าจำนวนสมาชิกใน nums ที่มากกว่า value
+    pass
+
+n = int(input())
+scores = []
+# รับคะแนน n ค่า ใส่ลงใน scores
+
+avg = sum(scores) / len(scores)
+print(f"Average: {avg:.2f}")
+print("Max:", max(scores))
+print("Min:", min(scores))
+print("Above average:", above(scores, avg))`,
+  tests:[{input:'5\n70\n85\n60\n90\n45',expected:'Average: 70.00\nMax: 90\nMin: 45\nAbove average: 2\n'},{input:'3\n50\n50\n50',expected:'Average: 50.00\nMax: 50\nMin: 50\nAbove average: 0\n'},{input:'4\n10\n20\n30\n41',expected:'Average: 25.25\nMax: 41\nMin: 10\nAbove average: 2\n'}],
+  requires:[{re:/def\s+above\s*\(/,msg:'มีฟังก์ชัน above'},{re:/\.append\s*\(/,msg:'ใช้ append() เก็บคะแนน'},{re:/\breturn\b/,msg:'ใช้ return ส่งค่ากลับ'}],
+  solution:C`def above(nums, value):
+    count = 0
+    for x in nums:
+        if x > value:
+            count += 1
+    return count
+
+n = int(input())
+scores = []
+for i in range(n):
+    scores.append(int(input()))
+
+avg = sum(scores) / len(scores)
+print(f"Average: {avg:.2f}")
+print("Max:", max(scores))
+print("Min:", min(scores))
+print("Above average:", above(scores, avg))`},
+ quiz:[
+  {q:'ต้องการให้โปรแกรมถามรหัสผ่านซ้ำจนกว่าจะพิมพ์ถูก ควรใช้ loop แบบใด',c:['for i in range(3)','while (วนจนกว่าจะถูก)','if-else','ไม่ต้องใช้ loop'],a:1,e:'ไม่รู้ล่วงหน้าว่าต้องถามกี่ครั้ง จึงเหมาะกับ while'},
+  {q:C`<pre class="show">def f(n):
+    total = 0
+    for i in range(n):
+        total += i
+    return total</pre><code>print(f(4))</code> แสดงผลอะไร`,c:['10','6','4','0'],a:1,e:'range(4) ได้ 0, 1, 2, 3 รวมกันได้ 6'},
+  {q:'โปรแกรมวนไม่รู้จบ (infinite loop) มักเกิดจากสาเหตุใด',c:['ใช้ for กับ range()','ตัวแปรในเงื่อนไขของ while ไม่เคยถูกเปลี่ยนค่า','ใช้ break','ใช้ list ที่ยาวเกินไป'],a:1,e:'เงื่อนไขจึงเป็น True ตลอดไป'}]}
+];
+
+/* =====================================================================
+   ส่วนที่ 6: ระบบแสดงหน้า
+   ===================================================================== */
+let cur=0;
+function renderDots(){
+  $('#steps').innerHTML=STEPS.map((s,i)=>`<button class="dot ${i===cur?'cur':''} ${progress['w'+i]?'done':''}" data-i="${i}">${progress['w'+i]?'✅ ':''}${s.name}</button>`).join('');
+  document.querySelectorAll('.dot').forEach(b=>b.onclick=()=>go(+b.dataset.i));
+}
+function go(i){
+  cur=i;const S=STEPS[i];
+  let h=`<div class="card learn"><h2>${S.title}</h2>${S.learn}${S.annot?'<div id="an"></div>':''}${S.learn2||''}</div>`;
+  (S.widgets||[]).forEach((w,k)=>{h+=`<div class="card"><div id="wd${k}"></div></div>`;});
+  S.labs.forEach((l,k)=>{h+=`<div class="card"><h3 style="margin-top:0">🧪 ลองรันดู${S.labs.length>1?' ตัวอย่างที่ '+(k+1):''}</h3><p>${l.tip}</p><div id="lab${k}"></div></div>`;});
+  h+='<div class="card mission" id="ms"></div><div class="card quiz" id="qz"></div>';
+  if(S.last)h+=`<div class="card fin"><h2>🎉 จบ Python ภาค 2 แล้ว!</h2><p>ตอนนี้คุณเขียนโปรแกรมที่ <b>ตัดสินใจ</b> (<code>if / elif / else</code>), <b>ทำซ้ำ</b> (<code>for</code>, <code>while</code>), <b>เก็บข้อมูลหลายค่า</b> (<code>list</code>) และ<b>แยกงานเป็นฟังก์ชัน</b> (<code>def</code>) ได้แล้ว 🌟</p><p>เรื่องที่น่าเรียนต่อ: <code>dict</code> (เก็บข้อมูลแบบมีชื่อกำกับ), การจัดการข้อความ (string methods), การอ่าน-เขียนไฟล์, โมดูล <code>random</code> และ <code>turtle</code> หรือ MicroPython สำหรับควบคุมบอร์ดไมโครคอนโทรลเลอร์</p></div>`;
+  h+=`<div class="nav"><button class="btn" id="pv" ${i===0?'disabled':''}>◀ ขั้นก่อนหน้า</button><button class="btn go" id="nx" ${i===STEPS.length-1?'disabled':''}>ขั้นต่อไป ▶</button></div>`;
+  $('#page').innerHTML=h;
+  if(S.annot)mkAnnot($('#an'),S.annot);
+  (S.widgets||[]).forEach((w,k)=>{
+    const el=$('#wd'+k);
+    if(w.type==='shell')mkShell(el,w);
+    else if(w.type==='logic')mkLogic(el);
+    else if(w.type==='range')mkRange(el);
+    else if(w.type==='while')mkWhileSim(el);
+    else if(w.type==='list')mkListBox(el);
+  });
+  S.labs.forEach((l,k)=>mkEditor($('#lab'+k),l));
+  mkMission($('#ms'),S.mission,'w'+i,renderDots);
+  mkQuiz($('#qz'),S.quiz);
+  $('#pv').onclick=()=>go(i-1);
+  $('#nx').onclick=()=>go(i+1);
+  renderDots();
+  window.scrollTo(0,0);
+}
+$('#rstp').onclick=()=>{if(confirm('ต้องการล้างความก้าวหน้าทั้งหมดหรือไม่')){progress={};saveP();go(cur);}};
+go(0);
+initPy();
+</script>
+</body>
+</html>
