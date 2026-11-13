@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arduino Lab — เรียนรู้ด้วยการทดลอง</title>
+  <style>
+    :root {
+      --navy: #142b4a;
+      --blue: #2563eb;
+      --sky: #eaf2ff;
+      --green: #16845b;
+      --ink: #1e293b;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --surface: #ffffff;
+      --bg: #f5f7fb;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    header {
+      padding: 18px 6%;
+      background: var(--navy);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand { font-size: 20px; font-weight: 800; }
+    .brand span { color: #7dd3fc; }
+    .header-note { color: #dbeafe; font-size: 14px; }
+
+    main { max-width: 1200px; margin: 32px auto; padding: 0 20px; }
+
+    .intro {
+      padding: 28px;
+      border-radius: 18px;
+      color: white;
+      background: linear-gradient(120deg, #1d4ed8, #0f766e);
+      margin-bottom: 24px;
+    }
+
+    .intro h1 { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
+    .intro p { margin: 0; max-width: 760px; line-height: 1.7; color: #e0f2fe; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .panel, .lesson-list, .workspace {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 5px 18px #0f172a0a;
+    }
+
+    .lesson-list { padding: 18px; }
+    .lesson-list h2 { margin: 0 0 14px; font-size: 17px; }
+
+    .lesson-button {
+      width: 100%;
+      text-align: left;
+      border: 1px solid transparent;
+      border-radius: 11px;
+      padding: 12px;
+      margin: 4px 0;
+      background: transparent;
+      cursor: pointer;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .lesson-button:hover { background: #f1f5f9; }
+    .lesson-button.active {
+      color: #1d4ed8;
+      background: var(--sky);
+      border-color: #bfdbfe;
+      font-weight: 700;
+    }
+
+    .lesson-number {
+      display: inline-grid;
+      place-items: center;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      margin-right: 7px;
+      background: #e2e8f0;
+      font-size: 12px;
+    }
+
+    .lesson-button.active .lesson-number { background: #bfdbfe; }
+
+    .workspace { overflow: hidden; }
+    .lesson-header { padding: 22px 24px 15px; border-bottom: 1px solid var(--line); }
+    .eyebrow { color: var(--blue); font-size: 13px; font-weight: 700; }
+    .lesson-header h2 { margin: 5px 0; font-size: 24px; }
+    .lesson-header p { margin: 0; color: var(--muted); line-height: 1.6; }
+
+    .learning-goal {
+      margin-top: 14px;
+      padding: 11px 13px;
+      border-radius: 10px;
+      background: #f0fdf4;
+      color: #166534;
+      font-size: 14px;
+    }
+
+    .lab-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      padding: 20px 24px 24px;
+    }
+
+    .panel { padding: 16px; }
+    .panel h3 { margin: 0 0 12px; font-size: 16px; }
+    .panel-subtitle { color: var(--muted); font-size: 13px; margin: -6px 0 14px; }
+
+    .board-area {
+      min-height: 240px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+    }
+
+    .board {
+      width: min(100%, 350px);
+      padding: 20px 18px;
+      border-radius: 16px;
+      color: white;
+      background: #166534;
+      position: relative;
+      box-shadow: 0 8px 20px #14532d35;
+    }
+
+    .board-title { text-align: center; font-size: 13px; font-weight: 800; letter-spacing: 1px; }
+    .board-chip {
+      width: 92px;
+      height: 58px;
+      margin: 14px auto;
+      border-radius: 7px;
+      background: #1e293b;
+      border: 3px solid #334155;
+    }
+
+    .pins {
+      display: flex;
+      justify-content: space-between;
+      color: #dcfce7;
+      font-size: 11px;
+    }
+
+    .led-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      margin: 14px 0 2px;
+      color: #e2e8f0;
+      font-size: 13px;
+    }
+
+    .led {
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      background: #475569;
+      border: 2px solid #cbd5e1;
+      transition: .15s;
+    }
+
+    .led.on {
+      background: #fde047;
+      box-shadow: 0 0 18px 7px #facc15aa;
+      border-color: #fef08a;
+    }
+
+    .circuit-note {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 240px;
+      resize: vertical;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 14px;
+      color: #e2e8f0;
+      background: #0f172a;
+      font: 13px/1.65 ui-monospace, SFMono-Regular, Consolas, monospace;
+      tab-size: 2;
+    }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 11px; }
+
+    button.action {
+      border: 0;
+      border-radius: 9px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .run { color: white; background: var(--blue); }
+    .run:hover { background: #1d4ed8; }
+    .stop { color: #334155; background: #e2e8f0; }
+    .reset { color: #166534; background: #dcfce7; }
+
+    .status {
+      margin-top: 12px;
+      min-height: 42px;
+      padding: 11px 12px;
+      border-radius: 9px;
+      color: #334155;
+      background: #f1f5f9;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .status.success { color: #166534; background: #f0fdf4; }
+    .status.error { color: #9a3412; background: #fff7ed; }
+
+    .steps { padding: 0 24px 22px; }
+    .steps h3 { margin: 0 0 10px; font-size: 16px; }
+    .steps ol { margin: 0; padding-left: 22px; color: #475569; line-height: 1.8; }
+
+    .progress-wrap { margin-top: 16px; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+    .progress { height: 8px; background: #e2e8f0; border-radius: 9px; overflow: hidden; margin-top: 6px; }
+    .progress-bar { height: 100%; width: 10%; background: var(--green); transition: width .3s; }
+
+    footer { text-align: center; padding: 24px; color: var(--muted); font-size: 13px; }
+
+    @media (max-width: 800px) {
+      .layout { grid-template-columns: 1fr; }
+      .lesson-list { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+      .lesson-list h2, .progress-wrap { grid-column: 1 / -1; }
+      .lab-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      header { align-items: flex-start; flex-direction: column; }
+      .lesson-list { grid-template-columns: 1fr; }
+      .lesson-header, .lab-grid, .steps { padding-left: 16px; padding-right: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">Arduino <span>Lab</span></div>
+    <div class="header-note">เรียนรู้ด้วยการต่อวงจรและทดลองเขียนโค้ด</div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h1>เริ่มต้นเขียนโปรแกรม Arduino</h1>
+      <p>เรียนรู้ทีละขั้น ทดลองแก้โค้ด และสังเกตผลจากวงจรจำลองได้ทันที เมื่อพร้อมแล้วค่อยนำความรู้ไปลองกับบอร์ดจริง</p>
+    </section>
+
+    <div class="layout">
+      <aside class="lesson-list">
+        <h2>เส้นทางการเรียนรู้</h2>
+        <div id="lessonButtons"></div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>ความคืบหน้า</span><span id="progressText">0 / 5 บท</span></div>
+          <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <div class="lesson-header">
+          <div class="eyebrow" id="lessonLevel"></div>
+          <h2 id="lessonTitle"></h2>
+          <p id="lessonDescription"></p>
+          <div class="learning-goal" id="lessonGoal"></div>
+        </div>
+
+        <div class="lab-grid">
+          <section class="panel">
+            <h3>วงจรจำลอง</h3>
+            <div class="panel-subtitle">Arduino UNO • LED ที่ขา 13</div>
+            <div class="board-area">
+              <div class="board">
+                <div class="board-title">ARDUINO UNO</div>
+                <div class="pins"><span>GND</span><span>13</span><span>12</span><span>11</span></div>
+                <div class="board-chip"></div>
+                <div class="led-row">
+                  <span>LED</span>
+                  <span class="led" id="led"></span>
+                  <span id="ledState">ปิด</span>
+                </div>
+                <div class="circuit-note">ขา 13 → ตัวต้านทาน → LED → GND</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h3>เขียนโค้ด Arduino</h3>
+            <div class="panel-subtitle">ลองแก้โค้ด แล้วกด “รันจำลอง”</div>
+            <textarea id="codeEditor" spellcheck="false" aria-label="ตัวแก้ไขโค้ด Arduino"></textarea>
+            <div class="actions">
+              <button class="action run" id="runButton">▶ รันจำลอง</button>
+              <button class="action stop" id="stopButton">หยุด</button>
+              <button class="action reset" id="resetButton">รีเซ็ตบทเรียน</button>
+            </div>
+            <div class="status" id="status">พร้อมทดลอง: กด “รันจำลอง” เพื่อเริ่มต้น</div>
+          </section>
+        </div>
+
+        <section class="steps">
+          <h3>ภารกิจในบทนี้</h3>
+          <ol id="lessonSteps"></ol>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <footer>Arduino Lab • พื้นที่ทดลองสำหรับผู้เริ่มต้น</footer>
+
+  <script>
+    const lessons = [
+      {
+        title: "รู้จัก setup() และ loop()",
+        level: "บทที่ 1 · เริ่มต้น",
+        description: "ทุกโปรแกรม Arduino มีส่วนตั้งค่าเริ่มต้น และส่วนคำสั่งที่ทำซ้ำไปเรื่อย ๆ",
+        goal: "เป้าหมาย: เข้าใจหน้าที่ของ setup() และ loop()",
+        steps: [
+          "สังเกตว่า setup() ทำงานเมื่อเริ่มโปรแกรม",
+          "สังเกตว่า loop() เป็นส่วนที่ทำงานซ้ำ",
+          "ลองเพิ่มคอมเมนต์อธิบายโค้ดของตัวเอง"
+        ],
+        code: `// setup() ทำงานหนึ่งครั้งเมื่อเริ่มต้น
+void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+// loop() ทำงานซ้ำไปเรื่อย ๆ
+void loop() {
+  // เพิ่มคำสั่งของคุณตรงนี้
+}`
+      },
+      {
+        title: "เปิดและปิด LED",
+        level: "บทที่ 2 · เอาต์พุต",
+        description: "ใช้ digitalWrite() สั่งให้ขาเอาต์พุตส่งสัญญาณ HIGH หรือ LOW",
+        goal: "เป้าหมาย: สั่ง LED ให้ติดค้าง",
+        steps: [
+          "ตั้งค่า LED_BUILTIN เป็น OUTPUT",
+          "สั่ง digitalWrite(LED_BUILTIN, HIGH)",
+          "กดรันจำลอง แล้วสังเกต LED"
+        ],
+        code: `void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);
+}`
+      },
+      {
+        title: "ทำ LED กะพริบ",
+        level: "บทที่ 3 · เวลาและลำดับคำสั่ง",
+        description: "ใช้ delay() หน่วงเวลา เพื่อสร้างการทำงานเป็นจังหวะ",
+        goal: "เป้าหมาย: ทำให้ LED ติดและดับสลับกัน",
+        steps: [
+          "สั่ง LED เป็น HIGH เพื่อเปิด",
+          "หน่วงเวลา 500 มิลลิวินาที",
+          "สั่ง LED เป็น LOW เพื่อปิด แล้วหน่วงเวลาอีกครั้ง"
+        ],
+        code: `void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(500);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(500);
+}`
+      },
+      {
+        title: "ใช้ตัวแปรกำหนดเวลา",
+        level: "บทที่ 4 · ตัวแปร",
+        description: "เก็บค่าเวลาไว้ในตัวแปร เพื่อปรับความเร็วของไฟกะพริบได้สะดวก",
+        goal: "เป้าหมาย: ใช้ตัวแปรแทนค่าหน่วงเวลา",
+        steps: [
+          "สร้างตัวแปร interval สำหรับเก็บเวลาหน่วง",
+          "นำตัวแปรไปใช้ใน delay(interval)",
+          "ลองเปลี่ยนค่าเวลาและเปรียบเทียบความเร็ว"
+        ],
+        code: `int interval = 300;
+
+void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(interval);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(interval);
+}`
+      },
+      {
+        title: "เพิ่มเงื่อนไข if / else",
+        level: "บทที่ 5 · เงื่อนไข",
+        description: "ใช้ if และ else เพื่อให้โปรแกรมเลือกทำงานตามเงื่อนไขที่กำหนด",
+        goal: "เป้าหมาย: ทำความรู้จักโครงสร้างเงื่อนไข",
+        steps: [
+          "ตรวจดูตำแหน่งของ if และ else",
+          "เปลี่ยน HIGH และ LOW เพื่อสังเกตผล",
+          "ต่อยอดบทนี้ด้วยการอ่านค่าจากปุ่มกดหรือเซนเซอร์"
+        ],
+        code: `int ledState = HIGH;
+
+void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+  if (ledState == HIGH) {
+    digitalWrite(LED_BUILTIN, HIGH);
+  } else {
+    digitalWrite(LED_BUILTIN, LOW);
+  }
+}`
+      }
+    ];
+
+    let currentLesson = 0;
+    let blinkTimer = null;
+    let ledOn = false;
+    const completed = new Set();
+
+    const editor = document.getElementById("codeEditor");
+    const statusBox = document.getElementById("status");
+    const led = document.getElementById("led");
+    const ledState = document.getElementById("ledState");
+
+    function renderLessonButtons() {
+      const container = document.getElementById("lessonButtons");
+      container.innerHTML = "";
+
+      lessons.forEach((lesson, index) => {
+        const button = document.createElement("button");
+        button.className = "lesson-button" + (index === currentLesson ? " active" : "");
+        button.innerHTML = `<span class="lesson-number">${completed.has(index) ? "✓" : index + 1}</span>${lesson.title}`;
+        button.addEventListener("click", () => loadLesson(index));
+        container.appendChild(button);
+      });
+
+      document.getElementById("progressText").textContent = `${completed.size} / ${lessons.length} บท`;
+      document.getElementById("progressBar").style.width =
+        `${(completed.size / lessons.length) * 100}%`;
+    }
+
+    function loadLesson(index) {
+      stopSimulation();
+      currentLesson = index;
+      const lesson = lessons[index];
+
+      document.getElementById("lessonLevel").textContent = lesson.level;
+      document.getElementById("lessonTitle").textContent = lesson.title;
+      document.getElementById("lessonDescription").textContent = lesson.description;
+      document.getElementById("lessonGoal").textContent = lesson.goal;
+      editor.value = lesson.code;
+
+      const list = document.getElementById("lessonSteps");
+      list.innerHTML = "";
+      lesson.steps.forEach(step => {
+        const item = document.createElement("li");
+        item.textContent = step;
+        list.appendChild(item);
+      });
+
+      setStatus("พร้อมทดลอง: กด “รันจำลอง” เพื่อเริ่มต้น");
+      renderLessonButtons();
+    }
+
+    function setStatus(message, type = "") {
+      statusBox.className = "status" + (type ? " " + type : "");
+      statusBox.textContent = message;
+    }
+
+    function setLed(state) {
+      ledOn = state;
+      led.classList.toggle("on", state);
+      ledState.textContent = state ? "ติด" : "ปิด";
+    }
+
+    function stopSimulation() {
+      if (blinkTimer) {
+        clearInterval(blinkTimer);
+        blinkTimer = null;
+      }
+    }
+
+    function runSimulation() {
+      stopSimulation();
+      const code = editor.value;
+
+      if (!code.includes("setup") || !code.includes("loop")) {
+        setStatus("ตรวจโค้ด: ควรมีฟังก์ชัน setup() และ loop()", "error");
+        return;
+      }
+
+      const hasHigh = /digitalWrite\s*\(\s*LED_BUILTIN\s*,\s*HIGH\s*\)/i.test(code);
+      const hasLow = /digitalWrite\s*\(\s*LED_BUILTIN\s*,\s*LOW\s*\)/i.test(code);
+      const hasDelay = /delay\s*\(/i.test(code);
+
+      if (hasHigh && hasLow && hasDelay) {
+        const delayMatch = code.match(/delay\s*\(\s*(\d+)\s*\)/i);
+        const delayMs = delayMatch ? Math.max(100, Math.min(Number(delayMatch[1]), 3000)) : 500;
+
+        setLed(true);
+        blinkTimer = setInterval(() => setLed(!ledOn), delayMs);
+        completed.add(currentLesson);
+        setStatus(`กำลังจำลองไฟกะพริบ (หน่วงประมาณ ${delayMs} ms) ลองกดหยุดหรือปรับค่า delay()`, "success");
+      } else if (hasHigh) {
+        setLed(true);
+        completed.add(currentLesson);
+        setStatus("จำลองแล้ว: LED ติด เพราะพบคำสั่ง HIGH", "success");
+      } else if (hasLow) {
+        setLed(false);
+        completed.add(currentLesson);
+        setStatus("จำลองแล้ว: LED ดับ เพราะพบคำสั่ง LOW", "success");
+      } else {
+        setLed(false);
+        setStatus("ยังไม่พบคำสั่งควบคุม LED ลองเพิ่ม digitalWrite(LED_BUILTIN, HIGH);", "error");
+      }
+
+      renderLessonButtons();
+    }
+
+    document.getElementById("runButton").addEventListener("click", runSimulation);
+    document.getElementById("stopButton").addEventListener("click", () => {
+      stopSimulation();
+      setStatus("หยุดการจำลองแล้ว");
+    });
+    document.getElementById("resetButton").addEventListener("click", () => loadLesson(currentLesson));
+
+    loadLesson(0);
+  </script>
+</body>
+</html>
